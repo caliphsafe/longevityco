@@ -6,7 +6,7 @@
   <title>Shop | Longevity Co.</title>
   <meta
     name="description"
-    content="Shop the Longevity collection. Placeholder products presented in a clean, elevated, Shopify-ready experience."
+    content="Shop the Longevity collection through a clean, product-first storefront experience."
   />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -41,163 +41,301 @@
     </header>
 
     <main>
-      <section class="page-hero">
+      <section class="page-hero shop-hero-minimal">
         <div class="container">
-          <div class="page-hero-card">
-            <div class="page-hero-grid">
-              <div class="page-hero-copy reveal-left">
-                <p class="section-label">Shop</p>
-                <h1>Clean products. Elevated presentation.</h1>
-                <p>
-                  A refined product experience built to highlight the collection
-                  in a way that feels editorial, minimal, and conversion-ready.
-                  These are placeholder products for now and can later be
-                  connected directly to Shopify.
-                </p>
-              </div>
-
-              <div class="page-hero-visual reveal-right">
-                <img src="assets/crewneck.png" alt="Longevity crewneck" />
-              </div>
-            </div>
+          <div class="shop-hero-bar reveal-up">
+            <p class="shop-hero-kicker">Shop</p>
+            <h1>Collection</h1>
           </div>
         </div>
       </section>
 
-      <section class="section">
+      <section class="section shop-section">
         <div class="container">
-          <div class="section-heading reveal-up">
-            <p class="section-label">Collection</p>
-            <h2>Core pieces presented with a campaign mindset.</h2>
+          <div class="shop-toolbar reveal-up">
+            <div class="shop-toolbar-left">
+              <span class="shop-count">6 Items</span>
+            </div>
+
+            <div class="shop-toolbar-right">
+              <button class="shop-chip is-active" type="button">All</button>
+              <button class="shop-chip" type="button">Tops</button>
+              <button class="shop-chip" type="button">Bottoms</button>
+            </div>
           </div>
 
-          <div class="product-grid">
-            <article class="product-card reveal-left">
-              <div class="product-image-wrap">
-                <img src="assets/shirt.png" alt="Longevity shirt" />
-              </div>
+          <div class="product-grid shop-grid">
+            <article
+              class="product-card shop-product-card reveal-left"
+              data-product-id="tee"
+              data-product-name="Essential Graphic Tee"
+              data-product-price="$48"
+              data-product-image="assets/shirt.png"
+              data-product-description="A clean everyday staple with a minimal graphic presence and balanced fit."
+            >
+              <button class="favorite-btn" type="button" aria-label="Add to favorites">
+                <span>♡</span>
+              </button>
+
+              <button class="product-click-area" type="button" aria-label="View Essential Graphic Tee details">
+                <div class="product-image-wrap">
+                  <img src="assets/shirt.png" alt="Essential Graphic Tee" />
+                </div>
+              </button>
+
               <div class="product-meta">
                 <div>
                   <h3 class="product-title">Essential Graphic Tee</h3>
-                  <p class="product-sub">
-                    Clean fit with a minimal visual language and everyday versatility.
-                  </p>
+                  <p class="product-sub">$48</p>
                 </div>
-                <span class="product-price">$48</span>
+              </div>
+
+              <div class="product-actions">
+                <div class="size-row">
+                  <button class="size-chip is-selected" type="button">S</button>
+                  <button class="size-chip" type="button">M</button>
+                  <button class="size-chip" type="button">L</button>
+                  <button class="size-chip" type="button">XL</button>
+                </div>
+
+                <button class="add-cart-btn" type="button">Add to Cart</button>
               </div>
             </article>
 
-            <article class="product-card reveal-up">
-              <div class="product-image-wrap">
-                <img src="assets/hoodie.png" alt="Longevity hoodie" />
-              </div>
+            <article
+              class="product-card shop-product-card reveal-up"
+              data-product-id="hoodie"
+              data-product-name="Heavyweight Hoodie"
+              data-product-price="$92"
+              data-product-image="assets/hoodie.png"
+              data-product-description="A structured heavyweight hoodie designed for comfort, weight, and clean silhouette."
+            >
+              <button class="favorite-btn" type="button" aria-label="Add to favorites">
+                <span>♡</span>
+              </button>
+
+              <button class="product-click-area" type="button" aria-label="View Heavyweight Hoodie details">
+                <div class="product-image-wrap">
+                  <img src="assets/hoodie.png" alt="Heavyweight Hoodie" />
+                </div>
+              </button>
+
               <div class="product-meta">
                 <div>
                   <h3 class="product-title">Heavyweight Hoodie</h3>
-                  <p class="product-sub">
-                    Built for comfort, structure, and a strong silhouette.
-                  </p>
+                  <p class="product-sub">$92</p>
                 </div>
-                <span class="product-price">$92</span>
+              </div>
+
+              <div class="product-actions">
+                <div class="size-row">
+                  <button class="size-chip is-selected" type="button">S</button>
+                  <button class="size-chip" type="button">M</button>
+                  <button class="size-chip" type="button">L</button>
+                  <button class="size-chip" type="button">XL</button>
+                </div>
+
+                <button class="add-cart-btn" type="button">Add to Cart</button>
               </div>
             </article>
 
-            <article class="product-card reveal-right">
-              <div class="product-image-wrap">
-                <img src="assets/pants.png" alt="Longevity pants" />
-              </div>
+            <article
+              class="product-card shop-product-card reveal-right"
+              data-product-id="pants"
+              data-product-name="Utility Pant"
+              data-product-price="$88"
+              data-product-image="assets/pants.png"
+              data-product-description="A cleaner utility-minded pant with an easy shape and refined streetwear feel."
+            >
+              <button class="favorite-btn" type="button" aria-label="Add to favorites">
+                <span>♡</span>
+              </button>
+
+              <button class="product-click-area" type="button" aria-label="View Utility Pant details">
+                <div class="product-image-wrap">
+                  <img src="assets/pants.png" alt="Utility Pant" />
+                </div>
+              </button>
+
               <div class="product-meta">
                 <div>
                   <h3 class="product-title">Utility Pant</h3>
-                  <p class="product-sub">
-                    Functional design with a refined streetwear attitude.
-                  </p>
+                  <p class="product-sub">$88</p>
                 </div>
-                <span class="product-price">$88</span>
+              </div>
+
+              <div class="product-actions">
+                <div class="size-row">
+                  <button class="size-chip is-selected" type="button">S</button>
+                  <button class="size-chip" type="button">M</button>
+                  <button class="size-chip" type="button">L</button>
+                  <button class="size-chip" type="button">XL</button>
+                </div>
+
+                <button class="add-cart-btn" type="button">Add to Cart</button>
               </div>
             </article>
 
-            <article class="product-card reveal-left">
-              <div class="product-image-wrap">
-                <img src="assets/shorts.png" alt="Longevity shorts" />
-              </div>
+            <article
+              class="product-card shop-product-card reveal-left"
+              data-product-id="shorts"
+              data-product-name="Studio Shorts"
+              data-product-price="$54"
+              data-product-image="assets/shorts.png"
+              data-product-description="A lighter short built for ease, daily wear, and a stripped-back studio fit."
+            >
+              <button class="favorite-btn" type="button" aria-label="Add to favorites">
+                <span>♡</span>
+              </button>
+
+              <button class="product-click-area" type="button" aria-label="View Studio Shorts details">
+                <div class="product-image-wrap">
+                  <img src="assets/shorts.png" alt="Studio Shorts" />
+                </div>
+              </button>
+
               <div class="product-meta">
                 <div>
                   <h3 class="product-title">Studio Shorts</h3>
-                  <p class="product-sub">
-                    Lightweight, practical, and cleanly styled for daily wear.
-                  </p>
+                  <p class="product-sub">$54</p>
                 </div>
-                <span class="product-price">$54</span>
+              </div>
+
+              <div class="product-actions">
+                <div class="size-row">
+                  <button class="size-chip is-selected" type="button">S</button>
+                  <button class="size-chip" type="button">M</button>
+                  <button class="size-chip" type="button">L</button>
+                  <button class="size-chip" type="button">XL</button>
+                </div>
+
+                <button class="add-cart-btn" type="button">Add to Cart</button>
               </div>
             </article>
 
-            <article class="product-card reveal-up">
-              <div class="product-image-wrap">
-                <img src="assets/longsleeve.png" alt="Longevity long sleeve" />
-              </div>
+            <article
+              class="product-card shop-product-card reveal-up"
+              data-product-id="longsleeve"
+              data-product-name="Long Sleeve Graphic"
+              data-product-price="$62"
+              data-product-image="assets/longsleeve.png"
+              data-product-description="A layered graphic piece that keeps the visual language restrained and clean."
+            >
+              <button class="favorite-btn" type="button" aria-label="Add to favorites">
+                <span>♡</span>
+              </button>
+
+              <button class="product-click-area" type="button" aria-label="View Long Sleeve Graphic details">
+                <div class="product-image-wrap">
+                  <img src="assets/longsleeve.png" alt="Long Sleeve Graphic" />
+                </div>
+              </button>
+
               <div class="product-meta">
                 <div>
                   <h3 class="product-title">Long Sleeve Graphic</h3>
-                  <p class="product-sub">
-                    A more layered expression of the brand’s visual identity.
-                  </p>
+                  <p class="product-sub">$62</p>
                 </div>
-                <span class="product-price">$62</span>
+              </div>
+
+              <div class="product-actions">
+                <div class="size-row">
+                  <button class="size-chip is-selected" type="button">S</button>
+                  <button class="size-chip" type="button">M</button>
+                  <button class="size-chip" type="button">L</button>
+                  <button class="size-chip" type="button">XL</button>
+                </div>
+
+                <button class="add-cart-btn" type="button">Add to Cart</button>
               </div>
             </article>
 
-            <article class="product-card reveal-right">
-              <div class="product-image-wrap">
-                <img src="assets/crewneck.png" alt="Longevity crewneck" />
-              </div>
+            <article
+              class="product-card shop-product-card reveal-right"
+              data-product-id="crewneck"
+              data-product-name="Structured Crewneck"
+              data-product-price="$78"
+              data-product-image="assets/crewneck.png"
+              data-product-description="A soft but substantial crewneck with a structured silhouette and quiet presence."
+            >
+              <button class="favorite-btn" type="button" aria-label="Add to favorites">
+                <span>♡</span>
+              </button>
+
+              <button class="product-click-area" type="button" aria-label="View Structured Crewneck details">
+                <div class="product-image-wrap">
+                  <img src="assets/crewneck.png" alt="Structured Crewneck" />
+                </div>
+              </button>
+
               <div class="product-meta">
                 <div>
                   <h3 class="product-title">Structured Crewneck</h3>
-                  <p class="product-sub">
-                    Soft texture, substantial feel, and understated presence.
-                  </p>
+                  <p class="product-sub">$78</p>
                 </div>
-                <span class="product-price">$78</span>
+              </div>
+
+              <div class="product-actions">
+                <div class="size-row">
+                  <button class="size-chip is-selected" type="button">S</button>
+                  <button class="size-chip" type="button">M</button>
+                  <button class="size-chip" type="button">L</button>
+                  <button class="size-chip" type="button">XL</button>
+                </div>
+
+                <button class="add-cart-btn" type="button">Add to Cart</button>
               </div>
             </article>
-          </div>
-
-          <div class="shop-feature-row">
-            <div class="info-card reveal-left">
-              <p class="section-label">Coming Next</p>
-              <h3>Ready for Shopify integration.</h3>
-              <p>
-                This layout is intentionally structured to transition into a
-                Shopify-powered experience later, with real products, inventory,
-                sizing, cart functionality, and checkout-ready flows.
-              </p>
-            </div>
-
-            <div class="info-card reveal-right">
-              <p class="section-label">Experience</p>
-              <h3>Less storefront. More brand world.</h3>
-              <p>
-                Instead of a generic product grid, the goal is to make the
-                collection feel curated, desirable, and aligned with the larger
-                identity of longevity.
-              </p>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <section class="section statement-band">
-        <div class="container">
-          <div class="statement-wrap reveal-up">
-            <p class="section-label">Product Direction</p>
-            <h2>
-              Presented simply enough to shop, but thoughtfully enough to remember.
-            </h2>
           </div>
         </div>
       </section>
     </main>
+
+    <div class="shop-drawer-overlay" id="shop-drawer-overlay"></div>
+
+    <aside class="shop-drawer" id="shop-drawer" aria-hidden="true">
+      <button class="shop-drawer-close" id="shop-drawer-close" type="button" aria-label="Close product details">
+        ×
+      </button>
+
+      <div class="shop-drawer-inner">
+        <div class="shop-drawer-media">
+          <img id="drawer-image" src="" alt="" />
+        </div>
+
+        <div class="shop-drawer-content">
+          <div class="shop-drawer-top">
+            <div>
+              <p class="shop-drawer-kicker">Product</p>
+              <h2 id="drawer-title"></h2>
+            </div>
+
+            <button class="favorite-btn drawer-favorite-btn" id="drawer-favorite-btn" type="button" aria-label="Add to favorites">
+              <span>♡</span>
+            </button>
+          </div>
+
+          <p class="shop-drawer-price" id="drawer-price"></p>
+          <p class="shop-drawer-description" id="drawer-description"></p>
+
+          <div class="drawer-size-wrap">
+            <p class="drawer-label">Size</p>
+            <div class="size-row drawer-size-row">
+              <button class="size-chip is-selected" type="button">S</button>
+              <button class="size-chip" type="button">M</button>
+              <button class="size-chip" type="button">L</button>
+              <button class="size-chip" type="button">XL</button>
+            </div>
+          </div>
+
+          <div class="drawer-actions">
+            <button class="add-cart-btn drawer-add-cart-btn" id="drawer-add-cart-btn" type="button">
+              Add to Cart
+            </button>
+          </div>
+        </div>
+      </div>
+    </aside>
 
     <footer class="site-footer">
       <div class="container footer-inner">
