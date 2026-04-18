@@ -36,6 +36,7 @@
           <a href="lookbook.html">Lookbook</a>
           <a href="about.html">About</a>
           <a href="contact.html">Contact</a>
+          <a href="cart.html" class="nav-cart-link">Cart <span class="cart-count" data-cart-count>0</span></a>
         </nav>
       </div>
     </header>
@@ -64,6 +65,16 @@
             </div>
           </div>
 
+          <div class="shop-utility-bar reveal-up">
+            <button class="utility-pill" id="favorites-toggle-btn" type="button">
+              Favorites <span class="utility-count" data-favorites-count>0</span>
+            </button>
+
+            <button class="utility-pill" id="cart-toggle-btn" type="button">
+              Cart <span class="utility-count" data-cart-count>0</span>
+            </button>
+          </div>
+
           <div class="product-grid shop-grid">
             <article
               class="product-card shop-product-card reveal-left"
@@ -85,7 +96,7 @@
 
               <div class="product-meta">
                 <div>
-                  <h3 class="product-title">Essential Graphic Tee</h3>
+                  <button class="product-title product-title-trigger" type="button">Essential Graphic Tee</button>
                   <p class="product-sub">$48</p>
                 </div>
               </div>
@@ -122,7 +133,7 @@
 
               <div class="product-meta">
                 <div>
-                  <h3 class="product-title">Heavyweight Hoodie</h3>
+                  <button class="product-title product-title-trigger" type="button">Heavyweight Hoodie</button>
                   <p class="product-sub">$92</p>
                 </div>
               </div>
@@ -159,7 +170,7 @@
 
               <div class="product-meta">
                 <div>
-                  <h3 class="product-title">Utility Pant</h3>
+                  <button class="product-title product-title-trigger" type="button">Utility Pant</button>
                   <p class="product-sub">$88</p>
                 </div>
               </div>
@@ -196,7 +207,7 @@
 
               <div class="product-meta">
                 <div>
-                  <h3 class="product-title">Studio Shorts</h3>
+                  <button class="product-title product-title-trigger" type="button">Studio Shorts</button>
                   <p class="product-sub">$54</p>
                 </div>
               </div>
@@ -233,7 +244,7 @@
 
               <div class="product-meta">
                 <div>
-                  <h3 class="product-title">Long Sleeve Graphic</h3>
+                  <button class="product-title product-title-trigger" type="button">Long Sleeve Graphic</button>
                   <p class="product-sub">$62</p>
                 </div>
               </div>
@@ -270,7 +281,7 @@
 
               <div class="product-meta">
                 <div>
-                  <h3 class="product-title">Structured Crewneck</h3>
+                  <button class="product-title product-title-trigger" type="button">Structured Crewneck</button>
                   <p class="product-sub">$78</p>
                 </div>
               </div>
@@ -337,6 +348,31 @@
       </div>
     </aside>
 
+    <aside class="side-panel" id="favorites-panel" aria-hidden="true">
+      <div class="side-panel-header">
+        <p>Favorites</p>
+        <button class="side-panel-close" type="button" data-close-panel="favorites-panel">×</button>
+      </div>
+      <div class="side-panel-body" id="favorites-items"></div>
+      <div class="side-panel-empty" id="favorites-empty">No favorites yet.</div>
+    </aside>
+
+    <aside class="side-panel" id="cart-panel" aria-hidden="true">
+      <div class="side-panel-header">
+        <p>Cart</p>
+        <button class="side-panel-close" type="button" data-close-panel="cart-panel">×</button>
+      </div>
+      <div class="side-panel-body" id="cart-panel-items"></div>
+      <div class="side-panel-empty" id="cart-panel-empty">Your cart is empty.</div>
+      <div class="side-panel-footer">
+        <div class="side-panel-total">
+          <span>Subtotal</span>
+          <span id="cart-panel-subtotal">$0</span>
+        </div>
+        <a href="cart.html" class="add-cart-btn panel-cart-link">View Cart</a>
+      </div>
+    </aside>
+
     <footer class="site-footer">
       <div class="container footer-inner">
         <div>
@@ -351,6 +387,7 @@
           <a href="lookbook.html">Lookbook</a>
           <a href="about.html">About</a>
           <a href="contact.html">Contact</a>
+          <a href="cart.html">Cart</a>
         </div>
       </div>
     </footer>
