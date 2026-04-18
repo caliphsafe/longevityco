@@ -927,27 +927,34 @@ main {
 .reveal-left,
 .reveal-right,
 .reveal-up {
+  opacity: 1;
+  transform: none;
+}
+
+body.js-ready .reveal-left,
+body.js-ready .reveal-right,
+body.js-ready .reveal-up {
   opacity: 0;
   transition:
     opacity 0.95s var(--ease),
     transform 0.95s var(--ease);
 }
 
-.reveal-left {
+body.js-ready .reveal-left {
   transform: translateX(-72px);
 }
 
-.reveal-right {
+body.js-ready .reveal-right {
   transform: translateX(72px);
 }
 
-.reveal-up {
+body.js-ready .reveal-up {
   transform: translateY(44px);
 }
 
-.reveal-left.is-visible,
-.reveal-right.is-visible,
-.reveal-up.is-visible {
+body.js-ready .reveal-left.is-visible,
+body.js-ready .reveal-right.is-visible,
+body.js-ready .reveal-up.is-visible {
   opacity: 1;
   transform: translate(0, 0);
 }
