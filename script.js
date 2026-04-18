@@ -50,6 +50,8 @@ const PRODUCT_DATA = {
 };
 
 document.addEventListener("DOMContentLoaded", () => {
+  document.body.classList.add("js-ready");
+
   const revealItems = document.querySelectorAll(".reveal-left, .reveal-right, .reveal-up");
   const menuToggle = document.querySelector(".menu-toggle");
   const siteNav = document.querySelector(".site-nav");
@@ -66,25 +68,29 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
-  const observer = new IntersectionObserver(
-    (entries) => {
-      entries.forEach((entry) => {
-        if (entry.isIntersecting) {
-          entry.target.classList.add("is-visible");
-          observer.unobserve(entry.target);
-        }
-      });
-    },
-    {
-      threshold: 0.14,
-      rootMargin: "0px 0px -40px 0px",
-    }
-  );
+  if ("IntersectionObserver" in window) {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add("is-visible");
+            observer.unobserve(entry.target);
+          }
+        });
+      },
+      {
+        threshold: 0.14,
+        rootMargin: "0px 0px -40px 0px",
+      }
+    );
 
-  revealItems.forEach((item, index) => {
-    item.style.transitionDelay = `${Math.min(index * 0.05, 0.28)}s`;
-    observer.observe(item);
-  });
+    revealItems.forEach((item, index) => {
+      item.style.transitionDelay = `${Math.min(index * 0.05, 0.28)}s`;
+      observer.observe(item);
+    });
+  } else {
+    revealItems.forEach((item) => item.classList.add("is-visible"));
+  }
 
   initSizeChips();
   initFavorites();
