@@ -52,21 +52,27 @@ const PRODUCT_DATA = {
 document.addEventListener("DOMContentLoaded", () => {
   document.body.classList.add("js-ready");
 
+  initRevealAnimations();
+  initMobileMenu();
+  initSizeChips();
+  initShopCards();
+  initShopDrawer();
+  initFavorites();
+  initAddToCartButtons();
+  initCartPage();
+  initCheckoutPlaceholder();
+  initUtilityPanels();
+  initProductPage();
+
+  updateCartCountUI();
+  updateFavoritesCountUI();
+  syncFavoriteButtons();
+  renderFavoritesPanel();
+  renderCartPanel();
+});
+
+function initRevealAnimations() {
   const revealItems = document.querySelectorAll(".reveal-left, .reveal-right, .reveal-up");
-  const menuToggle = document.querySelector(".menu-toggle");
-  const siteNav = document.querySelector(".site-nav");
-
-  if (menuToggle && siteNav) {
-    menuToggle.addEventListener("click", () => {
-      siteNav.classList.toggle("open");
-    });
-
-    siteNav.querySelectorAll("a").forEach((link) => {
-      link.addEventListener("click", () => {
-        siteNav.classList.remove("open");
-      });
-    });
-  }
 
   if ("IntersectionObserver" in window) {
     const observer = new IntersectionObserver(
@@ -91,20 +97,24 @@ document.addEventListener("DOMContentLoaded", () => {
   } else {
     revealItems.forEach((item) => item.classList.add("is-visible"));
   }
+}
 
-  initSizeChips();
-  initFavorites();
-  initAddToCartButtons();
-  initCartPage();
-  initCheckoutPlaceholder();
-  initUtilityPanels();
-  initProductPage();
-  updateCartCountUI();
-  updateFavoritesCountUI();
-  syncFavoriteButtons();
-  renderFavoritesPanel();
-  renderCartPanel();
-});
+function initMobileMenu() {
+  const menuToggle = document.querySelector(".menu-toggle");
+  const siteNav = document.querySelector(".site-nav");
+
+  if (!menuToggle || !siteNav) return;
+
+  menuToggle.addEventListener("click", () => {
+    siteNav.classList.toggle("open");
+  });
+
+  siteNav.querySelectorAll("a").forEach((link) => {
+    link.addEventListener("click", () => {
+      siteNav.classList.remove("open");
+    });
+  });
+}
 
 function getCart() {
   try {
@@ -183,6 +193,7 @@ function buildProductFromCard(card) {
     price: card.dataset.productPrice || "$0",
     image: card.dataset.productImage || "",
     description: card.dataset.productDescription || "",
+    category: card.dataset.productCategory || "",
   };
 }
 
@@ -215,6 +226,15 @@ function syncFavoriteButtons() {
     if (span) span.textContent = active ? "♥" : "♡";
   });
 
+  const drawer = document.getElementById("shop-drawer");
+  const drawerFavoriteBtn = document.getElementById("drawer-favorite-btn");
+  if (drawer && drawerFavoriteBtn) {
+    const active = isFavorite(drawer.dataset.productId || "");
+    drawerFavoriteBtn.classList.toggle("is-active", active);
+    const span = drawerFavoriteBtn.querySelector("span");
+    if (span) span.textContent = active ? "♥" : "♡";
+  }
+
   const productPageFavorite = document.getElementById("product-page-favorite");
   const productPage = document.body.dataset.productId;
   if (productPageFavorite && productPage) {
@@ -230,12 +250,27 @@ function initFavorites() {
     button.addEventListener("click", (event) => {
       event.preventDefault();
       event.stopPropagation();
+
       const card = button.closest(".shop-product-card");
       if (!card) return;
 
       toggleFavorite(buildProductFromCard(card));
     });
   });
+
+  const drawerFavoriteBtn = document.getElementById("drawer-favorite-btn");
+  if (drawerFavoriteBtn) {
+    drawerFavoriteBtn.addEventListener("click", () => {
+      const drawer = document.getElementById("shop-drawer");
+      if (!drawer) return;
+
+      const id = drawer.dataset.productId || "";
+      const product = PRODUCT_DATA[id];
+      if (!product) return;
+
+      toggleFavorite(product);
+    });
+  }
 
   const productPageFavorite = document.getElementById("product-page-favorite");
   if (productPageFavorite) {
@@ -266,58 +301,156 @@ function addItemToCart(product) {
   saveCart(cart);
 }
 
+function handleAddToCartFeedback(button, size) {
+  const original = button.textContent;
+  button.textContent = `Added • ${size}`;
+  button.classList.add("is-added");
+
+  setTimeout(() => {
+    button.textContent = original;
+    button.classList.remove("is-added");
+  }, 1300);
+}
+
 function initAddToCartButtons() {
-  document.querySelectorAll(".add-cart-btn").forEach((button) => {
-    if (button.id === "checkout-placeholder-btn") return;
-
+  document.querySelectorAll(".shop-product-card .add-cart-btn").forEach((button) => {
     button.addEventListener("click", (event) => {
-      if (button.classList.contains("panel-cart-link")) return;
-
+      event.preventDefault();
       event.stopPropagation();
 
       const card = button.closest(".shop-product-card");
-      const productPageButton = button.closest(".product-page-content");
+      if (!card) return;
 
-      let product = null;
-
-      if (card) {
-        const selected = card.querySelector(".size-chip.is-selected");
-        product = {
-          id: card.dataset.productId || "item",
-          name: card.dataset.productName || "Item",
-          price: card.dataset.productPrice || "$0",
-          image: card.dataset.productImage || "",
-          description: card.dataset.productDescription || "",
-          size: selected ? selected.textContent.trim() : "S",
-        };
-      }
-
-      if (productPageButton && button.id === "product-page-add-cart") {
-        const productId = document.body.dataset.productId;
-        const data = PRODUCT_DATA[productId];
-        const selected = document.querySelector(".product-page-size-row .size-chip.is-selected");
-
-        if (data) {
-          product = {
-            ...data,
-            size: selected ? selected.textContent.trim() : "S",
-          };
-        }
-      }
-
-      if (!product) return;
+      const selected = card.querySelector(".size-chip.is-selected");
+      const product = {
+        ...buildProductFromCard(card),
+        size: selected ? selected.textContent.trim() : "S",
+      };
 
       addItemToCart(product);
-
-      const original = button.textContent;
-      button.textContent = `Added • ${product.size}`;
-      button.classList.add("is-added");
-
-      setTimeout(() => {
-        button.textContent = original;
-        button.classList.remove("is-added");
-      }, 1300);
+      handleAddToCartFeedback(button, product.size);
     });
+  });
+
+  const drawerAddBtn = document.getElementById("drawer-add-cart-btn");
+  if (drawerAddBtn) {
+    drawerAddBtn.addEventListener("click", () => {
+      const drawer = document.getElementById("shop-drawer");
+      if (!drawer) return;
+
+      const productId = drawer.dataset.productId || "";
+      const base = PRODUCT_DATA[productId];
+      if (!base) return;
+
+      const selected = drawer.querySelector(".drawer-size-row .size-chip.is-selected");
+      const product = {
+        ...base,
+        size: selected ? selected.textContent.trim() : "S",
+      };
+
+      addItemToCart(product);
+      handleAddToCartFeedback(drawerAddBtn, product.size);
+    });
+  }
+
+  const productPageAddBtn = document.getElementById("product-page-add-cart");
+  if (productPageAddBtn) {
+    productPageAddBtn.addEventListener("click", () => {
+      const productId = document.body.dataset.productId;
+      const data = PRODUCT_DATA[productId];
+      const selected = document.querySelector(".product-page-size-row .size-chip.is-selected");
+
+      if (!data) return;
+
+      const product = {
+        ...data,
+        size: selected ? selected.textContent.trim() : "S",
+      };
+
+      addItemToCart(product);
+      handleAddToCartFeedback(productPageAddBtn, product.size);
+    });
+  }
+}
+
+function initShopCards() {
+  document.querySelectorAll(".product-click-area, .product-title-trigger").forEach((trigger) => {
+    trigger.addEventListener("click", (event) => {
+      event.preventDefault();
+      const card = trigger.closest(".shop-product-card");
+      if (!card) return;
+      openProductDrawer(card.dataset.productId || "");
+    });
+  });
+}
+
+function openProductDrawer(productId) {
+  const drawer = document.getElementById("shop-drawer");
+  const overlay = document.getElementById("shop-drawer-overlay");
+  const drawerImage = document.getElementById("drawer-image");
+  const drawerTitle = document.getElementById("drawer-title");
+  const drawerPrice = document.getElementById("drawer-price");
+  const drawerDescription = document.getElementById("drawer-description");
+  const drawerViewLink = document.getElementById("drawer-view-link");
+
+  if (!drawer || !overlay) return;
+
+  const product = PRODUCT_DATA[productId];
+  if (!product) return;
+
+  drawer.dataset.productId = product.id;
+
+  if (drawerImage) {
+    drawerImage.src = product.image;
+    drawerImage.alt = product.name;
+  }
+
+  if (drawerTitle) drawerTitle.textContent = product.name;
+  if (drawerPrice) drawerPrice.textContent = product.price;
+  if (drawerDescription) drawerDescription.textContent = product.description;
+  if (drawerViewLink) drawerViewLink.href = `product.html?id=${product.id}`;
+
+  drawer.querySelectorAll(".drawer-size-row .size-chip").forEach((chip, index) => {
+    chip.classList.toggle("is-selected", index === 0);
+  });
+
+  syncFavoriteButtons();
+  closePanels();
+
+  drawer.classList.add("is-open");
+  drawer.setAttribute("aria-hidden", "false");
+  overlay.classList.add("is-visible");
+  document.body.classList.add("drawer-open");
+}
+
+function initShopDrawer() {
+  const drawer = document.getElementById("shop-drawer");
+  const overlay = document.getElementById("shop-drawer-overlay");
+  const closeBtn = document.getElementById("shop-drawer-close");
+
+  if (!drawer || !overlay || !closeBtn) return;
+
+  const closeDrawer = () => {
+    drawer.classList.remove("is-open");
+    drawer.setAttribute("aria-hidden", "true");
+    if (!document.querySelector(".side-panel.is-open")) {
+      overlay.classList.remove("is-visible");
+      document.body.classList.remove("drawer-open");
+    }
+  };
+
+  closeBtn.addEventListener("click", closeDrawer);
+
+  overlay.addEventListener("click", () => {
+    closeDrawer();
+    closePanels();
+  });
+
+  document.addEventListener("keydown", (event) => {
+    if (event.key === "Escape") {
+      closeDrawer();
+      closePanels();
+    }
   });
 }
 
@@ -408,15 +541,10 @@ function initCartPage() {
 
         if (!cart[index]) return;
 
-        if (action === "increase") {
-          cart[index].quantity += 1;
-        }
-
+        if (action === "increase") cart[index].quantity += 1;
         if (action === "decrease") {
           cart[index].quantity -= 1;
-          if (cart[index].quantity <= 0) {
-            cart.splice(index, 1);
-          }
+          if (cart[index].quantity <= 0) cart.splice(index, 1);
         }
 
         saveCart(cart);
@@ -451,7 +579,8 @@ function closePanels() {
   });
 
   const overlay = document.getElementById("shop-drawer-overlay");
-  if (overlay) {
+  const drawer = document.getElementById("shop-drawer");
+  if (overlay && !drawer?.classList.contains("is-open")) {
     overlay.classList.remove("is-visible");
     document.body.classList.remove("drawer-open");
   }
@@ -460,7 +589,14 @@ function closePanels() {
 function openPanel(panelId) {
   const panel = document.getElementById(panelId);
   const overlay = document.getElementById("shop-drawer-overlay");
+  const drawer = document.getElementById("shop-drawer");
+
   if (!panel || !overlay) return;
+
+  if (drawer) {
+    drawer.classList.remove("is-open");
+    drawer.setAttribute("aria-hidden", "true");
+  }
 
   document.querySelectorAll(".side-panel").forEach((item) => {
     item.classList.remove("is-open");
@@ -576,7 +712,6 @@ function renderCartPanel() {
 function initUtilityPanels() {
   const favoritesBtn = document.getElementById("favorites-toggle-btn");
   const cartBtn = document.getElementById("cart-toggle-btn");
-  const overlay = document.getElementById("shop-drawer-overlay");
 
   if (favoritesBtn) {
     favoritesBtn.addEventListener("click", () => {
@@ -594,16 +729,6 @@ function initUtilityPanels() {
 
   document.querySelectorAll("[data-close-panel]").forEach((btn) => {
     btn.addEventListener("click", closePanels);
-  });
-
-  if (overlay) {
-    overlay.addEventListener("click", closePanels);
-  }
-
-  document.addEventListener("keydown", (event) => {
-    if (event.key === "Escape") {
-      closePanels();
-    }
   });
 }
 
@@ -649,6 +774,7 @@ function initProductPage() {
         data-product-price="${item.price}"
         data-product-image="${item.image}"
         data-product-description="${item.description}"
+        data-product-category="${item.category}"
       >
         <button class="favorite-btn" type="button" aria-label="Add to favorites">
           <span>${isFavorite(item.id) ? "♥" : "♡"}</span>
