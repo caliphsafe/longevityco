@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Product | Longevity Co.</title>
+  <meta
+    name="description"
+    content="Explore a Longevity product in detail, select your size, and add it to cart."
+  />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
+    rel="stylesheet"
+  />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="site-shell">
+    <header class="site-header">
+      <div class="container header-inner">
+        <a href="index.html" class="brand">
+          <img src="assets/logo.png" alt="Longevity logo" class="brand-logo" />
+          <span class="brand-word">longevity</span>
+        </a>
+
+        <button class="menu-toggle" aria-label="Toggle menu">
+          <span></span>
+          <span></span>
+        </button>
+
+        <nav class="site-nav">
+          <a href="index.html">Home</a>
+          <a href="shop.html">Shop</a>
+          <a href="lookbook.html">Lookbook</a>
+          <a href="about.html">About</a>
+          <a href="contact.html">Contact</a>
+          <a href="cart.html" class="nav-cart-link">Cart <span class="cart-count" data-cart-count>0</span></a>
+        </nav>
+      </div>
+    </header>
+
+    <main>
+      <section class="product-page-section">
+        <div class="container">
+          <div class="product-page-grid">
+            <div class="product-page-media reveal-left">
+              <div class="product-page-image-wrap">
+                <img id="product-page-image" src="" alt="" />
+              </div>
+            </div>
+
+            <div class="product-page-content reveal-right">
+              <p class="product-page-kicker">Product</p>
+              <h1 id="product-page-title"></h1>
+              <p class="product-page-price" id="product-page-price"></p>
+              <p class="product-page-description" id="product-page-description"></p>
+
+              <div class="product-page-actions">
+                <div class="product-page-block">
+                  <p class="product-page-label">Size</p>
+                  <div class="size-row product-page-size-row">
+                    <button class="size-chip is-selected" type="button">S</button>
+                    <button class="size-chip" type="button">M</button>
+                    <button class="size-chip" type="button">L</button>
+                    <button class="size-chip" type="button">XL</button>
+                  </div>
+                </div>
+
+                <div class="product-page-button-row">
+                  <button class="favorite-btn product-page-favorite" id="product-page-favorite" type="button" aria-label="Add to favorites">
+                    <span>♡</span>
+                  </button>
+
+                  <button class="add-cart-btn product-page-add-cart" id="product-page-add-cart" type="button">
+                    Add to Cart
+                  </button>
+                </div>
+              </div>
+
+              <div class="product-page-details">
+                <div class="product-detail-row">
+                  <span>Category</span>
+                  <span id="product-page-category"></span>
+                </div>
+                <div class="product-detail-row">
+                  <span>Fit</span>
+                  <span>Standard</span>
+                </div>
+                <div class="product-detail-row">
+                  <span>Availability</span>
+                  <span>In Stock</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="section related-products-section">
+        <div class="container">
+          <div class="section-heading reveal-up">
+            <p class="section-label">Related</p>
+            <h2>More from the collection.</h2>
+          </div>
+
+          <div class="product-grid related-grid" id="related-products"></div>
+        </div>
+      </section>
+    </main>
+
+    <footer class="site-footer">
+      <div class="container footer-inner">
+        <div>
+          <p class="footer-brand">longevity</p>
+          <p class="footer-copy">
+            New England based direct-to-consumer webstore and design studio.
+          </p>
+        </div>
+
+        <div class="footer-links">
+          <a href="shop.html">Shop</a>
+          <a href="lookbook.html">Lookbook</a>
+          <a href="about.html">About</a>
+          <a href="contact.html">Contact</a>
+          <a href="cart.html">Cart</a>
+        </div>
+      </div>
+    </footer>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
