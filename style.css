@@ -1195,3 +1195,250 @@ main {
     max-height: 280px;
   }
 }
+
+/* CART */
+
+.nav-cart-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.cart-count {
+  min-width: 18px;
+  height: 18px;
+  padding: 0 5px;
+  border: 1px solid var(--line);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.68rem;
+  line-height: 1;
+  color: var(--text);
+  background: rgba(255, 255, 255, 0.65);
+}
+
+.cart-section {
+  padding-top: 10px;
+}
+
+.cart-layout {
+  display: grid;
+  grid-template-columns: 1.15fr 0.85fr;
+  gap: 0;
+  border-top: 1px solid var(--line);
+  border-left: 1px solid var(--line);
+}
+
+.cart-items-wrap,
+.cart-summary {
+  border-right: 1px solid var(--line);
+  border-bottom: 1px solid var(--line);
+}
+
+.cart-items-wrap {
+  padding: 22px;
+}
+
+.cart-items-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid var(--line);
+  font-size: 0.92rem;
+  color: var(--text-soft);
+}
+
+.cart-items {
+  display: grid;
+}
+
+.cart-item {
+  display: grid;
+  grid-template-columns: 180px 1fr;
+  gap: 18px;
+  padding: 20px 0;
+  border-bottom: 1px solid var(--line);
+}
+
+.cart-item-media {
+  min-height: 200px;
+  background: #fff;
+  border: 1px solid var(--line);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 18px;
+}
+
+.cart-item-media img {
+  max-height: 160px;
+  object-fit: contain;
+}
+
+.cart-item-content {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.cart-item-top {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.cart-item-top h3 {
+  margin: 0 0 8px;
+  font-size: 1.15rem;
+  letter-spacing: -0.03em;
+}
+
+.cart-item-top p {
+  margin: 0;
+  color: var(--text-soft);
+}
+
+.cart-remove-btn {
+  border: 0;
+  border-bottom: 1px solid var(--text);
+  background: transparent;
+  padding: 0 0 2px;
+  cursor: pointer;
+  color: var(--text);
+}
+
+.cart-item-meta {
+  color: var(--text-soft);
+  font-size: 0.94rem;
+}
+
+.cart-item-bottom {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.cart-qty {
+  display: inline-flex;
+  align-items: center;
+  border: 1px solid var(--line);
+  background: #fff;
+}
+
+.qty-btn {
+  width: 42px;
+  height: 42px;
+  border: 0;
+  background: transparent;
+  cursor: pointer;
+  font-size: 1.2rem;
+  color: var(--text);
+}
+
+.cart-qty span {
+  min-width: 42px;
+  text-align: center;
+  font-size: 0.95rem;
+}
+
+.cart-line-price {
+  font-size: 1rem;
+  color: var(--text);
+}
+
+.cart-summary {
+  padding: 22px;
+}
+
+.cart-summary-inner {
+  position: sticky;
+  top: 108px;
+}
+
+.cart-summary-kicker {
+  margin: 0 0 16px;
+  font-size: 0.72rem;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--text-dim);
+}
+
+.cart-summary-row,
+.cart-summary-total {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.cart-summary-row {
+  padding: 14px 0;
+  border-bottom: 1px solid var(--line);
+  color: var(--text-soft);
+}
+
+.cart-summary-total {
+  padding: 18px 0 22px;
+  font-size: 1.05rem;
+  color: var(--text);
+}
+
+.cart-checkout-btn {
+  width: 100%;
+}
+
+.cart-summary-note {
+  margin: 14px 0 0;
+  color: var(--text-dim);
+  line-height: 1.7;
+  font-size: 0.9rem;
+}
+
+.cart-empty {
+  padding: 40px 0 10px;
+  display: grid;
+  gap: 16px;
+  justify-items: start;
+}
+
+.cart-empty p {
+  margin: 0;
+  color: var(--text-soft);
+}
+
+@media (max-width: 1100px) {
+  .cart-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .cart-summary-inner {
+    position: static;
+  }
+}
+
+@media (max-width: 820px) {
+  .cart-items-wrap,
+  .cart-summary {
+    padding: 16px;
+  }
+
+  .cart-item {
+    grid-template-columns: 1fr;
+    gap: 14px;
+  }
+
+  .cart-item-media {
+    min-height: 240px;
+  }
+
+  .cart-item-bottom {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}
