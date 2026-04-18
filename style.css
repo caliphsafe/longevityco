@@ -1825,3 +1825,14 @@ main {
     width: 100%;
   }
 }
+
+.product-title-link {
+  display: inline-block;
+  font-size: 1.05rem;
+  letter-spacing: -0.03em;
+  color: var(--text);
+}
+
+.product-title-link:hover {
+  opacity: 0.7;
+}
