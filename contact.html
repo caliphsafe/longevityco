@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Contact | Longevity Co.</title>
+  <meta
+    name="description"
+    content="Contact Longevity Co. for order questions, general inquiries, and brand communication."
+  />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
+    rel="stylesheet"
+  />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="site-shell">
+    <header class="site-header">
+      <div class="container header-inner">
+        <a href="index.html" class="brand">
+          <img src="assets/logo.png" alt="Longevity logo" class="brand-logo" />
+          <span class="brand-word">longevity</span>
+        </a>
+
+        <button class="menu-toggle" aria-label="Toggle menu">
+          <span></span>
+          <span></span>
+        </button>
+
+        <nav class="site-nav">
+          <a href="index.html">Home</a>
+          <a href="shop.html">Shop</a>
+          <a href="lookbook.html">Lookbook</a>
+          <a href="about.html">About</a>
+          <a href="contact.html" class="active">Contact</a>
+        </nav>
+      </div>
+    </header>
+
+    <main>
+      <section class="page-hero">
+        <div class="container">
+          <div class="page-hero-card">
+            <div class="page-hero-grid">
+              <div class="page-hero-copy reveal-left">
+                <p class="section-label">Contact</p>
+                <h1>Get in touch with the brand.</h1>
+                <p>
+                  For order-related questions, general inquiries, or anything
+                  else connected to longevity, use the contact form below.
+                </p>
+              </div>
+
+              <div class="page-hero-visual reveal-right">
+                <img src="assets/logo.png" alt="Longevity logo" />
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="section">
+        <div class="container">
+          <div class="contact-grid">
+            <div class="info-card reveal-left">
+              <p class="section-label">Contact Info</p>
+              <h3>Clean communication. Clear structure.</h3>
+              <p>
+                This form is designed to make it easy for customers to reach out
+                for support, order questions, and general brand inquiries.
+              </p>
+              <p>
+                Once this site is connected to a live backend, form submissions
+                can be routed to email, Shopify workflows, or a dedicated
+                customer support system.
+              </p>
+              <p>
+                For now, this is a styled frontend placeholder ready for real integration.
+              </p>
+            </div>
+
+            <div class="form-card reveal-right">
+              <form class="form-grid">
+                <div class="field">
+                  <label for="first-name">First Name</label>
+                  <input type="text" id="first-name" name="first-name" placeholder="First Name" />
+                </div>
+
+                <div class="field">
+                  <label for="last-name">Last Name</label>
+                  <input type="text" id="last-name" name="last-name" placeholder="Last Name" />
+                </div>
+
+                <div class="field full">
+                  <label for="email">Email</label>
+                  <input type="email" id="email" name="email" placeholder="Email Address" />
+                </div>
+
+                <div class="field full">
+                  <label for="order-number">Order Number</label>
+                  <input type="text" id="order-number" name="order-number" placeholder="Order Number (optional)" />
+                </div>
+
+                <div class="field full">
+                  <label for="subject">Subject</label>
+                  <input type="text" id="subject" name="subject" placeholder="Subject" />
+                </div>
+
+                <div class="field full">
+                  <label for="message">Message</label>
+                  <textarea id="message" name="message" placeholder="Write your message here"></textarea>
+                </div>
+
+                <div class="field full">
+                  <button type="submit" class="btn btn-solid">Send Message</button>
+                </div>
+              </form>
+
+              <p class="form-note">
+                This is currently a frontend contact form placeholder. We can
+                connect it next to Formspree, Shopify workflows, email routing,
+                or a custom backend depending on how you want the site to function.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="section statement-band">
+        <div class="container">
+          <div class="statement-wrap reveal-up">
+            <p class="section-label">Communication</p>
+            <h2>
+              Every touchpoint should feel as considered as the product itself.
+            </h2>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <footer class="site-footer">
+      <div class="container footer-inner">
+        <div>
+          <p class="footer-brand">longevity</p>
+          <p class="footer-copy">
+            New England based direct-to-consumer webstore and design studio.
+          </p>
+        </div>
+
+        <div class="footer-links">
+          <a href="shop.html">Shop</a>
+          <a href="lookbook.html">Lookbook</a>
+          <a href="about.html">About</a>
+          <a href="contact.html">Contact</a>
+        </div>
+      </div>
+    </footer>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
