@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Cart | Longevity Co.</title>
+  <meta
+    name="description"
+    content="Review your selected Longevity items, adjust quantities, and continue to checkout."
+  />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
+    rel="stylesheet"
+  />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="site-shell">
+    <header class="site-header">
+      <div class="container header-inner">
+        <a href="index.html" class="brand">
+          <img src="assets/logo.png" alt="Longevity logo" class="brand-logo" />
+          <span class="brand-word">longevity</span>
+        </a>
+
+        <button class="menu-toggle" aria-label="Toggle menu">
+          <span></span>
+          <span></span>
+        </button>
+
+        <nav class="site-nav">
+          <a href="index.html">Home</a>
+          <a href="shop.html">Shop</a>
+          <a href="lookbook.html">Lookbook</a>
+          <a href="about.html">About</a>
+          <a href="contact.html">Contact</a>
+          <a href="cart.html" class="active nav-cart-link">Cart <span class="cart-count" data-cart-count>0</span></a>
+        </nav>
+      </div>
+    </header>
+
+    <main>
+      <section class="page-hero shop-hero-minimal">
+        <div class="container">
+          <div class="shop-hero-bar reveal-up">
+            <p class="shop-hero-kicker">Cart</p>
+            <h1>Your Selection</h1>
+          </div>
+        </div>
+      </section>
+
+      <section class="section cart-section">
+        <div class="container">
+          <div class="cart-layout">
+            <div class="cart-items-wrap reveal-left">
+              <div class="cart-items-header">
+                <span>Items</span>
+                <span data-cart-count-label>0 items</span>
+              </div>
+
+              <div id="cart-items" class="cart-items"></div>
+
+              <div id="cart-empty" class="cart-empty" hidden>
+                <p>Your cart is empty.</p>
+                <a href="shop.html" class="btn btn-solid">Return to Shop</a>
+              </div>
+            </div>
+
+            <aside class="cart-summary reveal-right">
+              <div class="cart-summary-inner">
+                <p class="cart-summary-kicker">Summary</p>
+
+                <div class="cart-summary-row">
+                  <span>Subtotal</span>
+                  <span id="cart-subtotal">$0</span>
+                </div>
+
+                <div class="cart-summary-row">
+                  <span>Shipping</span>
+                  <span>Calculated at checkout</span>
+                </div>
+
+                <div class="cart-summary-row">
+                  <span>Tax</span>
+                  <span>Calculated at checkout</span>
+                </div>
+
+                <div class="cart-summary-total">
+                  <span>Total</span>
+                  <span id="cart-total">$0</span>
+                </div>
+
+                <button class="add-cart-btn cart-checkout-btn" type="button" id="checkout-placeholder-btn">
+                  Checkout
+                </button>
+
+                <p class="cart-summary-note">
+                  Checkout is currently a placeholder. We can connect this next to Shopify or another payment flow.
+                </p>
+              </div>
+            </aside>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <footer class="site-footer">
+      <div class="container footer-inner">
+        <div>
+          <p class="footer-brand">longevity</p>
+          <p class="footer-copy">
+            New England based direct-to-consumer webstore and design studio.
+          </p>
+        </div>
+
+        <div class="footer-links">
+          <a href="shop.html">Shop</a>
+          <a href="lookbook.html">Lookbook</a>
+          <a href="about.html">About</a>
+          <a href="contact.html">Contact</a>
+          <a href="cart.html">Cart</a>
+        </div>
+      </div>
+    </footer>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
