@@ -629,14 +629,12 @@ main {
   transform: translateY(-1px);
 }
 
-.product-image-link,
-.product-click-area {
+.product-image-link {
   display: block;
-  border: 0;
-  background: transparent;
-  padding: 0;
-  cursor: pointer;
-  text-align: left;
+}
+
+.product-image-link:hover {
+  opacity: 0.72;
 }
 
 .product-image-wrap {
@@ -674,8 +672,7 @@ main {
 }
 
 .product-title-trigger:hover,
-.product-title-link:hover,
-.product-image-link:hover {
+.product-title-link:hover {
   opacity: 0.72;
 }
 
@@ -739,7 +736,7 @@ main {
   border-color: #3d3d3d;
 }
 
-/* DRAWER */
+/* QUICK VIEW DRAWER */
 
 .shop-drawer-overlay {
   position: fixed;
