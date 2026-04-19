@@ -55,9 +55,9 @@ document.addEventListener("DOMContentLoaded", () => {
   initRevealAnimations();
   initMobileMenu();
   initSizeChips(document);
-  initShopCards();
-  initFavorites();
-  initAddToCartButtons();
+  initShopCardFavorites();
+  initShopCardAddToCart();
+  initShopQuickViewTriggers();
   initShopDrawer();
   initUtilityPanels();
   initCartPage();
@@ -74,6 +74,8 @@ document.addEventListener("DOMContentLoaded", () => {
 function initRevealAnimations() {
   const revealItems = document.querySelectorAll(".reveal-left, .reveal-right, .reveal-up");
 
+  if (!revealItems.length) return;
+
   if (!("IntersectionObserver" in window)) {
     revealItems.forEach((item) => item.classList.add("is-visible"));
     return;
@@ -89,13 +91,13 @@ function initRevealAnimations() {
       });
     },
     {
-      threshold: 0.14,
+      threshold: 0.12,
       rootMargin: "0px 0px -40px 0px",
     }
   );
 
   revealItems.forEach((item, index) => {
-    item.style.transitionDelay = `${Math.min(index * 0.05, 0.28)}s`;
+    item.style.transitionDelay = `${Math.min(index * 0.05, 0.25)}s`;
     observer.observe(item);
   });
 }
@@ -158,11 +160,6 @@ function formatPrice(value) {
   return `$${value.toFixed(2).replace(".00", "")}`;
 }
 
-function getSelectedSize(scope) {
-  const selected = scope.querySelector(".size-chip.is-selected");
-  return selected ? selected.dataset.size || selected.textContent.trim() : "S";
-}
-
 function buildProductFromCard(card) {
   return {
     id: card.dataset.productId || "item",
@@ -174,12 +171,14 @@ function buildProductFromCard(card) {
   };
 }
 
-function isFavorite(productId) {
-  return getFavorites().some((item) => item.id === productId);
+function getSelectedSizeFromScope(scope) {
+  const selected = scope.querySelector(".size-chip.is-selected");
+  return selected ? (selected.dataset.size || selected.textContent.trim()) : "S";
 }
 
 function handleAddToCartFeedback(button, size) {
-  const original = button.textContent;
+  const original = button.dataset.originalLabel || button.textContent;
+  button.dataset.originalLabel = original;
   button.textContent = `Added • ${size}`;
   button.classList.add("is-added");
 
@@ -215,15 +214,14 @@ function updateFavoritesCountUI() {
 
 function initSizeChips(root = document) {
   root.querySelectorAll("[data-size-group]").forEach((group) => {
-    group.querySelectorAll(".size-chip").forEach((chip) => {
+    const chips = group.querySelectorAll(".size-chip");
+
+    chips.forEach((chip) => {
       chip.addEventListener("click", (event) => {
         event.preventDefault();
         event.stopPropagation();
 
-        group.querySelectorAll(".size-chip").forEach((btn) => {
-          btn.classList.remove("is-selected");
-        });
-
+        chips.forEach((btn) => btn.classList.remove("is-selected"));
         chip.classList.add("is-selected");
       });
     });
@@ -232,12 +230,16 @@ function initSizeChips(root = document) {
 
 /* FAVORITES */
 
+function isFavorite(productId) {
+  return getFavorites().some((item) => item.id === productId);
+}
+
 function toggleFavorite(product) {
   const favorites = getFavorites();
-  const index = favorites.findIndex((item) => item.id === product.id);
+  const existingIndex = favorites.findIndex((item) => item.id === product.id);
 
-  if (index > -1) {
-    favorites.splice(index, 1);
+  if (existingIndex > -1) {
+    favorites.splice(existingIndex, 1);
   } else {
     favorites.push(product);
   }
@@ -262,21 +264,23 @@ function syncFavoriteButtons() {
   if (drawer && drawerFavoriteBtn) {
     const active = isFavorite(drawer.dataset.productId || "");
     drawerFavoriteBtn.classList.toggle("is-active", active);
+
     const span = drawerFavoriteBtn.querySelector("span");
     if (span) span.textContent = active ? "♥" : "♡";
   }
 
   const productPageFavorite = document.getElementById("product-page-favorite");
-  const productPageId = document.body.dataset.productId;
-  if (productPageFavorite && productPageId) {
-    const active = isFavorite(productPageId);
+  const pageProductId = document.body.dataset.productId || "";
+  if (productPageFavorite && pageProductId) {
+    const active = isFavorite(pageProductId);
     productPageFavorite.classList.toggle("is-active", active);
+
     const span = productPageFavorite.querySelector("span");
     if (span) span.textContent = active ? "♥" : "♡";
   }
 }
 
-function initFavorites() {
+function initShopCardFavorites() {
   document.querySelectorAll(".shop-product-card .favorite-btn").forEach((button) => {
     button.addEventListener("click", (event) => {
       event.preventDefault();
@@ -288,36 +292,9 @@ function initFavorites() {
       toggleFavorite(buildProductFromCard(card));
     });
   });
-
-  const drawerFavoriteBtn = document.getElementById("drawer-favorite-btn");
-  if (drawerFavoriteBtn) {
-    drawerFavoriteBtn.addEventListener("click", (event) => {
-      event.preventDefault();
-      const drawer = document.getElementById("shop-drawer");
-      if (!drawer) return;
-
-      const productId = drawer.dataset.productId || "";
-      const product = PRODUCT_DATA[productId];
-      if (!product) return;
-
-      toggleFavorite(product);
-    });
-  }
-
-  const productPageFavorite = document.getElementById("product-page-favorite");
-  if (productPageFavorite) {
-    productPageFavorite.addEventListener("click", (event) => {
-      event.preventDefault();
-      const productId = document.body.dataset.productId || "";
-      const product = PRODUCT_DATA[productId];
-      if (!product) return;
-
-      toggleFavorite(product);
-    });
-  }
 }
 
-/* CART */
+/* CART ADD */
 
 function addItemToCart(product) {
   const cart = getCart();
@@ -337,7 +314,7 @@ function addItemToCart(product) {
   saveCart(cart);
 }
 
-function initAddToCartButtons() {
+function initShopCardAddToCart() {
   document.querySelectorAll(".shop-product-card .add-cart-btn").forEach((button) => {
     button.addEventListener("click", (event) => {
       event.preventDefault();
@@ -348,7 +325,7 @@ function initAddToCartButtons() {
 
       const product = {
         ...buildProductFromCard(card),
-        size: getSelectedSize(card),
+        size: getSelectedSizeFromScope(card),
       };
 
       addItemToCart(product);
@@ -365,16 +342,16 @@ function initAddToCartButtons() {
       if (!drawer) return;
 
       const productId = drawer.dataset.productId || "";
-      const product = PRODUCT_DATA[productId];
-      if (!product) return;
+      const base = PRODUCT_DATA[productId];
+      if (!base) return;
 
-      const item = {
-        ...product,
-        size: getSelectedSize(drawer),
+      const product = {
+        ...base,
+        size: getSelectedSizeFromScope(drawer),
       };
 
-      addItemToCart(item);
-      handleAddToCartFeedback(drawerAddBtn, item.size);
+      addItemToCart(product);
+      handleAddToCartFeedback(drawerAddBtn, product.size);
     });
   }
 
@@ -384,23 +361,25 @@ function initAddToCartButtons() {
       event.preventDefault();
 
       const productId = document.body.dataset.productId || "";
-      const product = PRODUCT_DATA[productId];
-      if (!product) return;
+      const base = PRODUCT_DATA[productId];
+      if (!base) return;
 
-      const item = {
-        ...product,
-        size: getSelectedSize(document.querySelector(".product-page-size-row").parentElement),
+      const sizeRow = document.querySelector(".product-page-size-row");
+      const scope = sizeRow ? sizeRow.parentElement : document;
+      const product = {
+        ...base,
+        size: getSelectedSizeFromScope(scope),
       };
 
-      addItemToCart(item);
-      handleAddToCartFeedback(productPageAddBtn, item.size);
+      addItemToCart(product);
+      handleAddToCartFeedback(productPageAddBtn, product.size);
     });
   }
 }
 
-/* SHOP DRAWER */
+/* QUICK VIEW */
 
-function initShopCards() {
+function initShopQuickViewTriggers() {
   document.querySelectorAll(".product-title-trigger").forEach((trigger) => {
     trigger.addEventListener("click", (event) => {
       event.preventDefault();
@@ -455,8 +434,21 @@ function initShopDrawer() {
   const drawer = document.getElementById("shop-drawer");
   const overlay = document.getElementById("shop-drawer-overlay");
   const closeBtn = document.getElementById("shop-drawer-close");
+  const drawerFavoriteBtn = document.getElementById("drawer-favorite-btn");
 
   if (!drawer || !overlay || !closeBtn) return;
+
+  if (drawerFavoriteBtn) {
+    drawerFavoriteBtn.addEventListener("click", (event) => {
+      event.preventDefault();
+
+      const productId = drawer.dataset.productId || "";
+      const product = PRODUCT_DATA[productId];
+      if (!product) return;
+
+      toggleFavorite(product);
+    });
+  }
 
   const closeDrawer = () => {
     drawer.classList.remove("is-open");
@@ -483,7 +475,7 @@ function initShopDrawer() {
   });
 }
 
-/* UTILITY PANELS */
+/* SIDE PANELS */
 
 function closePanels() {
   document.querySelectorAll(".side-panel").forEach((panel) => {
@@ -830,12 +822,25 @@ function initProductPage() {
 
       <div class="product-meta">
         <div>
-          <a class="product-title product-title-link" href="product.html?id=${item.id}">${item.name}</a>
+          <button class="product-title product-title-trigger" type="button">${item.name}</button>
           <p class="product-sub">${item.price}</p>
         </div>
       </div>
+
+      <div class="product-actions">
+        <div class="size-row" data-size-group>
+          <button class="size-chip is-selected" type="button" data-size="S">S</button>
+          <button class="size-chip" type="button" data-size="M">M</button>
+          <button class="size-chip" type="button" data-size="L">L</button>
+          <button class="size-chip" type="button" data-size="XL">XL</button>
+        </div>
+
+        <button class="add-cart-btn" type="button">Add to Cart</button>
+      </div>
     </article>
   `;
+
+  initSizeChips(relatedWrap);
 
   relatedWrap.querySelectorAll(".favorite-btn").forEach((button) => {
     button.addEventListener("click", (event) => {
@@ -846,6 +851,36 @@ function initProductPage() {
       if (!card) return;
 
       toggleFavorite(buildProductFromCard(card));
+    });
+  });
+
+  relatedWrap.querySelectorAll(".add-cart-btn").forEach((button) => {
+    button.addEventListener("click", (event) => {
+      event.preventDefault();
+      event.stopPropagation();
+
+      const card = button.closest(".shop-product-card");
+      if (!card) return;
+
+      const productToAdd = {
+        ...buildProductFromCard(card),
+        size: getSelectedSizeFromScope(card),
+      };
+
+      addItemToCart(productToAdd);
+      handleAddToCartFeedback(button, productToAdd.size);
+    });
+  });
+
+  relatedWrap.querySelectorAll(".product-title-trigger").forEach((button) => {
+    button.addEventListener("click", (event) => {
+      event.preventDefault();
+      event.stopPropagation();
+
+      const card = button.closest(".shop-product-card");
+      if (!card) return;
+
+      window.location.href = `product.html?id=${card.dataset.productId}`;
     });
   });
 }
