@@ -880,7 +880,7 @@ function initProductPage() {
       const card = button.closest(".shop-product-card");
       if (!card) return;
 
-      window.location.href = `product.html?id=${card.dataset.productId}`;
+      openProductDrawer(card.dataset.productId || "");
     });
   });
 }
