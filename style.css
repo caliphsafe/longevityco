@@ -395,10 +395,10 @@ main {
   inset: 0;
   background: linear-gradient(
     to right,
-    rgba(10, 10, 10, 0.52) 0%,
-    rgba(10, 10, 10, 0.24) 40%,
-    rgba(10, 10, 10, 0.08) 68%,
-    rgba(10, 10, 10, 0.08) 100%
+    rgba(10, 10, 10, 0.72) 0%,
+    rgba(10, 10, 10, 0.46) 40%,
+    rgba(10, 10, 10, 0.24) 68%,
+    rgba(10, 10, 10, 0.18) 100%
   );
   z-index: 1;
   pointer-events: none;
@@ -407,6 +407,7 @@ main {
 .hero-stage-grid {
   position: relative;
   z-index: 2;
+  padding: 56px;
 }
 
 .hero-stage-copy {
