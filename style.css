@@ -1889,19 +1889,25 @@ body.js-ready .reveal-up.is-visible {
   }
 
   .header-inner-global {
-    min-height: 72px;
-  }
+  min-height: 72px;
+  display: grid;
+  grid-template-columns: 42px 1fr 42px;
+  align-items: center;
+}
 
-  .brand-centered {
-    position: static;
-    transform: none;
-    margin: 0 auto;
-  }
+.brand-centered {
+  position: static;
+  transform: none;
+  margin: 0;
+  grid-column: 2;
+  justify-self: center;
+}
 
-  .menu-toggle {
-    display: inline-flex;
-  }
-
+.menu-toggle {
+  display: inline-flex;
+  grid-column: 3;
+  justify-self: end;
+}
   .site-nav {
     position: absolute;
     top: calc(100% + 8px);
