@@ -51,7 +51,8 @@ const PRODUCT_DATA = {
 
 document.addEventListener("DOMContentLoaded", () => {
   document.body.classList.add("js-ready");
-
+  
+  initHeroDateTime();
   initRevealAnimations();
   initMobileMenu();
   initSizeChips(document);
@@ -67,6 +68,40 @@ document.addEventListener("DOMContentLoaded", () => {
   renderFavoritesPanel();
   renderCartPanel();
 });
+/* ----------------------------
+   date / time 
+---------------------------- */
+function initHeroDateTime() {
+  const dateEl = document.getElementById("hero-current-date");
+  const timeEl = document.getElementById("hero-current-time");
+
+  if (!dateEl || !timeEl) return;
+
+  function updateHeroDateTime() {
+    const now = new Date();
+
+    const dateFormatter = new Intl.DateTimeFormat("en-US", {
+      timeZone: "America/New_York",
+      month: "2-digit",
+      day: "2-digit",
+      year: "numeric",
+    });
+
+    const timeFormatter = new Intl.DateTimeFormat("en-US", {
+      timeZone: "America/New_York",
+      hour: "numeric",
+      minute: "2-digit",
+      hour12: true,
+      timeZoneName: "short",
+    });
+
+    dateEl.textContent = dateFormatter.format(now);
+    timeEl.textContent = timeFormatter.format(now);
+  }
+
+  updateHeroDateTime();
+  setInterval(updateHeroDateTime, 1000);
+}
 
 /* ----------------------------
    basic helpers
