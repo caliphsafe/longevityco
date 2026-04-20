@@ -47,7 +47,7 @@ function getSiteFooter() {
           <a href="cart.html">Cart</a>
         </div>
 
-        <p class="footer-system-note">LON-NE / DIRECT / WEBSTORE / STUDIO</p>
+        <p class="footer-system-note">© 2026 LONGEVITY CO. ALL RIGHTS RESERVED.</p>
       </div>
     </footer>
   `;
