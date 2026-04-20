@@ -369,6 +369,23 @@ main {
   filter: none;
 }
 
+.hero-stage-media::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    to bottom,
+    rgba(0,0,0,0.34) 0%,
+    rgba(0,0,0,0.18) 28%,
+    rgba(0,0,0,0.12) 58%,
+    rgba(0,0,0,0.34) 100%
+  );
+  pointer-events: none;
+}
+.hero-stage-media {
+  position: relative;
+  overflow: hidden;
+}
 .hero-stage-overlay {
   position: absolute;
   inset: 0;
@@ -1963,7 +1980,15 @@ body.js-ready .reveal-up.is-visible {
   .hero-actions {
     flex-direction: column;
   }
+.hero-stage-meta {
+  position: static;
+  margin-top: 14px;
+  padding-bottom: 4px;
+}
 
+.hero-stage-actions {
+  margin-bottom: 10px;
+}
   .btn {
     width: 100%;
   }
