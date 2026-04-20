@@ -52,28 +52,37 @@ const PRODUCT_DATA = {
 document.addEventListener("DOMContentLoaded", () => {
   document.body.classList.add("js-ready");
 
-  initRevealAnimations();
-  initMobileMenu();
-  initSizeChips(document);
-  initShopCardFavorites();
-  initShopCardAddToCart();
-  initShopQuickViewTriggers();
-  initShopDrawer();
-  initUtilityPanels();
-  initCartPage();
-  initCheckoutPlaceholder();
-  initProductPage();
+  safeRun(initRevealAnimations);
+  safeRun(initMobileMenu);
+  safeRun(() => initSizeChips(document));
+  safeRun(initShopCardFavorites);
+  safeRun(initShopCardAddToCart);
+  safeRun(initShopQuickViewTriggers);
+  safeRun(initShopDrawer);
+  safeRun(initUtilityPanels);
+  safeRun(initCartPage);
+  safeRun(initCheckoutPlaceholder);
+  safeRun(initProductPage);
 
-  updateCartCountUI();
-  updateFavoritesCountUI();
-  syncFavoriteButtons();
-  renderFavoritesPanel();
-  renderCartPanel();
+  safeRun(updateCartCountUI);
+  safeRun(updateFavoritesCountUI);
+  safeRun(syncFavoriteButtons);
+  safeRun(renderFavoritesPanel);
+  safeRun(renderCartPanel);
 });
+
+function safeRun(fn) {
+  try {
+    fn();
+  } catch (error) {
+    console.error("Longevity script error:", error);
+  }
+}
+
+/* REVEALS */
 
 function initRevealAnimations() {
   const revealItems = document.querySelectorAll(".reveal-left, .reveal-right, .reveal-up");
-
   if (!revealItems.length) return;
 
   if (!("IntersectionObserver" in window)) {
@@ -101,6 +110,8 @@ function initRevealAnimations() {
     observer.observe(item);
   });
 }
+
+/* MOBILE MENU */
 
 function initMobileMenu() {
   const menuToggle = document.querySelector(".menu-toggle");
@@ -161,6 +172,8 @@ function formatPrice(value) {
 }
 
 function buildProductFromCard(card) {
+  if (!card) return null;
+
   return {
     id: card.dataset.productId || "item",
     name: card.dataset.productName || "Item",
@@ -172,11 +185,13 @@ function buildProductFromCard(card) {
 }
 
 function getSelectedSizeFromScope(scope) {
+  if (!scope) return "S";
   const selected = scope.querySelector(".size-chip.is-selected");
   return selected ? (selected.dataset.size || selected.textContent.trim()) : "S";
 }
 
 function handleAddToCartFeedback(button, size) {
+  if (!button) return;
   const original = button.dataset.originalLabel || button.textContent;
   button.dataset.originalLabel = original;
   button.textContent = `Added • ${size}`;
@@ -235,6 +250,8 @@ function isFavorite(productId) {
 }
 
 function toggleFavorite(product) {
+  if (!product) return;
+
   const favorites = getFavorites();
   const existingIndex = favorites.findIndex((item) => item.id === product.id);
 
@@ -287,16 +304,17 @@ function initShopCardFavorites() {
       event.stopPropagation();
 
       const card = button.closest(".shop-product-card");
-      if (!card) return;
-
-      toggleFavorite(buildProductFromCard(card));
+      const product = buildProductFromCard(card);
+      toggleFavorite(product);
     });
   });
 }
 
-/* CART ADD */
+/* CART */
 
 function addItemToCart(product) {
+  if (!product) return;
+
   const cart = getCart();
   const existing = cart.find(
     (item) => item.id === product.id && item.size === product.size
@@ -321,10 +339,11 @@ function initShopCardAddToCart() {
       event.stopPropagation();
 
       const card = button.closest(".shop-product-card");
-      if (!card) return;
+      const base = buildProductFromCard(card);
+      if (!base) return;
 
       const product = {
-        ...buildProductFromCard(card),
+        ...base,
         size: getSelectedSizeFromScope(card),
       };
 
@@ -364,8 +383,7 @@ function initShopCardAddToCart() {
       const base = PRODUCT_DATA[productId];
       if (!base) return;
 
-      const sizeRow = document.querySelector(".product-page-size-row");
-      const scope = sizeRow ? sizeRow.parentElement : document;
+      const scope = document.querySelector(".product-page-content") || document;
       const product = {
         ...base,
         size: getSelectedSizeFromScope(scope),
@@ -475,7 +493,7 @@ function initShopDrawer() {
   });
 }
 
-/* SIDE PANELS */
+/* PANELS */
 
 function closePanels() {
   document.querySelectorAll(".side-panel").forEach((panel) => {
