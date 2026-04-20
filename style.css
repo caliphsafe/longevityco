@@ -362,6 +362,12 @@ main {
   inset: 0;
 }
 
+.hero-stage-media {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+}
+
 .hero-stage-media img {
   width: 100%;
   height: 100%;
@@ -375,31 +381,32 @@ main {
   inset: 0;
   background: linear-gradient(
     to bottom,
-    rgba(0,0,0,0.34) 0%,
-    rgba(0,0,0,0.18) 28%,
-    rgba(0,0,0,0.12) 58%,
-    rgba(0,0,0,0.34) 100%
+    rgba(0, 0, 0, 0.30) 0%,
+    rgba(0, 0, 0, 0.16) 28%,
+    rgba(0, 0, 0, 0.10) 58%,
+    rgba(0, 0, 0, 0.30) 100%
   );
   pointer-events: none;
+  z-index: 1;
 }
-.hero-stage-media {
-  position: relative;
-  overflow: hidden;
-}
+
 .hero-stage-overlay {
   position: absolute;
   inset: 0;
-  background:
-    linear-gradient(to right, rgba(10, 10, 10, 0.72) 0%, rgba(10, 10, 10, 0.36) 40%, rgba(10, 10, 10, 0.12) 68%, rgba(10, 10, 10, 0.12) 100%);
+  background: linear-gradient(
+    to right,
+    rgba(10, 10, 10, 0.52) 0%,
+    rgba(10, 10, 10, 0.24) 40%,
+    rgba(10, 10, 10, 0.08) 68%,
+    rgba(10, 10, 10, 0.08) 100%
+  );
+  z-index: 1;
+  pointer-events: none;
 }
 
 .hero-stage-grid {
   position: relative;
   z-index: 2;
-  min-height: calc(100vh - var(--header-h) - 46px);
-  display: grid;
-  align-items: end;
-  padding: 38px;
 }
 
 .hero-stage-copy {
@@ -1960,26 +1967,72 @@ body.js-ready .reveal-up.is-visible {
   }
 
   .hero-stage,
-  .hero-stage-grid {
-    min-height: 74vh;
-  }
+.hero-stage-grid {
+  min-height: 74vh;
+}
 
-  .hero-stage-grid {
-    padding: 22px;
-    align-items: end;
-  }
+.hero-stage-media {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+}
 
-  .hero-stage-copy h1,
-  .page-hero-copy h1,
-  .section-heading h2,
-  .statement-wrap h2 {
-    max-width: 100%;
-    font-size: clamp(2rem, 10vw, 4.4rem);
-  }
+.hero-stage-media img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  filter: none;
+}
 
-  .hero-actions {
-    flex-direction: column;
-  }
+.hero-stage-media::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    to bottom,
+    rgba(0, 0, 0, 0.30) 0%,
+    rgba(0, 0, 0, 0.16) 28%,
+    rgba(0, 0, 0, 0.10) 58%,
+    rgba(0, 0, 0, 0.30) 100%
+  );
+  pointer-events: none;
+  z-index: 1;
+}
+
+.hero-stage-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    to right,
+    rgba(10, 10, 10, 0.52) 0%,
+    rgba(10, 10, 10, 0.24) 40%,
+    rgba(10, 10, 10, 0.08) 68%,
+    rgba(10, 10, 10, 0.08) 100%
+  );
+  z-index: 1;
+  pointer-events: none;
+}
+
+.hero-stage-grid {
+  position: relative;
+  z-index: 2;
+  padding: 22px;
+  align-items: end;
+}
+
+.hero-stage-copy h1,
+.page-hero-copy h1,
+.section-heading h2,
+.statement-wrap h2 {
+  max-width: 100%;
+  font-size: clamp(2rem, 10vw, 4.4rem);
+}
+
+.hero-actions {
+  flex-direction: column;
+  margin-bottom: 56px;
+}
+
 .hero-stage-meta {
   position: static;
   margin-top: 14px;
@@ -1988,6 +2041,14 @@ body.js-ready .reveal-up.is-visible {
 
 .hero-stage-actions {
   margin-bottom: 10px;
+}
+
+.hero-stage-corner {
+  right: 22px;
+  bottom: 14px;
+  left: 22px;
+  text-align: left;
+  font-size: 0.62rem;
 }
   .btn {
     width: 100%;
