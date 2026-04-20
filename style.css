@@ -1889,24 +1889,26 @@ body.js-ready .reveal-up.is-visible {
   }
 
   .header-inner-global {
+  position: relative;
   min-height: 72px;
-  display: grid;
-  grid-template-columns: 42px 1fr 42px;
+  display: flex;
   align-items: center;
+  justify-content: flex-end;
 }
 
 .brand-centered {
-  position: static;
-  transform: none;
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
   margin: 0;
-  grid-column: 2;
-  justify-self: center;
+  z-index: 2;
 }
 
 .menu-toggle {
   display: inline-flex;
-  grid-column: 3;
-  justify-self: end;
+  margin-left: auto;
+  z-index: 3;
 }
   .site-nav {
     position: absolute;
