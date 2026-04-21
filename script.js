@@ -17,6 +17,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
   await initShopPage();
   await initProductPage();
+  await initCartPage();
   await syncLiveCartUI();
   initCheckoutButtons();
 
