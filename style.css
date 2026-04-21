@@ -111,7 +111,12 @@ button {
 .brand {
   display: inline-flex;
   align-items: center;
+  justify-content: center;
   gap: 12px;
+  border: 0;
+  background: transparent;
+  padding: 0;
+  cursor: pointer;
 }
 
 .brand-centered {
@@ -133,9 +138,8 @@ button {
   display: none;
 }
 
-.global-site-nav,
-.site-nav {
-  display: none;
+.global-site-nav {
+  display: block;
 }
 
 .nav-cart-link {
