@@ -141,7 +141,13 @@ function setShopifyCartId(cartId) {
 function clearShopifyCartId() {
   localStorage.removeItem("longevity_shopify_cart_id");
 }
+function updateCartCountLabelUI(quantity = null) {
+  const count = quantity == null ? 0 : Number(quantity) || 0;
 
+  document.querySelectorAll("[data-cart-count-label]").forEach((el) => {
+    el.textContent = `${count} item${count === 1 ? "" : "s"}`;
+  });
+}
 function getSelectedSize(scope) {
   if (!scope) return "";
   const selected = scope.querySelector(".size-chip.is-selected");
@@ -435,9 +441,12 @@ function initSizeChips(root = document) {
 
 function updateCartCountUI(quantity = null) {
   const count = quantity == null ? 0 : Number(quantity) || 0;
+
   document.querySelectorAll("[data-cart-count]").forEach((el) => {
     el.textContent = count;
   });
+
+  updateCartCountLabelUI(count);
 }
 
 function updateFavoritesCountUI() {
