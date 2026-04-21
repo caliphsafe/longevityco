@@ -1128,88 +1128,158 @@ async function initCartPage() {
 
   if (!cartItemsEl || !cartEmptyEl || !subtotalEl || !totalEl) return;
 
-  const cart = await fetchCurrentShopifyCart();
+  async function updateCartLineQuantity(lineId, quantity) {
+    const cartId = getShopifyCartId();
+    if (!cartId) return null;
 
-  cartItemsEl.innerHTML = "";
+    const response = await apiPostJson("/api/shopify-cart-lines-update", {
+      cartId,
+      lines: [{ id: lineId, quantity }],
+    });
 
-  const lines = cart?.lines?.nodes || [];
-
-  if (!lines.length) {
-    cartEmptyEl.hidden = false;
-    subtotalEl.textContent = "$0";
-    totalEl.textContent = "$0";
-    if (checkoutBtn) checkoutBtn.disabled = true;
-    return;
+    return response.cart;
   }
 
-  cartEmptyEl.hidden = true;
+  async function removeCartLine(lineId) {
+    const cartId = getShopifyCartId();
+    if (!cartId) return null;
 
-  lines.forEach((line) => {
-    const variant = line.merchandise;
-    const product = variant?.product;
-    const image =
-      variant?.image?.url ||
-      product?.featuredImage?.url ||
-      "";
+    const response = await apiPostJson("/api/shopify-cart-lines-remove", {
+      cartId,
+      lineIds: [lineId],
+    });
 
-    const sizeValue =
-      (variant?.selectedOptions || []).find(
-        (option) => String(option.name).toLowerCase() === "size"
-      )?.value || variant?.title || "Default";
-
-    const linePrice = Number(variant?.price?.amount || 0) * Number(line.quantity || 0);
-
-    const article = document.createElement("article");
-    article.className = "cart-item";
-
-    article.innerHTML = `
-      <div class="cart-item-media">
-        <img src="${escapeHtml(image)}" alt="${escapeHtml(product?.title || "")}" />
-      </div>
-
-      <div class="cart-item-content">
-        <div class="cart-item-top">
-          <div>
-            <h3>${escapeHtml(product?.title || "")}</h3>
-            <p>${escapeHtml(formatMoney(variant?.price?.amount, variant?.price?.currencyCode))}</p>
-          </div>
-        </div>
-
-        <div class="cart-item-meta">
-          <span>Size: ${escapeHtml(sizeValue)}</span>
-        </div>
-
-        <div class="cart-item-bottom">
-          <div class="cart-qty">
-            <span>${escapeHtml(String(line.quantity))}</span>
-          </div>
-
-          <div class="cart-line-price">
-            ${escapeHtml(formatMoney(linePrice, variant?.price?.currencyCode))}
-          </div>
-        </div>
-      </div>
-    `;
-
-    cartItemsEl.appendChild(article);
-  });
-
-  subtotalEl.textContent = formatMoney(
-    cart?.cost?.subtotalAmount?.amount,
-    cart?.cost?.subtotalAmount?.currencyCode
-  );
-
-  totalEl.textContent = formatMoney(
-    cart?.cost?.totalAmount?.amount,
-    cart?.cost?.totalAmount?.currencyCode
-  );
-
-  if (checkoutBtn && cart?.checkoutUrl) {
-    checkoutBtn.disabled = false;
-    checkoutBtn.onclick = () => {
-      window.location.href = cart.checkoutUrl;
-    };
+    return response.cart;
   }
+
+  async function renderCartPage() {
+    const cart = await fetchCurrentShopifyCart();
+
+    cartItemsEl.innerHTML = "";
+
+    const lines = cart?.lines?.nodes || [];
+
+    if (!lines.length) {
+      cartEmptyEl.hidden = false;
+      subtotalEl.textContent = "$0";
+      totalEl.textContent = "$0";
+      updateCartCountUI(0);
+      if (checkoutBtn) checkoutBtn.disabled = true;
+      return;
+    }
+
+    cartEmptyEl.hidden = true;
+
+    lines.forEach((line) => {
+      const variant = line.merchandise;
+      const product = variant?.product;
+      const image =
+        variant?.image?.url ||
+        product?.featuredImage?.url ||
+        "";
+
+      const sizeValue =
+        (variant?.selectedOptions || []).find(
+          (option) => String(option.name).toLowerCase() === "size"
+        )?.value || variant?.title || "Default";
+
+      const unitPrice = Number(variant?.price?.amount || 0);
+      const quantity = Number(line.quantity || 0);
+      const linePrice = unitPrice * quantity;
+
+      const article = document.createElement("article");
+      article.className = "cart-item";
+
+      article.innerHTML = `
+        <div class="cart-item-media">
+          <img src="${escapeHtml(image)}" alt="${escapeHtml(product?.title || "")}" />
+        </div>
+
+        <div class="cart-item-content">
+          <div class="cart-item-top">
+            <div>
+              <h3>${escapeHtml(product?.title || "")}</h3>
+              <p>${escapeHtml(formatMoney(variant?.price?.amount, variant?.price?.currencyCode))}</p>
+            </div>
+
+            <button class="cart-remove-btn" type="button" data-remove-line-id="${escapeHtml(line.id)}">
+              Remove
+            </button>
+          </div>
+
+          <div class="cart-item-meta">
+            <span>Size: ${escapeHtml(sizeValue)}</span>
+          </div>
+
+          <div class="cart-item-bottom">
+            <div class="cart-qty">
+              <button type="button" class="qty-btn" data-qty-action="decrease" data-line-id="${escapeHtml(line.id)}">−</button>
+              <span>${escapeHtml(String(quantity))}</span>
+              <button type="button" class="qty-btn" data-qty-action="increase" data-line-id="${escapeHtml(line.id)}">+</button>
+            </div>
+
+            <div class="cart-line-price">
+              ${escapeHtml(formatMoney(linePrice, variant?.price?.currencyCode))}
+            </div>
+          </div>
+        </div>
+      `;
+
+      cartItemsEl.appendChild(article);
+    });
+
+    subtotalEl.textContent = formatMoney(
+      cart?.cost?.subtotalAmount?.amount,
+      cart?.cost?.subtotalAmount?.currencyCode
+    );
+
+    totalEl.textContent = formatMoney(
+      cart?.cost?.totalAmount?.amount,
+      cart?.cost?.totalAmount?.currencyCode
+    );
+
+    updateCartCountUI(cart?.totalQuantity || 0);
+
+    if (checkoutBtn && cart?.checkoutUrl) {
+      checkoutBtn.disabled = false;
+      checkoutBtn.onclick = () => {
+        window.location.href = cart.checkoutUrl;
+      };
+    }
+
+    cartItemsEl.querySelectorAll("[data-remove-line-id]").forEach((btn) => {
+      btn.addEventListener("click", async () => {
+        await removeCartLine(btn.dataset.removeLineId);
+        await renderCartPage();
+        const liveCart = await fetchCurrentShopifyCart();
+        renderCartPanel(liveCart);
+      });
+    });
+
+    cartItemsEl.querySelectorAll("[data-qty-action]").forEach((btn) => {
+      btn.addEventListener("click", async () => {
+        const lineId = btn.dataset.lineId;
+        const action = btn.dataset.qtyAction;
+        const currentLine = lines.find((line) => line.id === lineId);
+        if (!currentLine) return;
+
+        const currentQty = Number(currentLine.quantity || 0);
+        const nextQty = action === "increase" ? currentQty + 1 : currentQty - 1;
+
+        if (nextQty <= 0) {
+          await removeCartLine(lineId);
+        } else {
+          await updateCartLineQuantity(lineId, nextQty);
+        }
+
+        await renderCartPage();
+        const liveCart = await fetchCurrentShopifyCart();
+        renderCartPanel(liveCart);
+      });
+    });
+  }
+
+  await renderCartPage();
 }
 
 /* ----------------------------
