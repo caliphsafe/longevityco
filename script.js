@@ -13,13 +13,16 @@ document.addEventListener("DOMContentLoaded", async () => {
   initHeroDateTime();
   initRevealAnimations();
   initSizeChips(document);
+
   initPanels();
+  initDrawer();   // IMPORTANT FIX
 
   await initHomeRandomProduct();
   await initShopPage();
   await initProductPage();
   await initCartPage();
   await syncLiveCartUI();
+
   initCheckoutButtons();
 
   updateFavoritesCountUI();
@@ -1006,6 +1009,7 @@ function renderCartPanel(cart = null) {
 function initPanels() {
   const favoritesBtn = document.getElementById("favorites-toggle-btn");
   const cartBtn = document.getElementById("cart-toggle-btn");
+  const overlay = document.getElementById("shop-drawer-overlay");
 
   if (favoritesBtn) {
     favoritesBtn.addEventListener("click", () => {
@@ -1024,6 +1028,16 @@ function initPanels() {
 
   document.querySelectorAll("[data-close-panel]").forEach((btn) => {
     btn.addEventListener("click", closePanels);
+  });
+
+  if (overlay) {
+    overlay.addEventListener("click", closePanels);
+  }
+
+  document.addEventListener("keydown", (event) => {
+    if (event.key === "Escape") {
+      closePanels();
+    }
   });
 }
 
