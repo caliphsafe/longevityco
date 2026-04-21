@@ -14,7 +14,7 @@
     href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
     rel="stylesheet"
   />
-  <link rel="stylesheet" href="style.css?v=7" />
+  <link rel="stylesheet" href="style.css?v=8" />
 </head>
 <body>
   <div class="site-shell">
@@ -25,25 +25,28 @@
         <div class="container">
           <div class="shop-hero-bar reveal-up">
             <p class="shop-hero-kicker">Shop</p>
-            <h1>Collection</h1>
+
+            <div class="shop-toolbar shop-toolbar-main">
+              <div class="shop-toolbar-left">
+                <h1 id="shop-collection-title">Collection</h1>
+              </div>
+
+              <div class="shop-toolbar-center">
+                <span class="shop-count" id="shop-count">0 Items</span>
+              </div>
+
+              <div class="shop-toolbar-right">
+                <button class="shop-chip is-active" type="button" data-filter="all">All</button>
+                <button class="shop-chip" type="button" data-filter="tops">Tops</button>
+                <button class="shop-chip" type="button" data-filter="bottoms">Bottoms</button>
+              </div>
+            </div>
           </div>
         </div>
       </section>
 
       <section class="section shop-section">
         <div class="container">
-          <div class="shop-toolbar reveal-up">
-            <div class="shop-toolbar-left">
-              <span class="shop-count">6 Items</span>
-            </div>
-
-            <div class="shop-toolbar-right">
-              <button class="shop-chip is-active" type="button">All</button>
-              <button class="shop-chip" type="button">Tops</button>
-              <button class="shop-chip" type="button">Bottoms</button>
-            </div>
-          </div>
-
           <div class="shop-utility-bar reveal-up">
             <button class="utility-pill" id="favorites-toggle-btn" type="button">
               Favorites <span class="utility-count" data-favorites-count>0</span>
@@ -54,235 +57,7 @@
             </button>
           </div>
 
-          <div class="product-grid shop-grid">
-            <article
-              class="product-card shop-product-card reveal-left"
-              data-product-id="tee"
-              data-product-name="Essential Graphic Tee"
-              data-product-price="$48"
-              data-product-image="assets/shirt.png"
-              data-product-description="A clean everyday staple with a minimal graphic presence and balanced fit."
-              data-product-category="Tops"
-            >
-              <button class="favorite-btn" type="button" aria-label="Add to favorites">
-                <span>♡</span>
-              </button>
-
-              <a class="product-image-link" href="product.html?id=tee" aria-label="View Essential Graphic Tee product page">
-                <div class="product-image-wrap">
-                  <img src="assets/shirt.png" alt="Essential Graphic Tee" />
-                </div>
-              </a>
-
-              <div class="product-meta">
-                <div>
-                  <button class="product-title product-title-trigger" type="button">Essential Graphic Tee</button>
-                  <p class="product-sub">$48</p>
-                </div>
-              </div>
-
-              <div class="product-actions">
-                <div class="size-row" data-size-group>
-                  <button class="size-chip is-selected" type="button" data-size="S">S</button>
-                  <button class="size-chip" type="button" data-size="M">M</button>
-                  <button class="size-chip" type="button" data-size="L">L</button>
-                  <button class="size-chip" type="button" data-size="XL">XL</button>
-                </div>
-
-                <button class="add-cart-btn" type="button">Add to Cart</button>
-              </div>
-            </article>
-
-            <article
-              class="product-card shop-product-card reveal-up"
-              data-product-id="hoodie"
-              data-product-name="Heavyweight Hoodie"
-              data-product-price="$92"
-              data-product-image="assets/hoodie.png"
-              data-product-description="A structured heavyweight hoodie designed for comfort, weight, and clean silhouette."
-              data-product-category="Tops"
-            >
-              <button class="favorite-btn" type="button" aria-label="Add to favorites">
-                <span>♡</span>
-              </button>
-
-              <a class="product-image-link" href="product.html?id=hoodie" aria-label="View Heavyweight Hoodie product page">
-                <div class="product-image-wrap">
-                  <img src="assets/hoodie.png" alt="Heavyweight Hoodie" />
-                </div>
-              </a>
-
-              <div class="product-meta">
-                <div>
-                  <button class="product-title product-title-trigger" type="button">Heavyweight Hoodie</button>
-                  <p class="product-sub">$92</p>
-                </div>
-              </div>
-
-              <div class="product-actions">
-                <div class="size-row" data-size-group>
-                  <button class="size-chip is-selected" type="button" data-size="S">S</button>
-                  <button class="size-chip" type="button" data-size="M">M</button>
-                  <button class="size-chip" type="button" data-size="L">L</button>
-                  <button class="size-chip" type="button" data-size="XL">XL</button>
-                </div>
-
-                <button class="add-cart-btn" type="button">Add to Cart</button>
-              </div>
-            </article>
-
-            <article
-              class="product-card shop-product-card reveal-right"
-              data-product-id="pants"
-              data-product-name="Utility Pant"
-              data-product-price="$88"
-              data-product-image="assets/pants.png"
-              data-product-description="A cleaner utility-minded pant with an easy shape and refined streetwear feel."
-              data-product-category="Bottoms"
-            >
-              <button class="favorite-btn" type="button" aria-label="Add to favorites">
-                <span>♡</span>
-              </button>
-
-              <a class="product-image-link" href="product.html?id=pants" aria-label="View Utility Pant product page">
-                <div class="product-image-wrap">
-                  <img src="assets/pants.png" alt="Utility Pant" />
-                </div>
-              </a>
-
-              <div class="product-meta">
-                <div>
-                  <button class="product-title product-title-trigger" type="button">Utility Pant</button>
-                  <p class="product-sub">$88</p>
-                </div>
-              </div>
-
-              <div class="product-actions">
-                <div class="size-row" data-size-group>
-                  <button class="size-chip is-selected" type="button" data-size="S">S</button>
-                  <button class="size-chip" type="button" data-size="M">M</button>
-                  <button class="size-chip" type="button" data-size="L">L</button>
-                  <button class="size-chip" type="button" data-size="XL">XL</button>
-                </div>
-
-                <button class="add-cart-btn" type="button">Add to Cart</button>
-              </div>
-            </article>
-
-            <article
-              class="product-card shop-product-card reveal-left"
-              data-product-id="shorts"
-              data-product-name="Studio Shorts"
-              data-product-price="$54"
-              data-product-image="assets/shorts.png"
-              data-product-description="A lighter short built for ease, daily wear, and a stripped-back studio fit."
-              data-product-category="Bottoms"
-            >
-              <button class="favorite-btn" type="button" aria-label="Add to favorites">
-                <span>♡</span>
-              </button>
-
-              <a class="product-image-link" href="product.html?id=shorts" aria-label="View Studio Shorts product page">
-                <div class="product-image-wrap">
-                  <img src="assets/shorts.png" alt="Studio Shorts" />
-                </div>
-              </a>
-
-              <div class="product-meta">
-                <div>
-                  <button class="product-title product-title-trigger" type="button">Studio Shorts</button>
-                  <p class="product-sub">$54</p>
-                </div>
-              </div>
-
-              <div class="product-actions">
-                <div class="size-row" data-size-group>
-                  <button class="size-chip is-selected" type="button" data-size="S">S</button>
-                  <button class="size-chip" type="button" data-size="M">M</button>
-                  <button class="size-chip" type="button" data-size="L">L</button>
-                  <button class="size-chip" type="button" data-size="XL">XL</button>
-                </div>
-
-                <button class="add-cart-btn" type="button">Add to Cart</button>
-              </div>
-            </article>
-
-            <article
-              class="product-card shop-product-card reveal-up"
-              data-product-id="longsleeve"
-              data-product-name="Long Sleeve Graphic"
-              data-product-price="$62"
-              data-product-image="assets/longsleeve.png"
-              data-product-description="A layered graphic piece that keeps the visual language restrained and clean."
-              data-product-category="Tops"
-            >
-              <button class="favorite-btn" type="button" aria-label="Add to favorites">
-                <span>♡</span>
-              </button>
-
-              <a class="product-image-link" href="product.html?id=longsleeve" aria-label="View Long Sleeve Graphic product page">
-                <div class="product-image-wrap">
-                  <img src="assets/longsleeve.png" alt="Long Sleeve Graphic" />
-                </div>
-              </a>
-
-              <div class="product-meta">
-                <div>
-                  <button class="product-title product-title-trigger" type="button">Long Sleeve Graphic</button>
-                  <p class="product-sub">$62</p>
-                </div>
-              </div>
-
-              <div class="product-actions">
-                <div class="size-row" data-size-group>
-                  <button class="size-chip is-selected" type="button" data-size="S">S</button>
-                  <button class="size-chip" type="button" data-size="M">M</button>
-                  <button class="size-chip" type="button" data-size="L">L</button>
-                  <button class="size-chip" type="button" data-size="XL">XL</button>
-                </div>
-
-                <button class="add-cart-btn" type="button">Add to Cart</button>
-              </div>
-            </article>
-
-            <article
-              class="product-card shop-product-card reveal-right"
-              data-product-id="crewneck"
-              data-product-name="Structured Crewneck"
-              data-product-price="$78"
-              data-product-image="assets/crewneck.png"
-              data-product-description="A soft but substantial crewneck with a structured silhouette and quiet presence."
-              data-product-category="Tops"
-            >
-              <button class="favorite-btn" type="button" aria-label="Add to favorites">
-                <span>♡</span>
-              </button>
-
-              <a class="product-image-link" href="product.html?id=crewneck" aria-label="View Structured Crewneck product page">
-                <div class="product-image-wrap">
-                  <img src="assets/crewneck.png" alt="Structured Crewneck" />
-                </div>
-              </a>
-
-              <div class="product-meta">
-                <div>
-                  <button class="product-title product-title-trigger" type="button">Structured Crewneck</button>
-                  <p class="product-sub">$78</p>
-                </div>
-              </div>
-
-              <div class="product-actions">
-                <div class="size-row" data-size-group>
-                  <button class="size-chip is-selected" type="button" data-size="S">S</button>
-                  <button class="size-chip" type="button" data-size="M">M</button>
-                  <button class="size-chip" type="button" data-size="L">L</button>
-                  <button class="size-chip" type="button" data-size="XL">XL</button>
-                </div>
-
-                <button class="add-cart-btn" type="button">Add to Cart</button>
-              </div>
-            </article>
-          </div>
+          <div class="product-grid shop-grid" id="shop-grid"></div>
         </div>
       </section>
     </main>
@@ -323,7 +98,9 @@
               <button class="size-chip" type="button" data-size="XL">XL</button>
             </div>
           </div>
+
           <a id="drawer-product-link" class="text-link" href="product.html">View Product</a>
+
           <div class="drawer-actions">
             <button class="add-cart-btn drawer-add-cart-btn" id="drawer-add-cart-btn" type="button">
               Add to Cart
@@ -358,7 +135,7 @@
       </div>
     </aside>
 
-  <div id="site-footer"></div>
+    <div id="site-footer"></div>
   </div>
 
   <script src="components.js?v=1"></script>
