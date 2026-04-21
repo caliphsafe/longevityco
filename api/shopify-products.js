@@ -12,44 +12,121 @@ export default async function handler(req, res) {
   }
 
   const endpoint = `https://${SHOPIFY_STORE_DOMAIN}/api/${SHOPIFY_API_VERSION}/graphql.json`;
+  const collectionHandle = typeof req.query.collection === "string" ? req.query.collection.trim() : "";
 
-  const query = `
-    query Products {
-      products(first: 12) {
-        nodes {
-          id
-          handle
+  const query = collectionHandle
+    ? `
+      query ProductsByCollection($handle: String!) {
+        collectionByHandle(handle: $handle) {
           title
-          description
-          featuredImage {
-            url
-            altText
-          }
-          priceRange {
-            minVariantPrice {
-              amount
-              currencyCode
-            }
-          }
-          variants(first: 20) {
+          handle
+          products(first: 100, sortKey: CREATED_AT, reverse: true) {
             nodes {
               id
+              handle
               title
-              availableForSale
-              selectedOptions {
-                name
-                value
+              description
+              createdAt
+              productType
+              featuredImage {
+                url
+                altText
               }
-              price {
-                amount
-                currencyCode
+              images(first: 10) {
+                nodes {
+                  url
+                  altText
+                }
+              }
+              options {
+                name
+                values
+              }
+              priceRange {
+                minVariantPrice {
+                  amount
+                  currencyCode
+                }
+              }
+              variants(first: 50) {
+                nodes {
+                  id
+                  title
+                  availableForSale
+                  selectedOptions {
+                    name
+                    value
+                  }
+                  price {
+                    amount
+                    currencyCode
+                  }
+                  image {
+                    url
+                    altText
+                  }
+                }
               }
             }
           }
         }
       }
-    }
-  `;
+    `
+    : `
+      query Products {
+        products(first: 100, sortKey: CREATED_AT, reverse: true) {
+          nodes {
+            id
+            handle
+            title
+            description
+            createdAt
+            productType
+            featuredImage {
+              url
+              altText
+            }
+            images(first: 10) {
+              nodes {
+                url
+                altText
+              }
+            }
+            options {
+              name
+              values
+            }
+            priceRange {
+              minVariantPrice {
+                amount
+                currencyCode
+              }
+            }
+            variants(first: 50) {
+              nodes {
+                id
+                title
+                availableForSale
+                selectedOptions {
+                  name
+                  value
+                }
+                price {
+                  amount
+                  currencyCode
+                }
+                image {
+                  url
+                  altText
+                }
+              }
+            }
+          }
+        }
+      }
+    `;
+
+  const variables = collectionHandle ? { handle: collectionHandle } : {};
 
   try {
     const response = await fetch(endpoint, {
@@ -58,7 +135,7 @@ export default async function handler(req, res) {
         "Content-Type": "application/json",
         "X-Shopify-Storefront-Access-Token": SHOPIFY_STOREFRONT_TOKEN,
       },
-      body: JSON.stringify({ query }),
+      body: JSON.stringify({ query, variables }),
     });
 
     const data = await response.json();
@@ -70,7 +147,32 @@ export default async function handler(req, res) {
       });
     }
 
-    return res.status(200).json(data.data.products.nodes);
+    if (collectionHandle) {
+      const collection = data?.data?.collectionByHandle;
+
+      if (!collection) {
+        return res.status(404).json({
+          error: "Collection not found",
+          collectionHandle,
+        });
+      }
+
+      return res.status(200).json({
+        collectionTitle: collection.title || "Collection",
+        collectionHandle: collection.handle || collectionHandle,
+        itemCount: collection.products?.nodes?.length || 0,
+        products: collection.products?.nodes || [],
+      });
+    }
+
+    const products = data?.data?.products?.nodes || [];
+
+    return res.status(200).json({
+      collectionTitle: "All Products",
+      collectionHandle: "",
+      itemCount: products.length,
+      products,
+    });
   } catch (error) {
     return res.status(500).json({
       error: "Unexpected server error",
