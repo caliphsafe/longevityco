@@ -6,23 +6,23 @@ function getSiteHeader() {
   return `
     <header class="site-header global-site-header">
       <div class="container header-inner header-inner-global">
-        <a href="index.html" class="brand brand-centered" aria-label="Longevity home">
+        <button class="brand brand-centered nav-logo-trigger" aria-label="Open site navigation" aria-expanded="false" aria-controls="global-site-nav" type="button">
           <img src="assets/site-logi-2.png" alt="Longevity logo" class="brand-logo" />
-        </a>
-
-        <button class="menu-toggle" aria-label="Toggle menu" aria-expanded="false" aria-controls="global-site-nav">
-          <span></span>
-          <span></span>
         </button>
 
         <nav class="site-nav global-site-nav" id="global-site-nav" aria-hidden="true">
           <div class="site-nav-inner">
-            <a href="index.html" class="${isActive("index.html")}">Home</a>
+            <p class="home-blackout-time nav-overlay-time">
+              <span id="hero-current-date">04/21/2026</span>
+              <span class="home-blackout-time-gap"></span>
+              <span id="hero-current-time">1:52 PM EDT</span>
+            </p>
+
             <a href="shop.html" class="${isActive("shop.html")}">Shop</a>
-            <a href="lookbook.html" class="${isActive("lookbook.html")}">Lookbook</a>
             <a href="about.html#order-info" class="${currentPage === "about.html" ? "active" : ""}">Order Info</a>
-            <a href="about.html" class="${isActive("about.html")}">About</a>
             <a href="contact.html" class="${isActive("contact.html")}">Contact</a>
+            <a href="about.html" class="${isActive("about.html")}">About the Brand</a>
+            <a href="lookbook.html" class="${isActive("lookbook.html")}">Lookbook</a>
             <a href="cart.html" class="nav-cart-link ${isActive("cart.html")}">
               Cart <span class="cart-count" data-cart-count>0</span>
             </a>
@@ -42,12 +42,11 @@ function getSiteFooter() {
         </div>
 
         <div class="footer-links footer-links-global">
-          <a href="index.html">Home</a>
           <a href="shop.html">Shop</a>
-          <a href="lookbook.html">Lookbook</a>
           <a href="about.html#order-info">Order Info</a>
-          <a href="about.html">About</a>
           <a href="contact.html">Contact</a>
+          <a href="about.html">About</a>
+          <a href="lookbook.html">Lookbook</a>
           <a href="cart.html">Cart</a>
         </div>
 
@@ -75,45 +74,49 @@ function setNavOverlayImage() {
   document.documentElement.style.setProperty("--nav-overlay-image", imagePath);
 }
 
-function initInjectedMenu() {
-  const menuToggle = document.querySelector(".menu-toggle");
+function initInjectedLogoOverlayNav() {
+  const logoTrigger = document.querySelector(".nav-logo-trigger");
   const siteNav = document.querySelector(".site-nav");
 
-  if (!menuToggle || !siteNav) return;
+  if (!logoTrigger || !siteNav) return;
 
-  const closeMenu = () => {
+  const closeNav = () => {
     siteNav.classList.remove("open");
     siteNav.setAttribute("aria-hidden", "true");
-    menuToggle.classList.remove("is-open");
-    menuToggle.setAttribute("aria-expanded", "false");
+    logoTrigger.setAttribute("aria-expanded", "false");
     document.body.classList.remove("nav-open");
   };
 
-  const openMenu = () => {
+  const openNav = () => {
     siteNav.classList.add("open");
     siteNav.setAttribute("aria-hidden", "false");
-    menuToggle.classList.add("is-open");
-    menuToggle.setAttribute("aria-expanded", "true");
+    logoTrigger.setAttribute("aria-expanded", "true");
     document.body.classList.add("nav-open");
   };
 
-  menuToggle.addEventListener("click", () => {
+  logoTrigger.addEventListener("click", () => {
     if (siteNav.classList.contains("open")) {
-      closeMenu();
+      closeNav();
     } else {
-      openMenu();
+      openNav();
     }
   });
 
   siteNav.querySelectorAll("a").forEach((link) => {
     link.addEventListener("click", () => {
-      closeMenu();
+      closeNav();
     });
+  });
+
+  siteNav.addEventListener("click", (event) => {
+    if (event.target === siteNav) {
+      closeNav();
+    }
   });
 
   document.addEventListener("keydown", (event) => {
     if (event.key === "Escape") {
-      closeMenu();
+      closeNav();
     }
   });
 }
@@ -131,7 +134,7 @@ function injectGlobalChrome() {
   }
 
   setNavOverlayImage();
-  initInjectedMenu();
+  initInjectedLogoOverlayNav();
 }
 
 document.addEventListener("DOMContentLoaded", injectGlobalChrome);
