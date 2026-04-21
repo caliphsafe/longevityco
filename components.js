@@ -17,7 +17,7 @@ function getSiteHeader() {
               <span class="home-blackout-time-gap"></span>
               <span id="hero-current-time">1:52 PM EDT</span>
             </p>
-
+            <a href="index.html" class="${isActive("index.html")}">Home</a>
             <a href="shop.html" class="${isActive("shop.html")}">Shop</a>
             <a href="about.html#order-info" class="${currentPage === "about.html" ? "active" : ""}">Order Info</a>
             <a href="contact.html" class="${isActive("contact.html")}">Contact</a>
@@ -38,7 +38,7 @@ function getSiteFooter() {
     <footer class="site-footer global-site-footer">
       <div class="container footer-inner footer-inner-global">
         <div class="footer-center-mark">
-          <img src="assets/site-logi-2.png" alt="Longevity logo" class="footer-logo" />
+          <img src="assets/logo.png" alt="Longevity logo" class="footer-logo" />
         </div>
 
         <div class="footer-links footer-links-global">
@@ -133,7 +133,6 @@ function injectGlobalChrome() {
     footerMount.innerHTML = getSiteFooter();
   }
 
-  setNavOverlayImage();
   initInjectedLogoOverlayNav();
 }
 
