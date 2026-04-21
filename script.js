@@ -11,7 +11,6 @@ document.addEventListener("DOMContentLoaded", async () => {
 
   initHeroDateTime();
   initRevealAnimations();
-  initMobileMenu();
   initSizeChips(document);
   initPanels();
 
