@@ -2,7 +2,7 @@ let SHOP_PRODUCTS = [];
 let SHOP_PRODUCTS_BY_HANDLE = {};
 let CURRENT_DRAWER_PRODUCT = null;
 let CURRENT_SHOP_FILTER = "all";
-
+let SHOP_COLLECTION_TITLE = "Collection";
 /* ----------------------------
    bootstrap
 ---------------------------- */
@@ -294,7 +294,7 @@ function updateShopHeader(products) {
   }
 
   if (titleEl) {
-    titleEl.textContent = "Collection";
+    titleEl.textContent = SHOP_COLLECTION_TITLE;
   }
 }
 
@@ -338,11 +338,18 @@ async function apiPostJson(url, body) {
 }
 
 async function fetchProducts() {
-  const products = await apiGetJson("/api/shopify-products");
+  const data = await apiGetJson("/api/shopify-products");
+
+  const products = Array.isArray(data) ? data : data.products || [];
+  SHOP_COLLECTION_TITLE = Array.isArray(data)
+    ? "Collection"
+    : data.collectionTitle || "Collection";
+
   SHOP_PRODUCTS = sortProductsNewestFirst(products.map(normalizeShopifyProduct));
   SHOP_PRODUCTS_BY_HANDLE = Object.fromEntries(
     SHOP_PRODUCTS.map((product) => [product.handle, product])
   );
+
   return SHOP_PRODUCTS;
 }
 
