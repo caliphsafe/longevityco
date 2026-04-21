@@ -173,7 +173,39 @@ function getProductCardData(card) {
     return null;
   }
 }
+async function initHomeRandomProduct() {
+  const wrap = document.getElementById("home-random-product");
+  const image = document.getElementById("home-random-product-image");
+  const title = document.getElementById("home-random-product-title");
+  const price = document.getElementById("home-random-product-price");
+  const link = document.getElementById("home-random-product-link");
 
+  if (!wrap || !image || !title || !price || !link) return;
+
+  try {
+    let products = SHOP_PRODUCTS;
+
+    if (!products.length) {
+      products = await fetchProducts();
+    }
+
+    if (!products.length) return;
+
+    const randomProduct = products[Math.floor(Math.random() * products.length)];
+
+    image.src = randomProduct.image;
+    image.alt = randomProduct.imageAlt || randomProduct.name;
+    title.textContent = randomProduct.name;
+    price.textContent = randomProduct.price;
+    link.href = `product.html?handle=${encodeURIComponent(randomProduct.handle)}`;
+
+    requestAnimationFrame(() => {
+      wrap.classList.add("is-ready");
+    });
+  } catch (error) {
+    console.error("Failed to load home random product:", error);
+  }
+}
 function getVariantForSize(product, size) {
   if (!product?.variants?.length) return null;
   if (!size) return product.variants[0];
