@@ -1145,10 +1145,15 @@ body.js-ready .home-blackout-stack.is-visible .boot-link-5 { animation-delay: 1s
 }
 
 .side-panel-footer {
-  padding: 14px 16px 16px;
+  padding: 14px 16px calc(16px + env(safe-area-inset-bottom, 0px));
   border-top: 0;
   display: grid;
   gap: 12px;
+  position: sticky;
+  bottom: 0;
+  background: rgba(249, 249, 245, 0.96);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
 }
 
 .side-panel-total {
@@ -2094,5 +2099,8 @@ body.js-ready .shop-product-card.is-visible {
   
   .brand-logo {
   width: 150px;
+}
+  .side-panel-footer {
+  padding-bottom: calc(30px + env(safe-area-inset-bottom, 0px));
 }
 }
