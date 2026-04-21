@@ -6,15 +6,15 @@
   <title>Cart | Longevity Co.</title>
   <meta
     name="description"
-    content="Review your selected Longevity items, adjust quantities, and continue to checkout."
+    content="Review your selected Longevity items and continue to checkout."
   />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link
-    href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Courier+Prime:wght@400;700&display=swap"
     rel="stylesheet"
   />
-  <link rel="stylesheet" href="style.css" />
+  <link rel="stylesheet" href="style.css?v=9" />
 </head>
 <body>
   <div class="site-shell">
@@ -71,12 +71,16 @@
                   <span id="cart-total">$0</span>
                 </div>
 
-                <button class="add-cart-btn cart-checkout-btn" type="button" id="checkout-placeholder-btn">
+                <button
+                  class="add-cart-btn cart-checkout-btn"
+                  type="button"
+                  id="checkout-placeholder-btn"
+                >
                   Checkout
                 </button>
 
                 <p class="cart-summary-note">
-                  Checkout is currently a placeholder. We can connect this next to Shopify or another payment flow.
+                  You will be redirected to secure Shopify checkout.
                 </p>
               </div>
             </aside>
@@ -89,6 +93,6 @@
   </div>
 
   <script src="components.js?v=1"></script>
-<script src="script.js?v=8"></script>
+  <script src="script.js?v=9"></script>
 </body>
 </html>
