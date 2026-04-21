@@ -363,38 +363,26 @@ main {
 }
 
 .home-y2k-center {
-  text-align: center;
+  text-align: left;
 }
 
 .home-y2k-left {
   display: grid;
   gap: 14px;
-  justify-items: center;
+  justify-items: start;
+  width: 100%;
+  max-width: 320px;
 }
 
 .home-y2k-mark {
   display: flex;
-  justify-content: center;
-}
-
-.home-y2k-logo {
-  width: 42px;
-  height: 42px;
-  object-fit: contain;
-}
-
-.home-y2k-system-line {
-  margin: 0;
-  font-size: 10px;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-  color: var(--text-dim);
+  justify-content: flex-start;
 }
 
 .home-y2k-nav {
   display: grid;
   gap: 8px;
-  justify-items: center;
+  justify-items: start;
 }
 
 .home-y2k-nav a {
