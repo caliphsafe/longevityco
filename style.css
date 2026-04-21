@@ -1101,14 +1101,19 @@ body.js-ready .home-blackout-stack.is-visible .boot-link-5 { animation-delay: 1s
 }
 
 .side-panel-close {
-  width: 30px;
-  height: 30px;
-  border: 0;
-  background: transparent;
+  width: 32px;
+  height: 32px;
+  border: 1px solid rgba(0, 0, 0, 0.12);
+  background: rgba(255, 255, 255, 0.82);
+  color: var(--text);
   cursor: pointer;
-  font-size: 0.9rem;
+  font-size: 1rem;
   line-height: 1;
   font-family: var(--mono);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
 }
 
 .side-panel-body {
