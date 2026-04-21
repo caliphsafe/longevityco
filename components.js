@@ -38,7 +38,7 @@ function getSiteFooter() {
     <footer class="site-footer global-site-footer">
       <div class="container footer-inner footer-inner-global">
         <div class="footer-center-mark">
-          <img src="assets/site-logi-2.png" alt="Longevity logo" class="footer-logo" />
+          <img src="assets/logo.png" alt="Longevity logo" class="footer-logo" />
         </div>
 
         <div class="footer-links footer-links-global">
