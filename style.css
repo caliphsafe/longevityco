@@ -755,6 +755,11 @@ body.js-ready .home-blackout-stack.is-visible .boot-link-5 { animation-delay: 1s
   font-family: var(--mono);
 }
 
+.product-grid,
+.shop-grid {
+  display: grid;
+}
+
 .shop-grid {
   grid-template-columns: repeat(4, minmax(0, 1fr));
   gap: 32px 24px;
