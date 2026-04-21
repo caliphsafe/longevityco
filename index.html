@@ -14,150 +14,57 @@
     href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Courier+Prime:wght@400;700&display=swap"
     rel="stylesheet"
   />
-  <link rel="stylesheet" href="style.css?v=9" />
+  <link rel="stylesheet" href="style.css?v=10" />
 </head>
 <body>
-  <div class="site-shell">
+  <div class="site-shell home-shell-y2k">
     <div id="site-header"></div>
 
-    <main>
-      <section class="hero">
+    <main class="home-main-y2k">
+      <section class="home-y2k-stage">
         <div class="container">
-          <div class="hero-stage reveal-up">
-            <div class="hero-stage-media">
-              <img src="assets/collection.png" alt="Longevity lifestyle campaign image" />
+          <div class="home-y2k-wrap">
+            <div class="home-y2k-left reveal-left">
+              <div class="home-y2k-mark">
+                <img src="assets/logo.png" alt="Longevity logo" class="home-y2k-logo" />
+              </div>
+
+              <p class="home-y2k-system-line">
+                Longevity / <span id="hero-current-date">04/20/2026</span> / <span id="hero-current-time">2:32 PM EDT</span>
+              </p>
+
+              <nav class="home-y2k-nav" aria-label="Homepage navigation">
+                <a href="shop.html">Shop</a>
+                <a href="lookbook.html">Lookbook</a>
+                <a href="about.html">About</a>
+                <a href="contact.html">Contact</a>
+                <a href="cart.html">Cart</a>
+              </nav>
             </div>
 
-            <div class="hero-stage-overlay"></div>
+            <div class="home-y2k-right reveal-right">
+              <div class="home-y2k-product" id="home-random-product">
+                <a class="home-y2k-product-link" id="home-random-product-link" href="shop.html">
+                  <div class="home-y2k-product-media">
+                    <img
+                      id="home-random-product-image"
+                      src="assets/hoodie.png"
+                      alt="Featured Longevity product"
+                    />
+                  </div>
 
-            <div class="hero-stage-grid">
-              <div class="hero-stage-copy reveal-left">
-                <p class="hero-system-line">
-                  Longevity / <span id="hero-current-date">04/20/2026</span> / <span id="hero-current-time">2:32 PM EDT</span>
-                </p>
-                <h1>Functional design. Lasting presence.</h1>
-                <p>
-                  Longevity is a New England based direct to consumer online webstore
-                  and design studio focused on the exploration of different print
-                  mediums and functional design.
-                </p>
-
-                <div class="hero-actions">
-                  <a href="shop.html" class="btn btn-solid">Shop Collection</a>
-                  <a href="lookbook.html" class="btn btn-outline">View Lookbook</a>
-                </div>
+                  <div class="home-y2k-product-meta">
+                    <p class="home-y2k-product-kicker">Current Object</p>
+                    <h1 id="home-random-product-title">Loading Product</h1>
+                    <p id="home-random-product-price">$0</p>
+                  </div>
+                </a>
               </div>
             </div>
-
-            <div class="hero-stage-corner">Current Collection / core 1_2026</div>
-          </div>
-        </div>
-      </section>
-
-      <section class="home-band reveal-up">
-        <div class="container">
-          <div class="home-band-track">
-            <span>Longevity is built on commitment, earned progress, and intentional living - our garments made for a life that's worked for, not given. / FREE SHIPPING ON ALL USA ORDERS OVER $100</span>
-          </div>
-        </div>
-      </section>
-
-      <section class="section">
-        <div class="container">
-          <div class="split-grid">
-            <article class="split-card reveal-left">
-              <p class="section-label">Mission</p>
-              <h2>Lead a life of purpose and significance.</h2>
-              <p>
-                The name “longevity” represents permanence and durability, achieved
-                through personal growth, movement, and action.
-              </p>
-            </article>
-
-            <article class="split-card reveal-right">
-              <p class="section-label">Symbol</p>
-              <h2>The upside down anchor rethinks direction.</h2>
-              <p>
-                It is a symbol of seeing things differently, considering all
-                perspectives, and rising toward higher purpose.
-              </p>
-            </article>
-          </div>
-        </div>
-      </section>
-
-      <section class="section">
-        <div class="container">
-          <div class="section-heading reveal-up">
-            <p class="section-label">Entry Points</p>
-            <h2>Explore the brand through product, image, and story.</h2>
           </div>
 
-          <div class="panel-grid">
-            <a href="shop.html" class="panel-card reveal-left">
-              <div>
-                <h3>Shop</h3>
-                <p>Essential pieces and core silhouettes.</p>
-              </div>
-              <span class="panel-arrow">01</span>
-            </a>
-
-            <a href="lookbook.html" class="panel-card reveal-up">
-              <div>
-                <h3>Lookbook</h3>
-                <p>Campaign imagery and styled brand moments.</p>
-              </div>
-              <span class="panel-arrow">02</span>
-            </a>
-
-            <a href="about.html" class="panel-card reveal-right">
-              <div>
-                <h3>About</h3>
-                <p>The vision, mission, and visual language behind longevity.</p>
-              </div>
-              <span class="panel-arrow">03</span>
-            </a>
-          </div>
-        </div>
-      </section>
-
-      <section class="section">
-        <div class="container">
-          <div class="featured-grid">
-            <article class="feature-tile large reveal-left">
-              <div class="feature-copy">
-                <p class="section-label">Featured</p>
-                <h3>Quiet forms. Strong utility.</h3>
-                <a href="shop.html" class="text-link">Open Shop</a>
-              </div>
-              <img src="assets/hoodie.png" alt="Longevity hoodie" />
-            </article>
-
-            <article class="feature-tile reveal-up">
-              <div class="feature-copy">
-                <p class="section-label">Collection</p>
-                <h3>Designed for repeat wear.</h3>
-                <a href="product.html?id=tee" class="text-link">View Product</a>
-              </div>
-              <img src="assets/shirt.png" alt="Longevity shirt" />
-            </article>
-
-            <article class="feature-tile reveal-right">
-              <div class="feature-copy">
-                <p class="section-label">Studio</p>
-                <h3>Built from print, image, and purpose.</h3>
-                <a href="contact.html" class="text-link">Contact</a>
-              </div>
-              <img src="assets/crewneck.png" alt="Longevity crewneck" />
-            </article>
-          </div>
-        </div>
-      </section>
-
-      <section class="section">
-        <div class="container">
-          <div class="statement-wrap reveal-up">
-            <h2>Durability is a mindset before it becomes a material.</h2>
+          <div class="home-y2k-foot reveal-up">
+            <p>Direct / Functional / Object / Archive</p>
           </div>
         </div>
       </section>
@@ -167,6 +74,6 @@
   </div>
 
   <script src="components.js?v=1"></script>
-  <script src="script.js?v=8"></script>
+  <script src="script.js?v=10"></script>
 </body>
 </html>
