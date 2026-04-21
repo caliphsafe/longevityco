@@ -2165,4 +2165,77 @@ body.js-ready .shop-product-card.is-visible {
     gap: 10px;
     font-size: 0.62rem;
   }
+  .home-shell-y2k .site-header,
+.home-shell-y2k .site-footer {
+  display: none;
+}
+
+.home-main-y2k {
+  min-height: 100vh;
+}
+
+.home-y2k-stage {
+  padding: 24px 0;
+}
+
+.home-y2k-wrap {
+  min-height: calc(100vh - 48px);
+  grid-template-columns: 1fr;
+  gap: 28px;
+  align-items: center;
+}
+
+.home-y2k-left {
+  justify-items: center;
+  text-align: center;
+  gap: 14px;
+}
+
+.home-y2k-mark {
+  justify-content: center;
+}
+
+.home-y2k-logo {
+  width: 46px;
+  height: 46px;
+}
+
+.home-y2k-system-line {
+  font-size: 0.62rem;
+  line-height: 1.4;
+}
+
+.home-y2k-nav {
+  justify-items: center;
+  gap: 8px;
+}
+
+.home-y2k-nav a {
+  font-size: clamp(1.15rem, 6vw, 1.6rem);
+}
+
+.home-y2k-product {
+  width: min(100%, 280px);
+}
+
+.home-y2k-product-media {
+  min-height: 260px;
+}
+
+.home-y2k-product-media img {
+  max-height: 260px;
+}
+
+.home-y2k-product-meta {
+  text-align: center;
+}
+
+.home-y2k-foot {
+  margin-top: 8px;
+}
+
+.home-y2k-foot p {
+  text-align: center;
+  line-height: 1.4;
+}
 }
