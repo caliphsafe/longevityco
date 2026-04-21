@@ -27,7 +27,7 @@ html {
 
 body {
   margin: 0;
-  font-family: var(--sans);
+  font-family: var(--mono);
   background: var(--bg);
   color: var(--text);
   -webkit-font-smoothing: antialiased;
