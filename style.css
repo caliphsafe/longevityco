@@ -81,7 +81,7 @@ button {
 .site-header {
   position: sticky;
   top: 0;
-  z-index: 200;
+  z-index: 145;
   background: rgba(246, 246, 242, 0.92);
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
@@ -942,7 +942,7 @@ body.js-ready .home-blackout-stack.is-visible .boot-link-5 { animation-delay: 1s
   opacity: 0;
   pointer-events: none;
   transition: opacity 0.3s var(--ease);
-  z-index: 140;
+  z-index: 1100;
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
 }
@@ -962,7 +962,7 @@ body.js-ready .home-blackout-stack.is-visible .boot-link-5 { animation-delay: 1s
   border-left: 0;
   transform: translateX(100%);
   transition: transform 0.35s var(--ease);
-  z-index: 150;
+  z-index: 1300;
   overflow-y: auto;
   backdrop-filter: blur(14px);
   -webkit-backdrop-filter: blur(14px);
@@ -1070,7 +1070,7 @@ body.js-ready .home-blackout-stack.is-visible .boot-link-5 { animation-delay: 1s
   border-left: 0;
   transform: translateX(100%);
   transition: transform 0.35s var(--ease);
-  z-index: 145;
+  z-index: 1200;
   display: flex;
   flex-direction: column;
   backdrop-filter: blur(14px);
