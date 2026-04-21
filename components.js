@@ -133,7 +133,6 @@ function injectGlobalChrome() {
     footerMount.innerHTML = getSiteFooter();
   }
 
-  setNavOverlayImage();
   initInjectedLogoOverlayNav();
 }
 
