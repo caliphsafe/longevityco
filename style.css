@@ -583,6 +583,108 @@ body.js-ready .home-blackout-stack.reveal-up.is-visible {
     font-size: 12px;
   }
 }
+
+.home-blackout-brand-wrap {
+  display: flex;
+  justify-content: center;
+  width: 100%;
+}
+
+.home-blackout-logo {
+  width: min(320px, 72vw);
+  height: auto;
+  display: block;
+  object-fit: contain;
+  filter: brightness(1.1);
+}
+
+.home-blackout-time {
+  margin: 0;
+  font-family: var(--mono);
+  font-size: 12px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.92);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 28px;
+}
+
+.home-blackout-time-gap {
+  width: 8px;
+}
+
+.home-blackout-nav {
+  display: grid;
+  justify-items: center;
+  gap: 30px;
+}
+
+.home-blackout-nav a {
+  font-family: var(--mono);
+  font-size: 12px;
+  line-height: 1;
+  letter-spacing: 0.08em;
+  color: #fff;
+  transition:
+    opacity 0.28s var(--ease),
+    transform 0.28s var(--ease);
+}
+
+.home-blackout-nav a:hover {
+  opacity: 0.55;
+  transform: translateY(-1px);
+}
+
+/* boot-up animation */
+.boot-item {
+  opacity: 0;
+  transform: translateY(8px);
+}
+
+body.js-ready .home-blackout-stack.is-visible .boot-item {
+  animation: homeBootFade 0.7s var(--ease) forwards;
+}
+
+body.js-ready .home-blackout-stack.is-visible .boot-logo {
+  animation-delay: 0.08s;
+}
+
+body.js-ready .home-blackout-stack.is-visible .boot-time {
+  animation-delay: 0.32s;
+}
+
+body.js-ready .home-blackout-stack.is-visible .boot-link-1 {
+  animation-delay: 0.52s;
+}
+
+body.js-ready .home-blackout-stack.is-visible .boot-link-2 {
+  animation-delay: 0.64s;
+}
+
+body.js-ready .home-blackout-stack.is-visible .boot-link-3 {
+  animation-delay: 0.76s;
+}
+
+body.js-ready .home-blackout-stack.is-visible .boot-link-4 {
+  animation-delay: 0.88s;
+}
+
+body.js-ready .home-blackout-stack.is-visible .boot-link-5 {
+  animation-delay: 1s;
+}
+
+@keyframes homeBootFade {
+  0% {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
 /* -----------------------------
    SHOP
 ----------------------------- */
@@ -2273,5 +2375,24 @@ body.js-ready .shop-product-card.is-visible {
 .home-y2k-foot p {
   text-align: center;
   line-height: 1.4;
+}
+
+  .home-blackout-logo {
+  width: min(240px, 78vw);
+}
+
+.home-blackout-time {
+  font-size: 10px;
+  gap: 16px;
+  line-height: 1.5;
+  flex-wrap: wrap;
+}
+
+.home-blackout-nav {
+  gap: 24px;
+}
+
+.home-blackout-nav a {
+  font-size: 12px;
 }
 }
