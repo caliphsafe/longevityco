@@ -1082,7 +1082,7 @@ body.js-ready .home-blackout-stack.is-visible .boot-link-5 { animation-delay: 1s
 }
 
 .side-panel-header {
-  min-height: 60px;
+  min-height: 82px;
   padding: 16px 16px 12px;
   border-bottom: 0;
   display: flex;
@@ -1103,13 +1103,15 @@ body.js-ready .home-blackout-stack.is-visible .boot-link-5 { animation-delay: 1s
 }
 
 .side-panel-close {
+  position: relative;
+  top: 18px;
   width: 34px;
   height: 34px;
   border: 1px solid rgba(0, 0, 0, 0.16);
   background: rgba(255, 255, 255, 0.96);
   color: #111111;
   cursor: pointer;
-  font-size: 16px;
+  font-size: 18px;
   line-height: 1;
   font-family: var(--mono);
   display: inline-flex;
@@ -1119,7 +1121,7 @@ body.js-ready .home-blackout-stack.is-visible .boot-link-5 { animation-delay: 1s
   border-radius: 999px;
   opacity: 1;
   visibility: visible;
-  z-index: 5;
+  z-index: 6;
 }
 
 .side-panel-close:hover {
