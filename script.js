@@ -15,6 +15,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   initSizeChips(document);
   initPanels();
 
+  await initHomeRandomProduct();
   await initShopPage();
   await initProductPage();
   await initCartPage();
