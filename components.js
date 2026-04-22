@@ -12,7 +12,7 @@ function getSiteHeader() {
 
         <nav class="site-nav global-site-nav" id="global-site-nav" aria-hidden="true">
           <div class="site-nav-inner">
-            <p class="home-blackout-time nav-overlay-time">
+            <p class="home-white-time nav-overlay-time">
               <span id="hero-current-date">04/21/2026</span>
               <span class="home-blackout-time-gap"></span>
               <span id="hero-current-time">1:52 PM EDT</span>
