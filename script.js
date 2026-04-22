@@ -348,7 +348,7 @@ async function fetchProducts() {
     ? "Collection"
     : data.collectionTitle || "Collection";
 
-  SHOP_PRODUCTS = sortProductsNewestFirst(products.map(normalizeShopifyProduct));
+  SHOP_PRODUCTS = products.map(normalizeShopifyProduct);
   SHOP_PRODUCTS_BY_HANDLE = Object.fromEntries(
     SHOP_PRODUCTS.map((product) => [product.handle, product])
   );
