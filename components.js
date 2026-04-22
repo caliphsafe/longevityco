@@ -48,7 +48,7 @@ function getSiteFooter() {
           <a href="about.html">About</a>
           <a href="lookbook.html">Lookbook</a>
           <a href="cart.html">Cart</a>
-        </div>
+        </div></br>
 
         <p class="footer-system-note">© 2026 LONGEVITY CO. ALL RIGHTS RESERVED.</p>
       </div>
