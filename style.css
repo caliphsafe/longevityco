@@ -264,7 +264,7 @@ button {
   grid-template-columns: auto auto auto;
   justify-content: center;
   align-items: center;
-  gap: 12px;
+  gap: 20px;
 }
 
 .footer-center-mark {
