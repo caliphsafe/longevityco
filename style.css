@@ -2118,12 +2118,23 @@ body.js-ready .shop-product-card.is-visible {
   }
 
 .shop-grid {
-  grid-template-columns: repeat(1, 1fr);
+  grid-template-columns: 1fr;
   gap: 12px 10px;
 }
 
-  .product-image-wrap {
-  height: clamp(230px, 32vw, 330px);
+.product-image-wrap {
+  height: clamp(380px, 80vw, 560px);
+  padding: 0;
+}
+
+.product-image-wrap img,
+.product-image-primary,
+.product-image-secondary {
+  width: 100%;
+  height: 100%;
+  max-width: none;
+  max-height: none;
+  object-fit: contain;
 }
 
   .shop-product-card {
