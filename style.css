@@ -223,7 +223,6 @@ button {
   position: relative;
   z-index: 1;
   font-family: var(--mono);
-  text-transform: uppercase;
   letter-spacing: 0.08em;
   font-size: 12px;
   line-height: 1;
