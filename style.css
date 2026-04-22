@@ -1152,7 +1152,8 @@ body.js-ready .home-blackout-stack.is-visible .boot-link-5 { animation-delay: 1s
   padding: 12px 16px;
   overflow-y: auto;
   display: grid;
-  gap: 12px;
+  gap: 10px;
+  align-content: start;
   flex: 1;
 }
 
@@ -1196,9 +1197,10 @@ body.js-ready .home-blackout-stack.is-visible .boot-link-5 { animation-delay: 1s
 .mini-item {
   display: grid;
   grid-template-columns: 88px 1fr;
-  gap: 12px;
+  gap: 10px;
   align-items: start;
-  padding-bottom: 10px;
+  align-content: start;
+  padding-bottom: 6px;
   border-bottom: 0;
 }
 
@@ -1269,12 +1271,16 @@ body.js-ready .home-blackout-stack.is-visible .boot-link-5 { animation-delay: 1s
 #favorites-items {
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));
-  gap: 12px 10px;
+  gap: 14px 10px;
+  align-content: start;
 }
 
 #favorites-items .mini-item {
+  display: grid;
   grid-template-columns: 1fr;
-  gap: 6px;
+  gap: 4px;
+  align-items: start;
+  align-content: start;
   padding-bottom: 0;
 }
 
@@ -1282,27 +1288,35 @@ body.js-ready .home-blackout-stack.is-visible .boot-link-5 { animation-delay: 1s
   width: 100%;
   min-width: 0;
   height: 88px;
+  min-height: 88px;
+  align-self: start;
 }
 
 #favorites-items .mini-item-content {
+  display: grid;
+  align-content: start;
+  gap: 2px;
   text-align: center;
-  gap: 4px;
+  margin-top: 0;
 }
 
 #favorites-items .mini-item-content h4 {
+  margin: 0;
   font-size: 0.5rem;
-  line-height: 1.15;
+  line-height: 1.1;
   word-break: break-word;
 }
 
 #favorites-items .mini-item-content p {
+  margin: 0;
   font-size: 0.46rem;
-  line-height: 1.1;
+  line-height: 1.05;
 }
 
 #favorites-items .mini-item-actions {
   justify-content: center;
   gap: 6px;
+  margin-top: 0;
 }
 
 #favorites-items .mini-link-btn {
@@ -1312,8 +1326,10 @@ body.js-ready .home-blackout-stack.is-visible .boot-link-5 { animation-delay: 1s
 
 #cart-panel-items .mini-item {
   grid-template-columns: 88px 1fr;
-  gap: 12px;
+  gap: 10px;
   align-items: start;
+  align-content: start;
+  margin: 0;
 }
 
 #cart-panel-items .mini-item-media {
@@ -1322,7 +1338,11 @@ body.js-ready .home-blackout-stack.is-visible .boot-link-5 { animation-delay: 1s
   height: 88px;
   min-height: 88px;
 }
-
+#cart-panel-items {
+  display: grid;
+  gap: 10px;
+  align-content: start;
+}
 #cart-panel-items .mini-item-content {
   text-align: left;
   gap: 6px;
