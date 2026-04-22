@@ -829,6 +829,7 @@ body.js-ready .home-blackout-stack.is-visible .boot-link-5 { animation-delay: 1s
 
 .product-image-wrap img {
   max-height: 100%;
+  max-width: 100%;
   object-fit: contain;
 }
 
@@ -1724,22 +1725,22 @@ body.js-ready .shop-product-card.is-visible {
   transform: translate(0, 0);
 }
 
-.shop-product-card .product-image-wrap img {
+.shop-product-card .product-image-primary,
+.shop-product-card .product-image-secondary {
   image-rendering: pixelated;
   filter: blur(0px) contrast(1.1);
   transform: scale(1.04);
-  opacity: 0.98;
   transition:
     transform 0.9s var(--ease),
     filter 0.9s var(--ease),
-    opacity 0.9s var(--ease);
+    opacity 0.35s var(--ease);
 }
 
-.shop-product-card.is-visible .product-image-wrap img {
+.shop-product-card.is-visible .product-image-primary,
+.shop-product-card.is-visible .product-image-secondary {
   image-rendering: auto;
   filter: blur(0px) contrast(1);
   transform: scale(1);
-  opacity: 1;
 }
 
 /* -----------------------------
@@ -1866,15 +1867,16 @@ body.js-ready .shop-product-card.is-visible {
   max-height: 100%;
   max-width: 100%;
   object-fit: contain;
-  transition: opacity 0.35s var(--ease);
 }
 
 .product-image-primary {
   opacity: 1;
+  z-index: 1;
 }
 
 .product-image-secondary {
   opacity: 0;
+  z-index: 2;
 }
 
 .shop-product-card:hover .product-image-primary {
@@ -1898,6 +1900,12 @@ body.js-ready .shop-product-card.is-visible {
   padding: 0 42px;
 }
 
+#product-page-image {
+  max-height: 460px;
+  max-width: 100%;
+  object-fit: contain;
+}
+
 .product-image-nav {
   position: absolute;
   top: 50%;
@@ -1915,6 +1923,11 @@ body.js-ready .shop-product-card.is-visible {
 
 .product-image-nav:hover {
   opacity: 0.5;
+}
+
+.product-image-nav:disabled {
+  opacity: 0.25;
+  cursor: default;
 }
 
 .product-image-prev {
@@ -2192,13 +2205,13 @@ body.js-ready .shop-product-card.is-visible {
   }
 
   .product-page-image-wrap {
-    min-height: 260px;
-    padding: 0;
-  }
+  min-height: 260px;
+  padding: 0 28px;
+}
 
-  .product-page-image-wrap img {
-    max-height: 260px;
-  }
+#product-page-image {
+  max-height: 260px;
+}
 
   .product-page-button-row {
     grid-template-columns: 1fr;
