@@ -2123,8 +2123,8 @@ body.js-ready .shop-product-card.is-visible {
 }
 
   .product-image-wrap {
-    height: 170px;
-  }
+  height: clamp(190px, 32vw, 230px);
+}
 
   .shop-product-card {
     min-height: auto;
