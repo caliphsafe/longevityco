@@ -44,7 +44,6 @@ function getSiteFooter() {
         <div class="footer-links footer-links-global">
           <a href="index.html">Home</a>
           <a href="shop.html">Shop</a>
-          <a href="about.html#order-info">Order Info</a>
           <a href="contact.html">Contact</a>
           <a href="about.html">About</a>
           <a href="lookbook.html">Lookbook</a>
