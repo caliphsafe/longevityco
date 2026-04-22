@@ -1981,13 +1981,14 @@ body.js-ready .shop-product-card.is-visible {
   :root {
     --header-h: 76px;
   }
-.related-grid {
-    grid-template-columns: 1fr;
-    gap: 12px 10px;
-  }
-}
+
   .container {
     width: min(calc(100% - 28px), var(--max));
+  }
+
+  .related-grid {
+    grid-template-columns: 1fr;
+    gap: 12px 10px;
   }
 
   .header-inner-global {
