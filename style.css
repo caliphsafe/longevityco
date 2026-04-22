@@ -2123,7 +2123,7 @@ body.js-ready .shop-product-card.is-visible {
 }
 
   .product-image-wrap {
-  height: clamp(190px, 32vw, 230px);
+  height: clamp(230px, 32vw, 330px);
 }
 
   .shop-product-card {
