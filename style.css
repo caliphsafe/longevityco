@@ -1158,7 +1158,6 @@ body.js-ready .home-blackout-stack.is-visible .boot-link-5 { animation-delay: 1s
 }
 
 .side-panel-empty {
-  padding: 16px;
   color: var(--text-soft);
   font-family: var(--mono);
   font-size: 0.62rem;
@@ -2120,7 +2119,7 @@ body.js-ready .shop-product-card.is-visible {
   }
 
 .shop-grid {
-  grid-template-columns: repeat(2, 1fr);
+  grid-template-columns: repeat(1, 1fr);
   gap: 12px 10px;
 }
 
