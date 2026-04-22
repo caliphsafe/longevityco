@@ -3,6 +3,8 @@ let SHOP_PRODUCTS_BY_HANDLE = {};
 let CURRENT_DRAWER_PRODUCT = null;
 let CURRENT_SHOP_FILTER = "all";
 let SHOP_COLLECTION_TITLE = "Collection";
+let CURRENT_PRODUCT_IMAGES = [];
+let CURRENT_PRODUCT_IMAGE_INDEX = 0;
 /* ----------------------------
    bootstrap
 ---------------------------- */
@@ -416,16 +418,27 @@ async function fetchCurrentShopifyCart() {
 ---------------------------- */
 
 function normalizeShopifyProduct(product) {
+  const imageNodes = product?.images?.nodes || [];
+
   const featuredImage =
     product?.featuredImage?.url ||
-    product?.images?.nodes?.[0]?.url ||
+    imageNodes?.[0]?.url ||
     "";
 
   const imageAlt =
     product?.featuredImage?.altText ||
-    product?.images?.nodes?.[0]?.altText ||
+    imageNodes?.[0]?.altText ||
     product?.title ||
     "";
+
+  const allImages = imageNodes.length
+    ? imageNodes.map((img) => ({
+        url: img.url,
+        altText: img.altText || product?.title || "",
+      }))
+    : featuredImage
+      ? [{ url: featuredImage, altText: imageAlt }]
+      : [];
 
   const variants = (product?.variants?.nodes || []).map((variant) => ({
     id: variant.id,
@@ -450,6 +463,8 @@ function normalizeShopifyProduct(product) {
     description: product.description || "",
     image: featuredImage,
     imageAlt,
+    images: allImages,
+    secondImage: allImages[1]?.url || "",
     price: formatMoney(
       product?.priceRange?.minVariantPrice?.amount,
       product?.priceRange?.minVariantPrice?.currencyCode || "USD"
@@ -625,6 +640,7 @@ function renderShopGrid(products) {
           data-product-name="${escapeHtml(product.name)}"
           data-product-price="${escapeHtml(product.price)}"
           data-product-image="${escapeHtml(product.image)}"
+          data-product-second-image="${escapeHtml(product.secondImage || "")}"
           data-product-description="${escapeHtml(product.description)}"
           data-product-category="${escapeHtml(product.category)}"
           data-variants='${escapeHtml(JSON.stringify(product.variants))}'
@@ -635,7 +651,20 @@ function renderShopGrid(products) {
 
           <a class="product-image-link" href="product.html?handle=${encodeURIComponent(product.handle)}" aria-label="View ${escapeHtml(product.name)} product page">
             <div class="product-image-wrap">
-              <img src="${escapeHtml(product.image)}" alt="${escapeHtml(product.imageAlt || product.name)}" />
+              <img
+                class="product-image-primary"
+                src="${escapeHtml(product.image)}"
+                alt="${escapeHtml(product.imageAlt || product.name)}"
+              />
+              ${
+                product.secondImage
+                  ? `<img
+                      class="product-image-secondary"
+                      src="${escapeHtml(product.secondImage)}"
+                      alt="${escapeHtml(product.name)} alternate image"
+                    />`
+                  : ""
+              }
             </div>
           </a>
 
@@ -1040,7 +1069,70 @@ function initPanels() {
     }
   });
 }
+/* PRODUCT GALLERY */
 
+function renderProductImageGallery() {
+  const mainImage = document.getElementById("product-page-image");
+  const thumbsWrap = document.getElementById("product-page-thumbs");
+  const prevBtn = document.getElementById("product-image-prev");
+  const nextBtn = document.getElementById("product-image-next");
+
+  if (!mainImage || !CURRENT_PRODUCT_IMAGES.length) return;
+
+  const current = CURRENT_PRODUCT_IMAGES[CURRENT_PRODUCT_IMAGE_INDEX];
+  mainImage.src = current.url;
+  mainImage.alt = current.altText || "Product image";
+
+  if (thumbsWrap) {
+    thumbsWrap.innerHTML = CURRENT_PRODUCT_IMAGES
+      .map(
+        (img, index) => `
+          <button
+            class="product-thumb ${index === CURRENT_PRODUCT_IMAGE_INDEX ? "is-active" : ""}"
+            type="button"
+            data-thumb-index="${index}"
+            aria-label="View product image ${index + 1}"
+          >
+            <img src="${escapeHtml(img.url)}" alt="${escapeHtml(img.altText || "Thumbnail")}" />
+          </button>
+        `
+      )
+      .join("");
+
+    thumbsWrap.querySelectorAll("[data-thumb-index]").forEach((btn) => {
+      btn.addEventListener("click", () => {
+        CURRENT_PRODUCT_IMAGE_INDEX = Number(btn.dataset.thumbIndex || 0);
+        renderProductImageGallery();
+      });
+    });
+  }
+
+  if (prevBtn) prevBtn.disabled = CURRENT_PRODUCT_IMAGES.length <= 1;
+  if (nextBtn) nextBtn.disabled = CURRENT_PRODUCT_IMAGES.length <= 1;
+}
+
+function bindProductImageGalleryControls() {
+  const prevBtn = document.getElementById("product-image-prev");
+  const nextBtn = document.getElementById("product-image-next");
+
+  if (prevBtn) {
+    prevBtn.onclick = () => {
+      if (!CURRENT_PRODUCT_IMAGES.length) return;
+      CURRENT_PRODUCT_IMAGE_INDEX =
+        (CURRENT_PRODUCT_IMAGE_INDEX - 1 + CURRENT_PRODUCT_IMAGES.length) % CURRENT_PRODUCT_IMAGES.length;
+      renderProductImageGallery();
+    };
+  }
+
+  if (nextBtn) {
+    nextBtn.onclick = () => {
+      if (!CURRENT_PRODUCT_IMAGES.length) return;
+      CURRENT_PRODUCT_IMAGE_INDEX =
+        (CURRENT_PRODUCT_IMAGE_INDEX + 1) % CURRENT_PRODUCT_IMAGES.length;
+      renderProductImageGallery();
+    };
+  }
+}
 /* ----------------------------
    product page
 ---------------------------- */
@@ -1067,11 +1159,19 @@ async function initProductPage() {
     const addBtn = document.getElementById("product-page-add-cart");
     const sizeRow = document.querySelector(".product-page-size-row");
 
-    if (image) {
-      image.src = product.image;
-      image.alt = product.imageAlt || product.name;
-    }
+    CURRENT_PRODUCT_IMAGES = product.images?.length
+  ? product.images
+  : [{ url: product.image, altText: product.imageAlt || product.name }];
 
+CURRENT_PRODUCT_IMAGE_INDEX = 0;
+
+if (image) {
+  image.src = CURRENT_PRODUCT_IMAGES[0]?.url || product.image;
+  image.alt = CURRENT_PRODUCT_IMAGES[0]?.altText || product.name;
+}
+
+renderProductImageGallery();
+bindProductImageGalleryControls();
     title.textContent = product.name;
     if (price) price.textContent = product.price;
     if (description) description.textContent = product.description;
