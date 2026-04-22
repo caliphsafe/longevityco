@@ -399,7 +399,37 @@ async function addVariantToShopifyCart(merchandiseId, quantity = 1) {
 
   return updated.cart;
 }
+async function updateCartLineQuantity(lineId, quantity) {
+  const cartId = getShopifyCartId();
+  if (!cartId) return null;
 
+  const updated = await apiPostJson("/api/shopify-cart-lines-update", {
+    cartId,
+    lines: [{ id: lineId, quantity }],
+  });
+
+  if (updated?.cart?.id) {
+    setShopifyCartId(updated.cart.id);
+  }
+
+  return updated.cart;
+}
+
+async function removeCartLine(lineId) {
+  const cartId = getShopifyCartId();
+  if (!cartId) return null;
+
+  const updated = await apiPostJson("/api/shopify-cart-lines-remove", {
+    cartId,
+    lineIds: [lineId],
+  });
+
+  if (updated?.cart?.id) {
+    setShopifyCartId(updated.cart.id);
+  }
+
+  return updated.cart;
+}
 async function fetchCurrentShopifyCart() {
   const cartId = getShopifyCartId();
   if (!cartId) return null;
@@ -1003,6 +1033,8 @@ function renderCartPanel(cart = null) {
         (option) => String(option.name).toLowerCase() === "size"
       )?.value || variant?.title || "Default";
 
+    const quantity = Number(line.quantity || 0);
+
     const card = document.createElement("article");
     card.className = "mini-item";
 
@@ -1010,10 +1042,16 @@ function renderCartPanel(cart = null) {
       <div class="mini-item-media">
         <img src="${escapeHtml(image)}" alt="${escapeHtml(product?.title || "")}" />
       </div>
+
       <div class="mini-item-content">
         <h4>${escapeHtml(product?.title || "")}</h4>
-        <p>${escapeHtml(formatMoney(variant?.price?.amount, variant?.price?.currencyCode))} · ${escapeHtml(sizeValue)} · Qty ${escapeHtml(String(line.quantity))}</p>
+        <p>${escapeHtml(formatMoney(variant?.price?.amount, variant?.price?.currencyCode))} · ${escapeHtml(sizeValue)}</p>
+
         <div class="mini-item-actions">
+          <button class="mini-link-btn" type="button" data-cart-decrease="${escapeHtml(line.id)}">−</button>
+          <span class="mini-cart-qty">${escapeHtml(String(quantity))}</span>
+          <button class="mini-link-btn" type="button" data-cart-increase="${escapeHtml(line.id)}">+</button>
+          <button class="mini-link-btn" type="button" data-cart-remove="${escapeHtml(line.id)}">Remove</button>
           <a class="mini-link-btn" href="product.html?handle=${encodeURIComponent(product?.handle || "")}">View</a>
         </div>
       </div>
@@ -1031,7 +1069,61 @@ function renderCartPanel(cart = null) {
     if (currentCart?.checkoutUrl) {
       link.setAttribute("href", currentCart.checkoutUrl);
       link.removeAttribute("aria-disabled");
+    } else {
+      link.removeAttribute("href");
+      link.setAttribute("aria-disabled", "true");
     }
+  });
+
+  wrap.querySelectorAll("[data-cart-remove]").forEach((btn) => {
+    btn.addEventListener("click", async () => {
+      const updatedCart = await removeCartLine(btn.dataset.cartRemove);
+      renderCartPanel(updatedCart);
+      updateCartCountUI(updatedCart?.totalQuantity || 0);
+
+      const cartPageExists = document.getElementById("cart-items");
+      if (cartPageExists) await initCartPage();
+    });
+  });
+
+  wrap.querySelectorAll("[data-cart-increase]").forEach((btn) => {
+    btn.addEventListener("click", async () => {
+      const lineId = btn.dataset.cartIncrease;
+      const currentLine = lines.find((line) => line.id === lineId);
+      if (!currentLine) return;
+
+      const nextQty = Number(currentLine.quantity || 0) + 1;
+      const updatedCart = await updateCartLineQuantity(lineId, nextQty);
+
+      renderCartPanel(updatedCart);
+      updateCartCountUI(updatedCart?.totalQuantity || 0);
+
+      const cartPageExists = document.getElementById("cart-items");
+      if (cartPageExists) await initCartPage();
+    });
+  });
+
+  wrap.querySelectorAll("[data-cart-decrease]").forEach((btn) => {
+    btn.addEventListener("click", async () => {
+      const lineId = btn.dataset.cartDecrease;
+      const currentLine = lines.find((line) => line.id === lineId);
+      if (!currentLine) return;
+
+      const currentQty = Number(currentLine.quantity || 0);
+      let updatedCart;
+
+      if (currentQty <= 1) {
+        updatedCart = await removeCartLine(lineId);
+      } else {
+        updatedCart = await updateCartLineQuantity(lineId, currentQty - 1);
+      }
+
+      renderCartPanel(updatedCart);
+      updateCartCountUI(updatedCart?.totalQuantity || 0);
+
+      const cartPageExists = document.getElementById("cart-items");
+      if (cartPageExists) await initCartPage();
+    });
   });
 }
 
