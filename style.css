@@ -248,7 +248,7 @@ button {
 .global-site-footer,
 .site-footer {
   border-top: 0;
-  padding: 26px 0 30px;
+  padding: 10px 0 12px;
   background: transparent;
 }
 
@@ -261,9 +261,10 @@ button {
 
 .footer-inner-global {
   display: grid;
-  grid-template-columns: 1fr auto 1fr;
+  grid-template-columns: auto auto auto;
+  justify-content: center;
   align-items: center;
-  gap: 20px;
+  gap: 12px;
 }
 
 .footer-center-mark {
