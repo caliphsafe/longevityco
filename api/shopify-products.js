@@ -74,7 +74,7 @@ export default async function handler(req, res) {
     `
     : `
       query Products {
-        products(first: 100, sortKey: CREATED, reverse: true) {
+        products(first: 100, sortKey: CREATED_AT, reverse: true) {
           nodes {
             id
             handle
