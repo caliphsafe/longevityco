@@ -1267,7 +1267,15 @@ body.js-ready .home-blackout-stack.is-visible .boot-link-5 { animation-delay: 1s
   gap: 8px;
   flex-wrap: wrap;
 }
-
+.mini-cart-qty {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 18px;
+  font-family: var(--mono);
+  font-size: 0.58rem;
+  line-height: 1;
+}
 #favorites-items {
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));
