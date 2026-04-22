@@ -20,7 +20,7 @@ export default async function handler(req, res) {
         collectionByHandle(handle: $handle) {
           title
           handle
-          products(first: 100, sortKey: CREATED, reverse: true) {
+          products(first: 100, sortKey: COLLECTION_DEFAULT, reverse: true) {
             nodes {
               id
               handle
