@@ -1133,6 +1133,87 @@ function bindProductImageGalleryControls() {
     };
   }
 }
+
+/* RELATED PRODUCTS */
+
+function renderRelatedProducts(currentHandle) {
+  const relatedGrid = document.getElementById("related-products");
+  if (!relatedGrid) return;
+
+  const relatedProducts = SHOP_PRODUCTS
+    .filter((product) => product.handle !== currentHandle)
+    .slice(0, 4);
+
+  if (!relatedProducts.length) {
+    relatedGrid.innerHTML = "";
+    return;
+  }
+
+  relatedGrid.innerHTML = relatedProducts
+    .map((product, index) => {
+      const revealCycle = index % 3;
+      const revealClass =
+        revealCycle === 0 ? "reveal-left" : revealCycle === 1 ? "reveal-up" : "reveal-right";
+
+      return `
+        <article
+          class="product-card shop-product-card ${revealClass}"
+          data-product-handle="${escapeHtml(product.handle)}"
+          data-product-name="${escapeHtml(product.name)}"
+          data-product-price="${escapeHtml(product.price)}"
+          data-product-image="${escapeHtml(product.image)}"
+          data-product-second-image="${escapeHtml(product.secondImage || "")}"
+          data-product-description="${escapeHtml(product.description)}"
+          data-product-category="${escapeHtml(product.category)}"
+          data-variants='${escapeHtml(JSON.stringify(product.variants))}'
+        >
+          <button class="favorite-btn" type="button" aria-label="Add to favorites">
+            <span>${isFavorite(product.handle) ? "♥" : "♡"}</span>
+          </button>
+
+          <a class="product-image-link" href="product.html?handle=${encodeURIComponent(product.handle)}" aria-label="View ${escapeHtml(product.name)} product page">
+            <div class="product-image-wrap">
+              <img
+                class="product-image-primary"
+                src="${escapeHtml(product.image)}"
+                alt="${escapeHtml(product.imageAlt || product.name)}"
+              />
+              ${
+                product.secondImage
+                  ? `<img
+                      class="product-image-secondary"
+                      src="${escapeHtml(product.secondImage)}"
+                      alt="${escapeHtml(product.name)} alternate image"
+                    />`
+                  : ""
+              }
+            </div>
+          </a>
+
+          <div class="product-meta">
+            <div>
+              <button class="product-title product-title-trigger" type="button">${escapeHtml(product.name)}</button>
+              <p class="product-sub">${escapeHtml(product.price)}</p>
+            </div>
+          </div>
+
+          <div class="product-actions">
+            <div class="size-row" data-size-group>
+              ${buildSizeOptions(product)}
+            </div>
+
+            <button class="add-cart-btn" type="button">Add to Cart</button>
+          </div>
+        </article>
+      `;
+    })
+    .join("");
+
+  initSizeChips(relatedGrid);
+  initShopInteractions();
+  syncFavoriteButtons();
+  initRevealAnimations();
+}
 /* ----------------------------
    product page
 ---------------------------- */
@@ -1147,7 +1228,9 @@ async function initProductPage() {
 
   try {
     const product = await fetchProductByHandle(handle);
-
+      if (!SHOP_PRODUCTS.length) {
+        await fetchProducts();
+      }
     document.body.dataset.productHandle = product.handle;
     document.title = `${product.name} | Longevity Co.`;
 
@@ -1208,7 +1291,7 @@ bindProductImageGalleryControls();
         }
       };
     }
-
+    renderRelatedProducts(product.handle);
     syncFavoriteButtons();
   } catch (error) {
     console.error("Failed to load Shopify product:", error);
