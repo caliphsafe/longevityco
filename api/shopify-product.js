@@ -26,11 +26,13 @@ export default async function handler(req, res) {
         handle
         title
         description
+        createdAt
+        productType
         featuredImage {
           url
           altText
         }
-        images(first: 12) {
+        images(first: 20) {
           nodes {
             url
             altText
