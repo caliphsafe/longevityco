@@ -341,7 +341,7 @@ async function apiPostJson(url, body) {
 }
 
 async function fetchProducts() {
-  const data = await apiGetJson("/api/shopify-products");
+  const data = await apiGetJson("/api/shopify-products?collection=shop-all");
 
   const products = Array.isArray(data) ? data : data.products || [];
   SHOP_COLLECTION_TITLE = Array.isArray(data)
