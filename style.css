@@ -274,8 +274,8 @@ button {
 }
 
 .footer-logo {
-  width: 180px;
-  height: auto;
+  width: 40px;
+  height: 40px;
   object-fit: contain;
 }
 
