@@ -14,42 +14,60 @@
     href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Courier+Prime:wght@400;700&display=swap"
     rel="stylesheet"
   />
-  <link rel="stylesheet" href="style.css?v=11" />
+  <link rel="stylesheet" href="style.css?v=12" />
 </head>
+
 <body class="home-blackout">
   <div class="site-shell home-blackout-shell">
+
     <main class="home-blackout-main">
+
+      <!-- VIDEO BACKGROUND -->
+      <div class="home-video-bg">
+        <video autoplay muted loop playsinline preload="auto">
+          <source src="assets/home-bg.mp4" type="video/mp4" />
+        </video>
+      </div>
+
+      <!-- DARK OVERLAY -->
+      <div class="home-video-overlay"></div>
+
+      <!-- CONTENT -->
       <section class="home-blackout-stage">
         <div class="home-blackout-stack reveal-up">
-  <div class="home-blackout-brand-wrap">
-    <img
-      src="assets/site-logi.png"
-      alt="Longevity"
-      class="home-blackout-logo boot-item boot-logo"
-    />
-  </div>
 
-  <p class="home-blackout-time boot-item boot-time">
-    <span id="hero-current-date">21/04/2026</span>
-    <span class="home-blackout-time-gap"></span>
-    <span id="hero-current-time">1:52 PM EDT</span>
-  </p>
+          <div class="home-blackout-brand-wrap">
+            <img
+              src="assets/site-logi.png"
+              alt="Longevity"
+              class="home-blackout-logo boot-item boot-logo"
+            />
+          </div>
 
-  <nav class="home-blackout-nav" aria-label="Homepage navigation">
-    <a href="shop.html" class="boot-item boot-link boot-link-1">Shop</a>
-    <a href="about.html#order-info" class="boot-item boot-link boot-link-2">Order Info</a>
-    <a href="contact.html" class="boot-item boot-link boot-link-3">Contact</a>
-    <a href="about.html" class="boot-item boot-link boot-link-4">About the Brand</a>
-    <a href="lookbook.html" class="boot-item boot-link boot-link-5">Lookbook</a>
-    <a href="cart.html" class="nav-cart-link ${isActive("cart.html")}">
+          <p class="home-blackout-time boot-item boot-time">
+            <span id="hero-current-date">21/04/2026</span>
+            <span class="home-blackout-time-gap"></span>
+            <span id="hero-current-time">1:52 PM EDT</span>
+          </p>
+
+          <nav class="home-blackout-nav" aria-label="Homepage navigation">
+            <a href="shop.html" class="boot-item boot-link boot-link-1">Shop</a>
+            <a href="about.html#order-info" class="boot-item boot-link boot-link-2">Order Info</a>
+            <a href="contact.html" class="boot-item boot-link boot-link-3">Contact</a>
+            <a href="about.html" class="boot-item boot-link boot-link-4">About the Brand</a>
+            <a href="lookbook.html" class="boot-item boot-link boot-link-5">Lookbook</a>
+            <a href="cart.html" class="boot-item boot-link">
               Cart <span class="cart-count" data-cart-count>0</span>
             </a>
-  </nav>
-</div>
+          </nav>
+
+        </div>
       </section>
+
     </main>
+
   </div>
 
-  <script src="script.js?v=11"></script>
+  <script src="script.js?v=12"></script>
 </body>
 </html>
