@@ -938,7 +938,28 @@ body.js-ready .home-blackout-stack.is-visible .boot-link-5 { animation-delay: 1s
 .size-chip.is-selected::after {
   transform: scaleX(1);
 }
+.size-chip.is-sold-out {
+  color: rgba(17, 17, 17, 0.28);
+  text-decoration: line-through;
+  cursor: not-allowed;
+}
 
+.size-chip.is-sold-out::after {
+  display: none;
+}
+
+.add-cart-btn.is-sold-out,
+.add-cart-btn:disabled {
+  color: rgba(17, 17, 17, 0.32);
+  cursor: not-allowed;
+  opacity: 1;
+}
+
+.add-cart-btn.is-sold-out:hover,
+.add-cart-btn:disabled:hover {
+  transform: none;
+  opacity: 1;
+}
 .add-cart-btn {
   min-height: 18px;
   border: 0;
