@@ -169,7 +169,23 @@ function getSelectedSize(scope) {
   const selected = scope.querySelector(".size-chip.is-selected");
   return selected ? (selected.dataset.size || selected.textContent.trim()) : "";
 }
+function syncAddButtonSoldOutState(scope) {
+  if (!scope) return;
 
+  const selected = scope.querySelector(".size-chip.is-selected");
+  const addBtn =
+    scope.querySelector(".add-cart-btn") ||
+    scope.querySelector(".product-page-add-cart") ||
+    document.getElementById("drawer-add-cart-btn");
+
+  if (!selected || !addBtn) return;
+
+  const isSoldOut = selected.dataset.soldOut === "true";
+
+  addBtn.textContent = isSoldOut ? "Sold Out" : "Add to Cart";
+  addBtn.classList.toggle("is-sold-out", isSoldOut);
+  addBtn.disabled = isSoldOut;
+}
 function getProductCardData(card) {
   if (!card) return null;
 
@@ -558,8 +574,24 @@ function initSizeChips(root = document) {
 
         chips.forEach((btn) => btn.classList.remove("is-selected"));
         chip.classList.add("is-selected");
+
+        const scope =
+          group.closest(".shop-product-card") ||
+          group.closest(".shop-drawer") ||
+          group.closest(".product-page-content") ||
+          document;
+
+        syncAddButtonSoldOutState(scope);
       });
     });
+
+    const scope =
+      group.closest(".shop-product-card") ||
+      group.closest(".shop-drawer") ||
+      group.closest(".product-page-content") ||
+      document;
+
+    syncAddButtonSoldOutState(scope);
   });
 }
 
@@ -639,17 +671,37 @@ function buildSizeOptions(product) {
   const uniqueValues = [...new Set(values)].filter(Boolean);
 
   if (!uniqueValues.length) {
-    return `<button class="size-chip is-selected" type="button" data-size="Default">Default</button>`;
+    const variant = product.variants?.[0];
+    const soldOut = variant && variant.availableForSale === false;
+
+    return `
+      <button
+        class="size-chip is-selected ${soldOut ? "is-sold-out" : ""}"
+        type="button"
+        data-size="Default"
+        data-sold-out="${soldOut ? "true" : "false"}"
+      >
+        Default
+      </button>
+    `;
   }
 
   return uniqueValues
-    .map(
-      (value, index) => `
-        <button class="size-chip ${index === 0 ? "is-selected" : ""}" type="button" data-size="${escapeHtml(value)}">
+    .map((value, index) => {
+      const variant = getVariantForSize(product, value);
+      const soldOut = variant && variant.availableForSale === false;
+
+      return `
+        <button
+          class="size-chip ${index === 0 ? "is-selected" : ""} ${soldOut ? "is-sold-out" : ""}"
+          type="button"
+          data-size="${escapeHtml(value)}"
+          data-sold-out="${soldOut ? "true" : "false"}"
+        >
           ${escapeHtml(value)}
         </button>
-      `
-    )
+      `;
+    })
     .join("");
 }
 
@@ -767,27 +819,32 @@ function initShopInteractions() {
     }
 
     if (addBtn) {
-      addBtn.onclick = async (event) => {
-        event.preventDefault();
-        event.stopPropagation();
+  addBtn.onclick = async (event) => {
+    event.preventDefault();
+    event.stopPropagation();
 
-        const product = getProductCardData(card);
-        if (!product) return;
+    const product = getProductCardData(card);
+    if (!product) return;
 
-        const size = getSelectedSize(card);
-        const variant = getVariantForSize(product, size);
-        if (!variant?.id) return;
+    const size = getSelectedSize(card);
+    const variant = getVariantForSize(product, size);
+    if (!variant?.id) return;
 
-        try {
-          const cart = await addVariantToShopifyCart(variant.id, 1);
-          updateCartCountUI(cart?.totalQuantity || 0);
-          renderCartPanel(cart);
-          showAddedState(addBtn, `Added • ${size || "Default"}`);
-        } catch (error) {
-          console.error("Failed to add to cart:", error);
-        }
-      };
+    if (variant.availableForSale === false) {
+      showAddedState(addBtn, "Sold Out");
+      return;
     }
+
+    try {
+      const cart = await addVariantToShopifyCart(variant.id, 1);
+      updateCartCountUI(cart?.totalQuantity || 0);
+      renderCartPanel(cart);
+      showAddedState(addBtn, `Added • ${size || "Default"}`);
+    } catch (error) {
+      console.error("Failed to add to cart:", error);
+    }
+  };
+}
 
     if (titleBtn) {
       titleBtn.onclick = (event) => {
@@ -864,24 +921,29 @@ function initDrawer() {
   }
 
   if (drawerAddBtn) {
-    drawerAddBtn.addEventListener("click", async (event) => {
-      event.preventDefault();
-      if (!CURRENT_DRAWER_PRODUCT) return;
+  drawerAddBtn.addEventListener("click", async (event) => {
+    event.preventDefault();
+    if (!CURRENT_DRAWER_PRODUCT) return;
 
-      const size = getSelectedSize(drawer);
-      const variant = getVariantForSize(CURRENT_DRAWER_PRODUCT, size);
-      if (!variant?.id) return;
+    const size = getSelectedSize(drawer);
+    const variant = getVariantForSize(CURRENT_DRAWER_PRODUCT, size);
+    if (!variant?.id) return;
 
-      try {
-        const cart = await addVariantToShopifyCart(variant.id, 1);
-        updateCartCountUI(cart?.totalQuantity || 0);
-        renderCartPanel(cart);
-        showAddedState(drawerAddBtn, `Added • ${size || "Default"}`);
-      } catch (error) {
-        console.error("Failed to add drawer item:", error);
-      }
-    });
-  }
+    if (variant.availableForSale === false) {
+      showAddedState(drawerAddBtn, "Sold Out");
+      return;
+    }
+
+    try {
+      const cart = await addVariantToShopifyCart(variant.id, 1);
+      updateCartCountUI(cart?.totalQuantity || 0);
+      renderCartPanel(cart);
+      showAddedState(drawerAddBtn, `Added • ${size || "Default"}`);
+    } catch (error) {
+      console.error("Failed to add drawer item:", error);
+    }
+  });
+}
 
   const closeDrawer = () => {
     drawer.classList.remove("is-open");
@@ -1364,25 +1426,30 @@ bindProductImageGalleryControls();
       };
     }
 
-    if (addBtn) {
-      addBtn.onclick = async (event) => {
-        event.preventDefault();
+if (addBtn) {
+  addBtn.onclick = async (event) => {
+    event.preventDefault();
 
-        const scope = document.querySelector(".product-page-content") || document;
-        const size = getSelectedSize(scope);
-        const variant = getVariantForSize(product, size);
-        if (!variant?.id) return;
+    const scope = document.querySelector(".product-page-content") || document;
+    const size = getSelectedSize(scope);
+    const variant = getVariantForSize(product, size);
+    if (!variant?.id) return;
 
-        try {
-          const cart = await addVariantToShopifyCart(variant.id, 1);
-          updateCartCountUI(cart?.totalQuantity || 0);
-          renderCartPanel(cart);
-          showAddedState(addBtn, `Added • ${size || "Default"}`);
-        } catch (error) {
-          console.error("Failed to add PDP item:", error);
-        }
-      };
+    if (variant.availableForSale === false) {
+      showAddedState(addBtn, "Sold Out");
+      return;
     }
+
+    try {
+      const cart = await addVariantToShopifyCart(variant.id, 1);
+      updateCartCountUI(cart?.totalQuantity || 0);
+      renderCartPanel(cart);
+      showAddedState(addBtn, `Added • ${size || "Default"}`);
+    } catch (error) {
+      console.error("Failed to add PDP item:", error);
+    }
+  };
+}
     renderRelatedProducts(product.handle);
     syncFavoriteButtons();
   } catch (error) {
