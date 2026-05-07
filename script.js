@@ -686,23 +686,32 @@ function buildSizeOptions(product) {
     `;
   }
 
-  return uniqueValues
-    .map((value, index) => {
-      const variant = getVariantForSize(product, value);
-      const soldOut = variant && variant.availableForSale === false;
+  const firstAvailableIndex = uniqueValues.findIndex((value) => {
+  const variant = getVariantForSize(product, value);
+  return variant?.availableForSale !== false;
+});
 
-      return `
-        <button
-          class="size-chip ${index === 0 ? "is-selected" : ""} ${soldOut ? "is-sold-out" : ""}"
-          type="button"
-          data-size="${escapeHtml(value)}"
-          data-sold-out="${soldOut ? "true" : "false"}"
-        >
-          ${escapeHtml(value)}
-        </button>
-      `;
-    })
-    .join("");
+return uniqueValues
+  .map((value, index) => {
+    const variant = getVariantForSize(product, value);
+    const soldOut = variant && variant.availableForSale === false;
+
+    return `
+      <button
+        class="size-chip ${
+          index === (firstAvailableIndex >= 0 ? firstAvailableIndex : 0)
+            ? "is-selected"
+            : ""
+        } ${soldOut ? "is-sold-out" : ""}"
+        type="button"
+        data-size="${escapeHtml(value)}"
+        data-sold-out="${soldOut ? "true" : "false"}"
+      >
+        ${escapeHtml(value)}
+      </button>
+    `;
+  })
+  .join("");
 }
 
 function renderShopGrid(products) {
