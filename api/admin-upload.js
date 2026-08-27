@@ -1,22 +1,8 @@
 import { requireAdmin } from "./_admin-auth.js";
-import { shopifyAdminGraphql, throwUserErrors } from "./_shopify-admin.js";
-
-function parseDataUrl(dataUrl) {
-  const match = /^data:([^;]+);base64,(.+)$/i.exec(dataUrl || "");
-  if (!match) throw new Error("Invalid image data");
-  return {
-    mimeType: match[1],
-    buffer: Buffer.from(match[2], "base64"),
-  };
-}
-
-export const config = {
-  api: {
-    bodyParser: {
-      sizeLimit: "5mb",
-    },
-  },
-};
+import {
+  shopifyAdminGraphql,
+  throwUserErrors,
+} from "./_shopify-admin.js";
 
 export default async function handler(req, res) {
   if (req.method !== "POST") {
@@ -26,73 +12,72 @@ export default async function handler(req, res) {
   if (!requireAdmin(req, res)) return;
 
   try {
-    const { filename, mimeType, dataUrl } = req.body || {};
-    if (!filename || !dataUrl) {
-      return res.status(400).json({ error: "Missing file" });
+    const {
+      filename,
+      mimeType,
+      fileSize,
+    } = req.body || {};
+
+    if (!filename || !mimeType || !fileSize) {
+      return res.status(400).json({
+        error: "Missing filename, mime type, or file size",
+      });
     }
 
-    const parsed = parseDataUrl(dataUrl);
-    const type = mimeType || parsed.mimeType;
-
-    if (!String(type).startsWith("image/")) {
-      return res.status(400).json({ error: "Only images are supported" });
+    if (!String(mimeType).startsWith("image/")) {
+      return res.status(400).json({
+        error: "Only image uploads are supported",
+      });
     }
 
-    if (parsed.buffer.length > 4_500_000) {
-      return res.status(400).json({ error: "Image is too large. Keep each image under about 4.5 MB." });
-    }
-
-    const staged = await shopifyAdminGraphql(`
-      mutation AdminStagedUpload($input: [StagedUploadInput!]!) {
-        stagedUploadsCreate(input: $input) {
-          stagedTargets {
-            url
-            resourceUrl
-            parameters {
-              name
-              value
+    const data = await shopifyAdminGraphql(
+      `
+        mutation AdminStagedUpload($input: [StagedUploadInput!]!) {
+          stagedUploadsCreate(input: $input) {
+            stagedTargets {
+              url
+              resourceUrl
+              parameters {
+                name
+                value
+              }
+            }
+            userErrors {
+              field
+              message
             }
           }
-          userErrors {
-            field
-            message
-          }
         }
+      `,
+      {
+        input: [
+          {
+            filename,
+            mimeType,
+            fileSize: String(fileSize),
+            resource: "PRODUCT_IMAGE",
+            httpMethod: "POST",
+          },
+        ],
       }
-    `, {
-      input: [{
-        filename,
-        mimeType: type,
-        resource: "PRODUCT_IMAGE",
-        httpMethod: "POST",
-      }],
-    });
+    );
 
-    throwUserErrors(staged.stagedUploadsCreate?.userErrors);
+    throwUserErrors(data.stagedUploadsCreate?.userErrors);
 
-    const target = staged.stagedUploadsCreate?.stagedTargets?.[0];
-    if (!target) throw new Error("Shopify did not return an upload target");
+    const target = data.stagedUploadsCreate?.stagedTargets?.[0];
 
-    const form = new FormData();
-    (target.parameters || []).forEach((param) => form.append(param.name, param.value));
-    form.append("file", new Blob([parsed.buffer], { type }), filename);
-
-    const uploadResponse = await fetch(target.url, {
-      method: "POST",
-      body: form,
-    });
-
-    if (!uploadResponse.ok) {
-      throw new Error(`Shopify file upload failed (${uploadResponse.status})`);
+    if (!target) {
+      throw new Error("Shopify did not return an upload target");
     }
 
     return res.status(200).json({
-      ok: true,
+      uploadUrl: target.url,
       resourceUrl: target.resourceUrl,
-      filename,
-      mimeType: type,
+      parameters: target.parameters || [],
     });
   } catch (error) {
-    return res.status(500).json({ error: error.message });
+    return res.status(500).json({
+      error: error.message,
+    });
   }
 }
