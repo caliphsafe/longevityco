@@ -100,7 +100,12 @@ function stripHtml(html = "") {
 }
 
 function textToHtml(text = "") {
-  return escapeHtml(text).replace(/\n/g, "<br>");
+  const cleaned = String(text)
+    .replace(/\u00A0/g, " ")   // convert non-breaking spaces to normal spaces
+    .replace(/[ \t]+\n/g, "\n") // remove spaces before line breaks
+    .trim();
+
+  return escapeHtml(cleaned).replace(/\n/g, "<br>");
 }
 
 function showLogin() {
