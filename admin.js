@@ -13,19 +13,32 @@ document.addEventListener("DOMContentLoaded", async () => {
 });
 
 async function apiJson(url, options = {}) {
-  const response = await fetch(url, {
-    credentials: "same-origin",
-    ...options,
-    headers: {
-      "Content-Type": "application/json",
-      ...(options.headers || {}),
-    },
-  });
+  let response;
 
-  let data = {};
   try {
-    data = await response.json();
-  } catch {}
+    response = await fetch(url, {
+      credentials: "same-origin",
+      ...options,
+      headers: {
+        "Content-Type": "application/json",
+        ...(options.headers || {}),
+      },
+    });
+  } catch (error) {
+    console.error("ADMIN FETCH FAILED:", url, error);
+    throw new Error(`Unable to connect to ${url}. ${error?.message || ""}`);
+  }
+
+  const rawText = await response.text();
+  let data = null;
+
+  if (rawText) {
+    try {
+      data = JSON.parse(rawText);
+    } catch {
+      data = null;
+    }
+  }
 
   if (response.status === 401) {
     showLogin();
@@ -33,10 +46,33 @@ async function apiJson(url, options = {}) {
   }
 
   if (!response.ok) {
-    throw new Error(data.error || data.message || `Request failed: ${response.status}`);
+    console.error("ADMIN API ERROR:", {
+      url,
+      status: response.status,
+      statusText: response.statusText,
+      response: rawText,
+    });
+
+    if (data?.error) throw new Error(data.error);
+    if (data?.message) throw new Error(data.message);
+
+    if (rawText?.trim().startsWith("<!DOCTYPE")) {
+      throw new Error(`${url} returned an HTML error page instead of JSON. Check the Vercel function logs for this API route.`);
+    }
+
+    throw new Error(rawText || `${url} failed with status ${response.status}`);
   }
 
-  return data;
+  if (rawText && !data) {
+    console.error("NON-JSON ADMIN RESPONSE:", {
+      url,
+      status: response.status,
+      response: rawText,
+    });
+    throw new Error(`${url} returned an invalid server response.`);
+  }
+
+  return data || {};
 }
 
 function escapeHtml(value = "") {
@@ -558,21 +594,12 @@ async function uploadPendingImages(title) {
         id: item.fileId,
         alt: item.alt || title,
       });
-
       continue;
     }
 
     const file = item.file;
-
     if (!file) continue;
 
-    /*
-     * STEP 1
-     * Ask our protected server route for a temporary
-     * Shopify staged-upload destination.
-     *
-     * Only metadata is sent to Vercel.
-     */
     const staged = await apiJson("/api/admin-upload", {
       method: "POST",
       body: JSON.stringify({
@@ -583,42 +610,39 @@ async function uploadPendingImages(title) {
     });
 
     if (!staged.uploadUrl || !staged.resourceUrl) {
-      throw new Error(`Unable to prepare upload for ${file.name}`);
+      throw new Error(`Shopify did not prepare an upload for ${file.name}.`);
     }
 
-    /*
-     * STEP 2
-     * Build the exact multipart form Shopify requested.
-     */
     const formData = new FormData();
-
     (staged.parameters || []).forEach((parameter) => {
       formData.append(parameter.name, parameter.value);
     });
+    formData.append("file", file, file.name);
 
-    formData.append("file", file);
-
-    /*
-     * STEP 3
-     * Upload DIRECTLY from the browser to Shopify.
-     *
-     * The image never passes through Vercel.
-     */
-    const uploadResponse = await fetch(staged.uploadUrl, {
-      method: "POST",
-      body: formData,
-    });
-
-    if (!uploadResponse.ok) {
-      throw new Error(
-        `Image upload failed for ${file.name} (${uploadResponse.status})`
-      );
+    let uploadResponse;
+    try {
+      uploadResponse = await fetch(staged.uploadUrl, {
+        method: "POST",
+        body: formData,
+      });
+    } catch (error) {
+      console.error("DIRECT SHOPIFY UPLOAD FAILED:", {
+        filename: file.name,
+        error,
+      });
+      throw new Error(`Unable to upload ${file.name} directly to Shopify.`);
     }
 
-    /*
-     * STEP 4
-     * Pass Shopify's uploaded resource URL into productSet.
-     */
+    if (!uploadResponse.ok) {
+      const uploadErrorText = await uploadResponse.text();
+      console.error("SHOPIFY STAGED UPLOAD ERROR:", {
+        filename: file.name,
+        status: uploadResponse.status,
+        response: uploadErrorText,
+      });
+      throw new Error(`Image upload failed for ${file.name} (${uploadResponse.status}).`);
+    }
+
     result.push({
       originalSource: staged.resourceUrl,
       filename: file.name,
@@ -629,6 +653,7 @@ async function uploadPendingImages(title) {
 
   return result;
 }
+
 async function submitProduct() {
   const message = document.getElementById("editor-message");
   const title = document.getElementById("product-title").value.trim();
