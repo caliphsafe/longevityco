@@ -547,15 +547,6 @@ function updateReview() {
   `;
 }
 
-async function fileToDataUrl(file) {
-  return new Promise((resolve, reject) => {
-    const reader = new FileReader();
-    reader.onload = () => resolve(String(reader.result || ""));
-    reader.onerror = reject;
-    reader.readAsDataURL(file);
-  });
-}
-
 async function uploadPendingImages(title) {
   const result = [];
 
@@ -567,30 +558,77 @@ async function uploadPendingImages(title) {
         id: item.fileId,
         alt: item.alt || title,
       });
+
       continue;
     }
 
-    const dataUrl = await fileToDataUrl(item.file);
-    const uploaded = await apiJson("/api/admin-upload", {
+    const file = item.file;
+
+    if (!file) continue;
+
+    /*
+     * STEP 1
+     * Ask our protected server route for a temporary
+     * Shopify staged-upload destination.
+     *
+     * Only metadata is sent to Vercel.
+     */
+    const staged = await apiJson("/api/admin-upload", {
       method: "POST",
       body: JSON.stringify({
-        filename: item.file.name,
-        mimeType: item.file.type || "image/jpeg",
-        dataUrl,
+        filename: file.name,
+        mimeType: file.type || "image/jpeg",
+        fileSize: file.size,
       }),
     });
 
+    if (!staged.uploadUrl || !staged.resourceUrl) {
+      throw new Error(`Unable to prepare upload for ${file.name}`);
+    }
+
+    /*
+     * STEP 2
+     * Build the exact multipart form Shopify requested.
+     */
+    const formData = new FormData();
+
+    (staged.parameters || []).forEach((parameter) => {
+      formData.append(parameter.name, parameter.value);
+    });
+
+    formData.append("file", file);
+
+    /*
+     * STEP 3
+     * Upload DIRECTLY from the browser to Shopify.
+     *
+     * The image never passes through Vercel.
+     */
+    const uploadResponse = await fetch(staged.uploadUrl, {
+      method: "POST",
+      body: formData,
+    });
+
+    if (!uploadResponse.ok) {
+      throw new Error(
+        `Image upload failed for ${file.name} (${uploadResponse.status})`
+      );
+    }
+
+    /*
+     * STEP 4
+     * Pass Shopify's uploaded resource URL into productSet.
+     */
     result.push({
-      originalSource: uploaded.resourceUrl,
-      filename: item.file.name,
+      originalSource: staged.resourceUrl,
+      filename: file.name,
       contentType: "IMAGE",
-      alt: title,
+      alt: item.alt || title,
     });
   }
 
   return result;
 }
-
 async function submitProduct() {
   const message = document.getElementById("editor-message");
   const title = document.getElementById("product-title").value.trim();
