@@ -1,0 +1,244 @@
+/* Longevity Admin — mobile phone experience overrides
+   Loaded after admin.css. Desktop remains unchanged. */
+
+@media (max-width: 900px) {
+  html { scroll-padding-top: 122px; }
+  body { font-size: 13px; }
+
+  .admin-header {
+    height: 62px;
+    padding: max(10px, env(safe-area-inset-top)) 14px 8px;
+  }
+  .admin-brand { font-size: 11px; white-space: nowrap; }
+  .admin-header-meta { gap: 12px; font-size: 9px; }
+
+  .admin-shell { display: block; min-height: calc(100vh - 62px); }
+  .admin-sidebar {
+    top: 62px;
+    height: auto;
+    padding: 0 14px;
+    background: rgba(244,244,239,.98);
+    border-bottom: 1px solid var(--soft);
+    overflow: hidden;
+  }
+  .admin-sidebar nav {
+    display: grid;
+    grid-template-columns: repeat(4, max-content);
+    gap: 22px;
+    overflow-x: auto;
+    scrollbar-width: none;
+    -webkit-overflow-scrolling: touch;
+  }
+  .admin-sidebar nav::-webkit-scrollbar { display: none; }
+  .admin-nav-link {
+    min-height: 48px;
+    padding: 0;
+    position: relative;
+    white-space: nowrap;
+    font-size: 10px;
+  }
+  .admin-nav-link.is-active::after {
+    content: "";
+    position: absolute;
+    left: 0; right: 0; bottom: 0;
+    height: 2px;
+    background: #111;
+  }
+  .admin-sidebar-note { display: none; }
+
+  .admin-main {
+    width: 100%;
+    padding: 22px 14px calc(96px + env(safe-area-inset-bottom));
+  }
+  .admin-page-head { margin-bottom: 18px; gap: 12px; }
+  .admin-page-head h1 { font-size: 22px; }
+  .admin-kicker { font-size: 9px; }
+  .admin-primary-link,
+  .admin-text-btn { min-height: 40px; padding: 0 4px; }
+
+  .admin-toolbar { grid-template-columns: 1fr; gap: 8px; margin-bottom: 18px; }
+  .admin-toolbar input,
+  .admin-toolbar select {
+    min-height: 48px;
+    padding: 10px 0;
+    font-size: 16px; /* avoids iOS zoom */
+  }
+
+  /* Product cards */
+  .admin-product-list { gap: 10px; }
+  .admin-product-row {
+    grid-template-columns: 82px minmax(0,1fr) auto;
+    gap: 12px;
+    min-height: 104px;
+    padding: 11px;
+    background: rgba(255,255,255,.5);
+    align-items: center;
+  }
+  .admin-product-image { width: 82px; height: 82px; }
+  .admin-product-info { min-width: 0; }
+  .admin-product-info h3 {
+    font-size: 12px;
+    line-height: 1.25;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .admin-product-info p { font-size: 9px; }
+  .admin-product-status { align-self: start; padding-top: 4px; }
+  .admin-product-stock,
+  .admin-product-collections { display: none; }
+  .admin-product-actions {
+    grid-column: 2 / -1;
+    justify-content: flex-start;
+    gap: 20px;
+    padding-top: 2px;
+  }
+  .admin-product-actions button { min-height: 34px; font-size: 9px; }
+
+  /* Editor becomes a true vertical flow */
+  .admin-step {
+    grid-template-columns: 1fr;
+    gap: 8px;
+    padding: 26px 0;
+    border-top: 1px solid var(--soft);
+  }
+  .admin-step:first-of-type { border-top: 0; padding-top: 8px; }
+  .admin-step-number {
+    padding: 0;
+    font-size: 9px;
+    letter-spacing: .1em;
+  }
+  .admin-step-head { margin-bottom: 16px; }
+  .admin-step-head h2 { font-size: 16px; }
+  .admin-step-head p,
+  .admin-help { font-size: 10px; }
+
+  .admin-form-grid { grid-template-columns: 1fr; gap: 14px; }
+  .admin-field-full { grid-column: auto; }
+  .admin-field { gap: 6px; }
+  .admin-field input,
+  .admin-field select,
+  .admin-field textarea {
+    min-height: 48px;
+    padding: 11px 0;
+    font-size: 16px;
+  }
+  .admin-field textarea { min-height: 132px; line-height: 1.45; }
+
+  /* Upload is large and thumb friendly */
+  .admin-upload-zone {
+    min-height: 180px;
+    padding: 22px 14px;
+    background: rgba(255,255,255,.34);
+  }
+  .admin-image-preview-grid {
+    grid-template-columns: repeat(2,minmax(0,1fr));
+    gap: 8px;
+  }
+  .admin-image-preview button { width: 30px; height: 30px; }
+
+  /* Size presets */
+  .admin-size-presets {
+    display: grid;
+    grid-template-columns: repeat(2,minmax(0,1fr));
+    gap: 8px;
+  }
+  .admin-size-presets button {
+    min-height: 44px;
+    padding: 8px;
+    background: rgba(255,255,255,.62);
+  }
+  .admin-set-all {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 10px;
+    align-items: end;
+  }
+  .admin-set-all label { min-width: 0; }
+  .admin-set-all input {
+    width: 100%;
+    min-height: 44px;
+    font-size: 16px;
+  }
+  .admin-set-all button { min-height: 44px; padding: 0 14px; }
+
+  .admin-variant-table { max-width: none; }
+  .admin-variant-head,
+  .admin-variant-row {
+    grid-template-columns: minmax(0,1fr) 92px 40px;
+    gap: 10px;
+  }
+  .admin-variant-row { min-height: 52px; }
+  .admin-variant-row input { min-height: 44px; font-size: 16px; }
+  .admin-variant-row button { min-width: 40px; min-height: 40px; }
+
+  /* Collections become large selectable rows */
+  .admin-collection-grid { grid-template-columns: 1fr; gap: 7px; }
+  .admin-collection-option { min-height: 48px; padding: 12px; }
+  .admin-collection-option input { width: 18px; height: 18px; }
+
+  .admin-review-card { padding: 15px; }
+
+  /* Inventory cards */
+  .admin-inventory-list { gap: 10px; }
+  .admin-inventory-row {
+    grid-template-columns: 72px minmax(0,1fr);
+    gap: 12px;
+    padding: 12px;
+    background: rgba(255,255,255,.5);
+    align-items: center;
+  }
+  .admin-inventory-row img { width: 72px; height: 72px; }
+  .admin-inventory-variants {
+    grid-column: 1 / -1;
+    display: grid;
+    grid-template-columns: repeat(2,minmax(0,1fr));
+    gap: 8px;
+    padding-top: 6px;
+  }
+  .admin-stock-editor {
+    min-width: 0;
+    padding: 10px;
+    background: rgba(255,255,255,.48);
+  }
+  .admin-stock-editor input { width: 100%; min-height: 40px; font-size: 16px; }
+  .admin-stock-editor button { min-height: 30px; }
+}
+
+@media (max-width: 520px) {
+  .admin-login-screen {
+    min-height: 100dvh;
+    padding: 22px 18px max(22px, env(safe-area-inset-bottom));
+  }
+  .admin-login-card { width: 100%; max-width: 390px; }
+  .admin-login-card input { min-height: 48px; font-size: 16px; }
+  .admin-login-card button { min-height: 48px; }
+
+  .admin-header-meta #admin-user-label { display: none; }
+  .admin-main { padding-left: 12px; padding-right: 12px; }
+  .admin-page-head { align-items: center; }
+  .admin-page-head h1 { font-size: 20px; }
+
+  .admin-product-row { grid-template-columns: 74px minmax(0,1fr) auto; padding: 9px; }
+  .admin-product-image { width: 74px; height: 74px; }
+
+  .admin-save-row {
+    position: sticky;
+    bottom: 0;
+    z-index: 12;
+    display: grid;
+    grid-template-columns: .8fr 1.2fr;
+    gap: 8px;
+    margin: 20px -12px 0;
+    padding: 10px 12px calc(10px + env(safe-area-inset-bottom));
+    background: rgba(244,244,239,.96);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+    border-top: 1px solid var(--soft);
+  }
+  .admin-primary-btn,
+  .admin-secondary-btn { min-height: 48px; padding: 0 10px; }
+
+  .admin-image-preview-grid { grid-template-columns: repeat(2,minmax(0,1fr)); }
+  .admin-inventory-variants { grid-template-columns: repeat(2,minmax(0,1fr)); }
+}
