@@ -15,6 +15,68 @@ function cleanSizes(sizes = []) {
     .filter((size) => size.name);
 }
 
+async function publishProductEverywhere(productId) {
+  const publicationsData = await shopifyAdminGraphql(`
+    query AdminPublications {
+      publications(first: 100) {
+        nodes {
+          id
+        }
+      }
+    }
+  `);
+
+  const publicationIds = (publicationsData.publications?.nodes || [])
+    .map((publication) => publication.id)
+    .filter(Boolean);
+
+  if (!publicationIds.length) {
+    throw new Error(
+      "Product was created, but Shopify returned no publications to make it available on."
+    );
+  }
+
+  const data = await shopifyAdminGraphql(`
+    mutation AdminPublishProduct(
+      $id: ID!,
+      $input: [PublicationInput!]!
+    ) {
+      publishablePublish(
+        id: $id,
+        input: $input
+      ) {
+        publishable {
+          availablePublicationsCount {
+            count
+          }
+          resourcePublicationsCount {
+            count
+          }
+        }
+        userErrors {
+          field
+          message
+        }
+      }
+    }
+  `, {
+    id: productId,
+    input: publicationIds.map((publicationId) => ({
+      publicationId,
+    })),
+  });
+
+  throwUserErrors(data.publishablePublish?.userErrors);
+
+  return {
+    publicationIds,
+    availablePublicationsCount:
+      data.publishablePublish?.publishable?.availablePublicationsCount?.count ?? null,
+    resourcePublicationsCount:
+      data.publishablePublish?.publishable?.resourcePublicationsCount?.count ?? null,
+  };
+}
+
 export default async function handler(req, res) {
   if (req.method !== "POST") {
     return res.status(405).json({ error: "Method not allowed" });
@@ -54,6 +116,10 @@ export default async function handler(req, res) {
       return res.status(400).json({ error: "No Shopify inventory location is available" });
     }
 
+    const normalizedStatus = ["ACTIVE", "DRAFT"].includes(status)
+      ? status
+      : "DRAFT";
+
     const productOptions = [{
       name: "Size",
       position: 1,
@@ -76,7 +142,7 @@ export default async function handler(req, res) {
       descriptionHtml,
       productType,
       vendor,
-      status: ["ACTIVE", "DRAFT"].includes(status) ? status : "DRAFT",
+      status: normalizedStatus,
       collections: Array.isArray(collectionIds) ? collectionIds.filter(Boolean) : [],
       productOptions,
       variants,
@@ -159,15 +225,30 @@ export default async function handler(req, res) {
 
     throwUserErrors(data.productSet?.userErrors);
 
+    const product = data.productSet?.product;
+
+    if (!product?.id) {
+      throw new Error("Shopify saved the request but did not return a product ID.");
+    }
+
+    let publication = null;
+
+    if (normalizedStatus === "ACTIVE") {
+      publication = await publishProductEverywhere(product.id);
+    }
+
     return res.status(200).json({
       ok: true,
-      product: data.productSet?.product,
+      product,
+      published: normalizedStatus === "ACTIVE",
+      publication,
       note:
-        status === "ACTIVE"
-          ? "Product status is ACTIVE. If your store requires explicit publication to a sales channel, add write_publications and publication handling."
-          : "",
+        normalizedStatus === "ACTIVE"
+          ? "Product is ACTIVE and has been published to the Shopify publications available to this app."
+          : "Product saved as DRAFT and was not published.",
     });
   } catch (error) {
+    console.error("ADMIN PRODUCT SAVE ERROR:", error);
     return res.status(500).json({ error: error.message });
   }
 }
