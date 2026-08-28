@@ -1,25 +1,18 @@
-LONGEVITY ADMIN — SMART SELECT ALL / DESELECT ALL 43 BUILD
+LONGEVITY CO. — MOBILE FULL SHOP NAV 43 BUILD
 
 REPLACE:
-- admin-sort.js
+- shop.html
+- shop-editorial.js
+- shop-editorial.css
 
-KEEP / REPLACE FROM PRIOR FIX:
-- admin-bulk-edit-stability.js
+MOBILE NAV UPDATE:
+- All Shop category options are visible at once on mobile.
+- Removes horizontal category scrolling.
+- Categories display in a compact 4-column wrapped grid.
+- Favorites / Cart move to a clean utility row beneath the categories.
+- Shop nav remains sticky directly below the main site header.
+- The sticky offset is measured from the real rendered header height, removing the mobile gap.
+- Product cards continue to scroll underneath both sticky layers.
+- Desktop Shop navigation remains unchanged.
 
-ADD:
-- admin-select-visible.js
-
-NEW BEHAVIOR:
-- Adds Select All and Deselect All to the Products toolbar.
-- These controls ONLY affect product rows currently showing on screen.
-- Live filter -> selects/deselects only Live products shown.
-- Draft filter -> selects/deselects only Draft products shown.
-- Archived filter -> selects/deselects only Archived products shown.
-- All Status -> selects/deselects all currently shown products.
-- Product search is also respected.
-- A small counter shows how many of the currently visible products are selected.
-- When the user changes Status or Search, selections from the previous result set are cleared BEFORE the rows change. This prevents invisible previously selected products from accidentally being included in Bulk Edit, Set Live/Draft, or Delete.
-- Sorting does not clear selection because the same visible products remain in scope.
-- Mobile layout is included.
-
-No Shopify, API, database, scopes, product data, or environment changes.
+No Shopify, API, admin, database, or environment changes.

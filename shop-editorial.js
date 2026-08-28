@@ -96,3 +96,43 @@
   }
   if(document.readyState==="loading")document.addEventListener("DOMContentLoaded",boot);else boot();
 })();
+
+/* SHOP V11 — sync Shop nav directly beneath the real rendered site header. */
+(() => {
+  function syncShopHeaderHeight() {
+    const host = document.getElementById("site-header");
+    if (!host) return;
+
+    const header = host.querySelector(".site-header") || host;
+    const height = Math.ceil(header.getBoundingClientRect().height || 0);
+    if (height > 0) {
+      document.documentElement.style.setProperty("--shop-header-height", `${height}px`);
+    }
+  }
+
+  const sync = () => requestAnimationFrame(syncShopHeaderHeight);
+
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", sync);
+  } else {
+    sync();
+  }
+
+  window.addEventListener("load", sync);
+  window.addEventListener("resize", sync, { passive: true });
+
+  if ("ResizeObserver" in window) {
+    const timer = setInterval(() => {
+      const host = document.getElementById("site-header");
+      const header = host?.querySelector(".site-header");
+      if (!header) return;
+
+      clearInterval(timer);
+      const observer = new ResizeObserver(sync);
+      observer.observe(header);
+      sync();
+    }, 100);
+
+    setTimeout(() => clearInterval(timer), 5000);
+  }
+})();

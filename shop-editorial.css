@@ -391,3 +391,124 @@
     top:78px !important;
   }
 }
+
+
+/* =========================================================
+   SHOP V11 — MOBILE FULL NAV
+   All Shop navigation options remain visible on mobile.
+   ========================================================= */
+
+:root{
+  --shop-header-height:78px;
+}
+
+/* Use the true rendered header height so there is never a mobile gap. */
+.simple-shop-topbar.sticky-shop-navigation{
+  top:var(--shop-header-height) !important;
+}
+
+@media(max-width:900px){
+  /* Main site header remains the first sticky layer. */
+  #site-header{
+    position:sticky !important;
+    top:0 !important;
+    z-index:145 !important;
+    background:#f6f6f2 !important;
+  }
+
+  /* Shop nav becomes a compact full-width control area directly underneath. */
+  .simple-shop-topbar.sticky-shop-navigation{
+    position:sticky !important;
+    top:var(--shop-header-height) !important;
+    z-index:100 !important;
+    min-height:0 !important;
+    padding:7px 0 8px !important;
+    margin:0 0 18px !important;
+    background:#f6f6f2 !important;
+    border-bottom:1px solid rgba(0,0,0,.12) !important;
+  }
+
+  /* Categories wrap instead of horizontally scrolling so ALL options show. */
+  .simple-category-menu{
+    display:grid !important;
+    grid-template-columns:repeat(4,minmax(0,1fr)) !important;
+    gap:3px 6px !important;
+    width:100% !important;
+    overflow:visible !important;
+    white-space:normal !important;
+    flex:initial !important;
+  }
+
+  .simple-category-menu button,
+  .simple-category-menu .simple-category-btn{
+    width:100% !important;
+    min-width:0 !important;
+    min-height:32px !important;
+    padding:5px 2px !important;
+    display:flex !important;
+    align-items:center !important;
+    justify-content:center !important;
+    text-align:center !important;
+    white-space:normal !important;
+    line-height:1.15 !important;
+    font-size:.54rem !important;
+    letter-spacing:.025em !important;
+    border:0 !important;
+  }
+
+  .simple-category-menu button::after,
+  .simple-category-menu .simple-category-btn::after{
+    left:20% !important;
+    right:20% !important;
+  }
+
+  /* Utilities move to their own clean row below categories. */
+  .simple-shop-topbar.sticky-shop-navigation{
+    display:grid !important;
+    grid-template-columns:1fr !important;
+    gap:5px !important;
+  }
+
+  .simple-shop-utilities{
+    width:100% !important;
+    display:flex !important;
+    align-items:center !important;
+    justify-content:flex-end !important;
+    gap:12px !important;
+    min-height:30px !important;
+    padding-top:4px !important;
+    border-top:1px solid rgba(0,0,0,.06) !important;
+  }
+
+  .simple-shop-utilities button,
+  .simple-shop-utilities a{
+    min-height:30px !important;
+    display:inline-flex !important;
+    align-items:center !important;
+  }
+
+  /* The nav's background is fully opaque across viewport. */
+  .simple-shop-topbar.sticky-shop-navigation::before{
+    top:0 !important;
+    bottom:0 !important;
+    background:#f6f6f2 !important;
+  }
+}
+
+@media(max-width:520px){
+  .simple-category-menu{
+    grid-template-columns:repeat(4,minmax(0,1fr)) !important;
+    gap:2px 4px !important;
+  }
+
+  .simple-category-menu button,
+  .simple-category-menu .simple-category-btn{
+    min-height:30px !important;
+    padding:4px 1px !important;
+    font-size:.50rem !important;
+  }
+
+  .simple-shop-topbar.sticky-shop-navigation{
+    padding:6px 0 7px !important;
+  }
+}
