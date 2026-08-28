@@ -2,8 +2,9 @@
 const LIMITS={headwear:1,tops:1,bottoms:1},state={headwear:{items:[],selections:[],none:false},tops:{items:[],selections:[]},bottoms:{items:[],selections:[]}};
 const esc=(v="")=>String(v).replaceAll("&","&amp;").replaceAll("<","&lt;").replaceAll(">","&gt;").replaceAll('"',"&quot;").replaceAll("'","&#039;");
 function cat(p){let r=`${p.productType||""} ${p.title||""}`.toLowerCase();if(/headwear|hat|cap|beanie/.test(r))return"headwear";if(/hoodie|sweatshirt|crewneck|t-shirt|t shirt|tee|shirt|top|sweater|longsleeve|long sleeve/.test(r))return"tops";if(/pants|pant|shorts|short|jogger|trouser|bottom/.test(r))return"bottoms";return""}
-function norm(p){let imgs=p.images?.nodes||[],vs=(p.variants?.nodes||[]).map(v=>({id:v.id,title:v.title||"Default",availableForSale:v.availableForSale!==false,selectedOptions:v.selectedOptions||[]}));return{id:p.id,title:p.title,image:p.featuredImage?.url||imgs[0]?.url||"",productType:p.productType||"",variants:vs}}
+function norm(p){let imgs=p.images?.nodes||[],vs=(p.variants?.nodes||[]).map(v=>({id:v.id,title:v.title||"Default",availableForSale:v.availableForSale!==false,selectedOptions:v.selectedOptions||[],price:v.price||p.priceRange?.minVariantPrice||{amount:"0",currencyCode:"USD"}}));return{id:p.id,title:p.title,image:p.featuredImage?.url||imgs[0]?.url||"",productType:p.productType||"",variants:vs}}
 function label(v){let s=(v?.selectedOptions||[]).find(o=>String(o.name).toLowerCase()==="size");return s?.value||(v?.title&&v.title!=="Default Title"?v.title:"One Size")}
+function money(v){let p=v?.price||{},n=Number(p.amount||0);try{return new Intl.NumberFormat("en-US",{style:"currency",currency:p.currencyCode||"USD"}).format(n)}catch(e){return `$${n.toFixed(2)}`}}
 function first(p){return p?.variants?.find(v=>v.availableForSale)||p?.variants?.[0]||null}
 function make(c,i=0){let a=state[c].items;if(!a.length)return null;i=(i+a.length)%a.length;return{productIndex:i,variantId:first(a[i])?.id||"",uid:Math.random().toString(36).slice(2)}}
 function prod(c,s){return state[c].items[s.productIndex]} function vari(c,s){let p=prod(c,s);return p?.variants.find(v=>v.id===s.variantId)||first(p)}
@@ -30,7 +31,20 @@ function picks(){let r=[];["headwear","tops","bottoms"].forEach(c=>{if(c==="head
 function summary(){let p=picks(),t=`${p.length} item${p.length===1?"":"s"} selected`;document.getElementById("uniform-item-count").textContent=t;document.getElementById("uniform-mobile-count").textContent=t;let dis=!p.length;document.getElementById("uniform-add-all").disabled=dis;document.getElementById("uniform-mobile-add").disabled=dis}
 function none(){state.headwear.none=!state.headwear.none;let b=document.getElementById("uniform-headwear-none");b.classList.toggle("is-active",state.headwear.none);b.setAttribute("aria-pressed",state.headwear.none);render("headwear");summary()}
 function random(){["headwear","tops","bottoms"].forEach(c=>{if(c==="headwear"&&state.headwear.none)return;let a=state[c].items;if(a.length)state[c].selections=[make(c,Math.floor(Math.random()*a.length))]});["headwear","tops","bottoms"].forEach(render);summary()}
-function openSizes(){let body=document.getElementById("uniform-size-sheet-body"),ps=picks();body.innerHTML=ps.map((x,i)=>`<article class="uniform-size-item"><img src="${esc(x.p.image)}" alt="${esc(x.p.title)}"><div><h3>${esc(x.p.title)}</h3><div class="uniform-sheet-sizes">${x.p.variants.map(v=>`<button class="uniform-sheet-size ${v.id===x.s.variantId?"is-selected":""}" data-pick="${i}" data-variant="${esc(v.id)}" ${v.availableForSale?"":"disabled"}>${esc(label(v))}</button>`).join("")}</div></div></article>`).join("");document.getElementById("uniform-size-count").textContent=`${ps.length} ITEM${ps.length===1?"":"S"}`;body.querySelectorAll("[data-pick]").forEach(b=>b.onclick=()=>{let x=ps[+b.dataset.pick];x.s.variantId=b.dataset.variant;openSizes()});document.getElementById("uniform-size-overlay").classList.add("is-open");document.getElementById("uniform-size-sheet").classList.add("is-open");document.getElementById("uniform-size-overlay").setAttribute("aria-hidden","false");document.getElementById("uniform-size-sheet").setAttribute("aria-hidden","false")}
+function openSizes(){
+ let body=document.getElementById("uniform-size-sheet-body"),ps=picks();
+ body.innerHTML=ps.map((x,i)=>`<article class="uniform-size-item"><img src="${esc(x.p.image)}" alt="${esc(x.p.title)}"><div class="uniform-size-item-copy"><div class="uniform-size-item-meta"><h3>${esc(x.p.title)}</h3><span class="uniform-size-item-price">${esc(money(x.v))}</span></div><div class="uniform-sheet-sizes">${x.p.variants.map(v=>`<button class="uniform-sheet-size ${v.id===x.s.variantId?"is-selected":""}" data-pick="${i}" data-variant="${esc(v.id)}" ${v.availableForSale?"":"disabled"}>${esc(label(v))}</button>`).join("")}</div></div></article>`).join("");
+ document.getElementById("uniform-size-count").textContent=`${ps.length} ITEM${ps.length===1?"":"S"}`;
+ body.querySelectorAll("[data-pick]").forEach(b=>b.onclick=()=>{
+   let x=ps[+b.dataset.pick];
+   x.s.variantId=b.dataset.variant;
+   openSizes();
+ });
+ document.getElementById("uniform-size-overlay").classList.add("is-open");
+ document.getElementById("uniform-size-sheet").classList.add("is-open");
+ document.getElementById("uniform-size-overlay").setAttribute("aria-hidden","false");
+ document.getElementById("uniform-size-sheet").setAttribute("aria-hidden","false");
+}
 function closeSizes(){document.getElementById("uniform-size-overlay").classList.remove("is-open");document.getElementById("uniform-size-sheet").classList.remove("is-open");document.getElementById("uniform-size-overlay").setAttribute("aria-hidden","true");document.getElementById("uniform-size-sheet").setAttribute("aria-hidden","true")}
 function lines(){let m=new Map;picks().forEach(x=>m.set(x.v.id,(m.get(x.v.id)||0)+1));return [...m].map(([merchandiseId,quantity])=>({merchandiseId,quantity}))}
 async function buy(){let btn=document.getElementById("uniform-confirm-cart");btn.disabled=true;try{let cart=await ensureShopifyCart(),res=await apiPostJson("/api/shopify-cart-lines-add",{cartId:cart.id,lines:lines()}),u=res?.cart;if(u?.id)setShopifyCartId(u.id);updateCartCountUI(u?.totalQuantity||0);renderCartPanel(u);closeSizes();openPanel("cart-panel")}catch(e){console.error(e);document.getElementById("uniform-cart-message").textContent="Unable to add look. Please try again."}finally{btn.disabled=false}}

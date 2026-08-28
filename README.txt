@@ -1,27 +1,20 @@
-LONGEVITY CO. — UNIFORM OUTFIT STACK V9.3 43 BUILD
+LONGEVITY CO. — UNIFORM FINISH LOOK DETAILS V9.4 43 BUILD
 
 REPLACE:
 - uniform.html
 - uniform.css
 - uniform.js
 
-CHANGES:
-- Main selected garment is significantly larger than the faded products on either side.
-- Left/right preview garments are smaller and more faded on desktop and mobile.
-- Product names are removed from the builder.
-- The vertical outfit stack is emphasized so Headwear, Top and Bottom visually read as one outfit.
-- When No Headwear is enabled, that section collapses instead of leaving a large empty area.
-- On mobile, the freed headwear space is automatically given to Top and Bottom.
-- Mobile stays viewport-focused so the selected outfit remains visible without scrolling.
-- Mobile navigation is swipe-first.
-- Arrow glyphs are hidden on mobile; the faded neighboring products provide the navigation cue.
-- The neighboring products are still tappable.
-- Swipe detection is improved to respond to horizontal gestures and ignore mostly vertical movement.
+ONLY REQUESTED UPDATES:
+1. Desktop Finish This Look button now explicitly uses white text on the black button so the label is always visible.
+2. The Finish Look sizing popup now shows product name + price for every selected garment on both desktop and mobile.
 
 UNCHANGED:
-- Pick For Me respects No Headwear.
+- Main outfit builder remains visual-first with no product names or pricing.
+- Large selected garment / smaller faded side products.
+- Mobile swipe behavior.
+- Collapsing No Headwear state.
+- Pick For Me behavior.
 - One Headwear / one Top / one Bottom.
-- Finish Look sizing sheet.
-- Shopify cart flow.
-- No pricing in the builder.
-- Black / grey palette.
+- Size selection flow.
+- Shopify Add Look to Cart flow.
