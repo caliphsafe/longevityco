@@ -1,12 +1,17 @@
-LONGEVITY CO. — UNIFORM 5PX TOP SPACING 43 BUILD
+LONGEVITY CO. — SHOP FLUSH STICKY MASK 43 BUILD
 
 REPLACE:
-- uniform.html
-- uniform.js
-- uniform.css
+- shop.html
+- shop-editorial.js
+- shop-editorial.css
 
 CHANGE:
-- Removes the large space between the global header/navigation and the Uniform intro.
-- UNIFORM / OUTFIT BUILDER now begins 5px below the header/navigation area.
-- Applied consistently on desktop and mobile.
-- All other Uniform sizing and layout from the restored version remains unchanged.
+- Keeps the current Shop layout and navigation exactly as-is.
+- Removes the space above the Shop navigation so it sits flush directly beneath the main site header.
+- Keeps the Shop navigation sticky beneath the main header.
+- Makes both the main header and Shop navigation opaque on the Shop page.
+- Product cards now scroll underneath both layers and disappear cleanly behind them instead of showing through.
+- Desktop and mobile behavior preserved.
+- No category/order/Shopify behavior changed.
+
+No API, Shopify, admin, database, or environment changes.

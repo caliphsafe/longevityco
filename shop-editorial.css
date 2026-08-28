@@ -253,3 +253,55 @@
     margin-bottom:2.75rem;
   }
 }
+
+
+/* SHOP V9 — flush stacked header + shop navigation */
+.simple-category-shop-section{
+  padding-top:0 !important;
+}
+
+/* On Shop only, make the global header a solid masking surface so products
+   disappear completely behind it while scrolling. */
+#site-header .site-header,
+#site-header .global-site-header{
+  background:#f6f6f2 !important;
+  -webkit-backdrop-filter:none !important;
+  backdrop-filter:none !important;
+}
+
+/* Shop navigation touches the main header with no visual gap. */
+.simple-shop-topbar.sticky-shop-navigation{
+  top:78px !important;
+  margin-top:0 !important;
+  background:#f6f6f2 !important;
+}
+
+/* Ensure the full strip beneath the controls is opaque across the viewport. */
+.simple-shop-topbar.sticky-shop-navigation::before{
+  top:0 !important;
+  bottom:0 !important;
+  background:#f6f6f2 !important;
+}
+
+/* Product areas always remain underneath the two navigation layers. */
+#shop-featured-section,
+#categorized-shop-sections,
+.simple-featured-section,
+.simple-product-section{
+  position:relative;
+  z-index:1 !important;
+}
+
+.simple-shop-topbar.sticky-shop-navigation{
+  z-index:100 !important;
+}
+
+@media(max-width:900px){
+  .simple-category-shop-section{
+    padding-top:0 !important;
+  }
+
+  .simple-shop-topbar.sticky-shop-navigation{
+    top:78px !important;
+  }
+}
