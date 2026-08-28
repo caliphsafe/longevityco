@@ -1,6 +1,6 @@
 (() => {
   const ORDER = [["hoodies","Hoodies"],["t-shirts","T-Shirts"],["pants","Pants"],["shorts","Shorts"],["headwear","Headwear"],["accessories","Accessories"]];
-  let active="all", rendered=false;
+  let active="featured", rendered=false;
   const clean=v=>String(v||"").trim().toLowerCase().replace(/[_/]+/g," ").replace(/\s+/g," ");
 
   function categoryFor(p){
@@ -63,17 +63,17 @@
     const host=document.getElementById("categorized-shop-sections"); if(!host)return;
     const featuredHandles=new Set(featured().map(p=>p.handle));
     const catalog=SHOP_PRODUCTS.filter(p=>!featuredHandles.has(p.handle));
-    const visible=active==="all"?catalog:catalog.filter(p=>categoryFor(p)===active);
+    const visible=active==="featured" ? [] : (active==="all"?catalog:catalog.filter(p=>categoryFor(p)===active));
     const count=document.getElementById("shop-count"); if(count) count.textContent=`${visible.length} Item${visible.length===1?"":"s"}`;
     document.querySelectorAll("[data-editorial-filter]").forEach(b=>b.classList.toggle("is-active",b.dataset.editorialFilter===active));
 
-    const sections=(active==="all"?ORDER:ORDER.filter(([key])=>key===active)).map(([key,label])=>{
+    const sections=(active==="featured"?[]:(active==="all"?ORDER:ORDER.filter(([key])=>key===active))).map(([key,label])=>{
       const items=catalog.filter(p=>categoryFor(p)===key);
       if(!items.length)return "";
       return `<section class="simple-product-section"><div class="simple-section-heading"><span>${escapeHtml(label)}</span><span>${items.length}</span></div>
         <div class="product-grid shop-grid simple-category-grid">${items.map(card).join("")}</div></section>`;
     }).join("");
-    host.innerHTML=sections || `<div class="simple-empty-category">No items in this category.</div>`;
+    host.innerHTML=active==="featured" ? "" : (sections || `<div class="simple-empty-category">No items in this category.</div>`);
     activate(host);
   }
 
@@ -84,7 +84,14 @@
   }
 
   function boot(){
-    document.querySelectorAll("[data-editorial-filter]").forEach(b=>b.addEventListener("click",()=>{active=b.dataset.editorialFilter||"all";renderCatalog();}));
+    document.querySelectorAll("[data-editorial-filter]").forEach(b=>b.addEventListener("click",()=>{
+      active=b.dataset.editorialFilter||"featured";
+      const featuredSection=document.getElementById("shop-featured-section");
+      if(featuredSection) featuredSection.hidden = active!=="featured" && active!=="all";
+      renderCatalog();
+      const target=active==="featured"?featuredSection:document.getElementById("categorized-shop-sections");
+      if(target) target.scrollIntoView({behavior:"smooth",block:"start"});
+    }));
     let tries=0; const timer=setInterval(()=>{tries++; if(Array.isArray(SHOP_PRODUCTS)&&SHOP_PRODUCTS.length){clearInterval(timer);setTimeout(render,50);} else if(tries>100)clearInterval(timer);},100);
     const grid=document.getElementById("shop-grid"); if(grid)new MutationObserver(()=>{if(rendered&&grid.children.length){grid.innerHTML="";}}).observe(grid,{childList:true});
   }

@@ -9,7 +9,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="style.css?v=12" />
-  <link rel="stylesheet" href="shop-editorial.css?v=3" />
+  <link rel="stylesheet" href="shop-editorial.css?v=4" />
 </head>
 <body>
   <div class="site-shell">
@@ -17,17 +17,10 @@
     <main class="simple-category-shop">
       <section class="simple-category-shop-section">
         <div class="container">
-          <section class="simple-featured-section" id="shop-featured-section">
-            <div class="simple-section-heading">
-              <span>Featured</span>
-              <span id="featured-count"></span>
-            </div>
-            <div class="product-grid shop-grid simple-featured-grid" id="shop-featured-grid"></div>
-          </section>
-
-          <div class="simple-shop-topbar">
+          <div class="simple-shop-topbar sticky-shop-navigation">
             <nav class="simple-category-menu" aria-label="Shop categories">
-              <button class="simple-category-button is-active" type="button" data-editorial-filter="all">All</button>
+              <button class="simple-category-button is-active" type="button" data-editorial-filter="featured">Featured</button>
+              <button class="simple-category-button" type="button" data-editorial-filter="all">All</button>
               <button class="simple-category-button" type="button" data-editorial-filter="hoodies">Hoodies</button>
               <button class="simple-category-button" type="button" data-editorial-filter="t-shirts">T-Shirts</button>
               <button class="simple-category-button" type="button" data-editorial-filter="pants">Pants</button>
@@ -41,6 +34,14 @@
               <button class="utility-pill" id="cart-toggle-btn" type="button">Cart <span class="utility-count" data-cart-count>0</span></button>
             </div>
           </div>
+
+          <section class="simple-featured-section" id="shop-featured-section">
+            <div class="simple-section-heading">
+              <span>Featured</span>
+              <span id="featured-count"></span>
+            </div>
+            <div class="product-grid shop-grid simple-featured-grid" id="shop-featured-grid"></div>
+          </section>
 
           <div id="categorized-shop-sections"></div>
           <div class="product-grid shop-grid simple-category-grid shop-bootstrap-grid" id="shop-grid" aria-hidden="true"></div>
@@ -94,6 +95,6 @@
   </div>
   <script src="components.js?v=1"></script>
   <script src="script.js?v=15"></script>
-  <script src="shop-editorial.js?v=3"></script>
+  <script src="shop-editorial.js?v=4"></script>
 </body>
 </html>
