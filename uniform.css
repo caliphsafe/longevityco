@@ -68,3 +68,13 @@
 .uniform-size-sheet a:visited{
   color:#111;
 }
+
+
+/* V9.2 — Single-look mode
+   One headwear, one top, one bottom. No layering/additional garment controls. */
+.uniform-layer-action,
+.uniform-layer-grid,
+.uniform-layer-card,
+.uniform-layer-remove{
+  display:none !important;
+}
