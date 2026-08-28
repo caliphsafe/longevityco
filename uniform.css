@@ -280,3 +280,39 @@
     left:15px !important;
   }
 }
+
+
+/* V9.6 — Desktop-only vertical tightening */
+@media(min-width:701px){
+  .uniform-studio{
+    padding-top:10px !important;
+    padding-bottom:10px !important;
+  }
+
+  .uniform-canvas{
+    gap:0 !important;
+  }
+
+  .uniform-look-slot{
+    min-height:172px !important;
+    padding-top:8px !important;
+  }
+
+  .uniform-carousel{
+    height:154px !important;
+  }
+
+  .uniform-slot-top{
+    margin-bottom:0 !important;
+  }
+
+  .uniform-finish-row{
+    margin-top:4px !important;
+  }
+
+  .uniform-look-slot[data-category="headwear"].is-none{
+    min-height:38px !important;
+    height:38px !important;
+    padding-top:10px !important;
+  }
+}

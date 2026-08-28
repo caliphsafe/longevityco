@@ -1,4 +1,4 @@
-LONGEVITY CO. — UNIFORM MOBILE CONTROLS V9.5
+LONGEVITY CO. — UNIFORM DESKTOP TIGHTEN V9.6
 
 REPLACE:
 - uniform.html
@@ -6,7 +6,17 @@ REPLACE:
 - uniform.js
 
 ONLY CHANGE:
-- Pick For Me is larger on mobile.
-- No Headwear toggle directly beneath it is larger and easier to tap on mobile.
-- Desktop remains unchanged.
-- No other Uniform behavior or layout was changed.
+- Tightened vertical spacing on the Uniform page for desktop only.
+- Reduced top/bottom studio padding.
+- Reduced spacing between Headwear, Top, and Bottom.
+- Slightly reduced section heights while keeping selected products visually dominant.
+- Brought Finish Look closer to the outfit.
+- Collapsed No Headwear desktop state a little further.
+
+UNCHANGED:
+- Mobile layout and viewport-fit experience.
+- Mobile swipe behavior.
+- Mobile Pick For Me and No Headwear sizing.
+- Product scale hierarchy.
+- Finish Look popup details.
+- Shopify cart and sizing flow.
