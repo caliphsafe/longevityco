@@ -1,24 +1,17 @@
-LONGEVITY CO. — SHOP + UNIFORM POLISH 43 BUILD
+LONGEVITY CO. — CLEAN STICKY SHOP BAR 43 BUILD
 
 REPLACE:
 - shop.html
 - shop-editorial.js
 - shop-editorial.css
-- uniform.html
-- uniform.js
-- uniform.css
 
-SHOP
-- Sticky navigation now reads as the actual top of the shop rather than a separate floating bar.
-- It remains persistent while products scroll beneath it.
-- Cleaner text navigation with a minimal underline active state.
-- All remains default, Featured remains second.
-- Mobile navigation stays horizontally swipeable and touch-friendly.
+CHANGES:
+- Restores/keeps the sticky bar-style Shop navigation.
+- The navigation stays fixed at the top while the user scrolls through products.
+- Products now scroll underneath the Shop bar and disappear cleanly behind it.
+- Product cards no longer remain visible above/through the sticky navigation area.
+- All remains the default category.
+- Featured remains the second selection.
+- Mobile sticky navigation behavior is preserved.
 
-UNIFORM
-- Headwear, top, and bottoms are much closer together vertically.
-- Added a subtle centered outfit axis to visually connect the pieces.
-- Smaller gaps, tighter controls, and reduced image-stage heights make the stack feel like one outfit.
-- Mobile is also tightened so the full look is easier to understand on a phone.
-
-No API, admin, database, or Shopify configuration changes.
+No Shopify, API, admin, database, or environment changes.
