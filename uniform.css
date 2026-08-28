@@ -112,3 +112,14 @@
     font-size:.56rem !important;
   }
 }
+
+/* UNIFORM V5 — flush page start beneath global header */
+.uniform-page{
+  padding-top:5px !important;
+}
+
+@media(max-width:700px){
+  .uniform-page{
+    padding-top:5px !important;
+  }
+}
