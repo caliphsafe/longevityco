@@ -246,3 +246,37 @@
     font-size:8px;
   }
 }
+
+
+/* V9.5 — Mobile-only control sizing */
+@media(max-width:700px){
+  .uniform-random{
+    height:36px !important;
+    padding:0 13px !important;
+    font-size:8px !important;
+    letter-spacing:.08em !important;
+  }
+
+  .uniform-none-toggle{
+    min-height:30px !important;
+    gap:7px !important;
+    font-size:7px !important;
+    letter-spacing:.08em !important;
+    opacity:.78 !important;
+  }
+
+  .uniform-none-toggle b{
+    width:28px !important;
+    height:14px !important;
+    border-radius:14px !important;
+  }
+
+  .uniform-none-toggle b:after{
+    width:10px !important;
+    height:10px !important;
+  }
+
+  .uniform-none-toggle.is-active b:after{
+    left:15px !important;
+  }
+}
