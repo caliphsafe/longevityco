@@ -40,3 +40,31 @@
  #site-footer{display:none}
  .uniform-size-sheet{top:auto;left:0;right:0;bottom:0;width:100%;height:min(82dvh,720px);border-radius:14px 14px 0 0;transform:translateY(102%)}.uniform-size-sheet.is-open{transform:none}.uniform-size-sheet header{padding:16px}.uniform-size-sheet h2{font-size:20px}.uniform-size-sheet-body{padding:2px 16px}.uniform-size-item{grid-template-columns:60px 1fr;padding:11px 0}.uniform-size-item img{width:60px;height:68px}.uniform-size-sheet footer{padding:12px 16px calc(12px + env(safe-area-inset-bottom))}
 }
+
+
+/* V9.1 — Uniform palette guard: prevent browser-default blue UI on mobile */
+.uniform-page a,
+.uniform-page button,
+.uniform-mobile-cartbar button,
+.uniform-size-sheet button,
+.uniform-size-sheet a,
+.uniform-none-toggle,
+.uniform-layer-action,
+.uniform-peek,
+.uniform-current,
+.uniform-random,
+.uniform-buy{
+  color:inherit;
+  -webkit-tap-highlight-color:rgba(0,0,0,.08);
+}
+.uniform-buy,
+.uniform-mobile-cartbar button,
+.uniform-size-sheet footer button{
+  color:#fff;
+}
+.uniform-page a:link,
+.uniform-page a:visited,
+.uniform-size-sheet a:link,
+.uniform-size-sheet a:visited{
+  color:#111;
+}
