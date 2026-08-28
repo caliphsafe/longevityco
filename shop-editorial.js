@@ -1,6 +1,6 @@
 (() => {
   const ORDER = [["hoodies","Hoodies"],["t-shirts","T-Shirts"],["pants","Pants"],["shorts","Shorts"],["headwear","Headwear"],["accessories","Accessories"]];
-  let active="featured", rendered=false;
+  let active="all", rendered=false;
   const clean=v=>String(v||"").trim().toLowerCase().replace(/[_/]+/g," ").replace(/\s+/g," ");
 
   function categoryFor(p){
@@ -89,8 +89,7 @@
       const featuredSection=document.getElementById("shop-featured-section");
       if(featuredSection) featuredSection.hidden = active!=="featured" && active!=="all";
       renderCatalog();
-      const target=active==="featured"?featuredSection:document.getElementById("categorized-shop-sections");
-      if(target) target.scrollIntoView({behavior:"smooth",block:"start"});
+
     }));
     let tries=0; const timer=setInterval(()=>{tries++; if(Array.isArray(SHOP_PRODUCTS)&&SHOP_PRODUCTS.length){clearInterval(timer);setTimeout(render,50);} else if(tries>100)clearInterval(timer);},100);
     const grid=document.getElementById("shop-grid"); if(grid)new MutationObserver(()=>{if(rendered&&grid.children.length){grid.innerHTML="";}}).observe(grid,{childList:true});
