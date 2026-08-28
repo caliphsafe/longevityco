@@ -77,6 +77,14 @@
     document.head.appendChild(script);
   }
 
+  function loadMobileAdminUX() {
+    if (document.querySelector('script[src^="admin-mobile-ux.js"]')) return;
+    const script = document.createElement("script");
+    script.src = "admin-mobile-ux.js?v=1";
+    script.defer = true;
+    document.head.appendChild(script);
+  }
+
   document.addEventListener("DOMContentLoaded",()=>{
     addProductDateOptions();
 
@@ -99,6 +107,7 @@
 
     loadBulkEditStabilityFix();
     loadVisibleSelectionTools();
+    loadMobileAdminUX();
     loadShopEditorAssets();
   });
 })();
