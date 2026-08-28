@@ -535,3 +535,326 @@
     font-size:.58rem;
   }
 }
+
+
+/* =========================================================
+   UNIFORM V7 — VISUAL-FIRST CLEANUP
+   Let the garments dominate. Controls become quieter,
+   smaller, and more contextual.
+   ========================================================= */
+
+.uniform-intro{
+  margin-bottom:.4rem;
+}
+
+.uniform-intro-actions{
+  margin-top:.5rem;
+}
+
+.uniform-pick-btn{
+  min-height:30px !important;
+  padding:0 10px !important;
+  border-color:rgba(0,0,0,.11) !important;
+  background:transparent !important;
+  font-size:.52rem !important;
+  letter-spacing:.07em !important;
+  opacity:.72;
+}
+.uniform-pick-btn:hover{
+  opacity:1;
+  background:#111 !important;
+}
+
+.uniform-category{
+  padding:.45rem 0 .7rem !important;
+}
+
+.uniform-category-head{
+  min-height:26px !important;
+  margin-bottom:.05rem;
+}
+
+.uniform-category-head > div{
+  gap:.4rem !important;
+}
+
+.uniform-category-head span,
+.uniform-category-hint{
+  font-size:.48rem !important;
+  opacity:.38 !important;
+}
+
+.uniform-category-head strong{
+  font-size:.58rem !important;
+  letter-spacing:.07em !important;
+}
+
+.uniform-category-hint{
+  display:none !important;
+}
+
+/* Headwear NONE becomes a quiet text control */
+.uniform-none-btn{
+  min-height:24px !important;
+  padding:0 3px !important;
+  border:0 !important;
+  background:transparent !important;
+  font-size:.46rem !important;
+  letter-spacing:.08em !important;
+  opacity:.42;
+  text-decoration:underline;
+  text-underline-offset:3px;
+}
+.uniform-none-btn:hover,
+.uniform-none-btn.is-active{
+  color:#111 !important;
+  background:transparent !important;
+  opacity:1;
+}
+
+/* Garment is the star */
+.uniform-choice{
+  grid-template-columns:28px minmax(0,1fr) 28px !important;
+  gap:.15rem !important;
+  padding:0 0 .2rem !important;
+}
+
+.uniform-choice.is-extra{
+  margin-top:.2rem !important;
+  padding-top:.45rem !important;
+  border-top:1px solid rgba(0,0,0,.055) !important;
+}
+
+.uniform-choice-stage{
+  height:clamp(172px,23vw,250px) !important;
+}
+
+.uniform-choice-stage img{
+  max-width:96% !important;
+  max-height:100% !important;
+}
+
+/* Prev/next become nearly invisible unless hovered */
+.uniform-arrow{
+  width:26px !important;
+  height:26px !important;
+  border:0 !important;
+  background:transparent !important;
+  font-size:.72rem !important;
+  opacity:.28;
+}
+.uniform-arrow:hover{
+  background:transparent !important;
+  color:#111 !important;
+  opacity:1;
+}
+
+/* Product name / price remain understated */
+.uniform-choice-info{
+  gap:.4rem !important;
+  min-height:16px !important;
+  padding-top:0 !important;
+}
+
+.uniform-choice-info strong{
+  font-size:.66rem !important;
+  font-weight:400 !important;
+}
+
+.uniform-choice-info span{
+  font-size:.56rem !important;
+  opacity:.42 !important;
+}
+
+/* Controls sit quietly beneath the garment */
+.uniform-choice-controls{
+  gap:.22rem !important;
+  margin-top:0 !important;
+}
+
+.uniform-size-row{
+  gap:.15rem !important;
+  min-height:22px !important;
+}
+
+.uniform-size-label{
+  display:none !important;
+}
+
+.uniform-size-chip{
+  min-width:24px !important;
+  min-height:22px !important;
+  padding:0 5px !important;
+  border-color:rgba(0,0,0,.10) !important;
+  background:transparent !important;
+  font-size:.46rem !important;
+  opacity:.58;
+}
+
+.uniform-size-chip.is-selected{
+  background:transparent !important;
+  color:#111 !important;
+  border-color:#111 !important;
+  opacity:1;
+}
+
+.uniform-size-chip:disabled{
+  opacity:.18 !important;
+}
+
+/* Remove extra layer becomes a tiny text action */
+.uniform-remove-layer{
+  min-height:20px !important;
+  padding:0 2px !important;
+  font-size:.43rem !important;
+  opacity:.3 !important;
+}
+.uniform-remove-layer:hover{
+  opacity:.8 !important;
+}
+
+/* Add another is no longer a large box */
+.uniform-add-layer{
+  width:auto !important;
+  min-height:22px !important;
+  margin:.05rem auto 0 !important;
+  padding:0 3px !important;
+  display:block !important;
+  border:0 !important;
+  background:transparent !important;
+  font-size:.45rem !important;
+  letter-spacing:.07em !important;
+  opacity:.38;
+}
+.uniform-add-layer:hover{
+  background:transparent !important;
+  opacity:.9;
+}
+.uniform-add-layer:disabled{
+  opacity:.15 !important;
+}
+
+/* None state stays visually quiet */
+.uniform-none-state{
+  min-height:72px !important;
+}
+.uniform-none-state div{
+  padding:.5rem .75rem !important;
+  background:transparent !important;
+}
+.uniform-none-state strong{
+  font-size:.58rem !important;
+}
+.uniform-none-state span{
+  font-size:.48rem !important;
+}
+
+/* Preserve strong checkout hierarchy only at the end */
+.uniform-summary{
+  margin-top:.9rem !important;
+}
+
+.uniform-summary-head p{
+  font-size:.54rem !important;
+}
+
+.uniform-summary-head span{
+  font-size:.5rem !important;
+}
+
+.uniform-selected-list{
+  margin:.55rem 0 !important;
+}
+
+.uniform-selected-list > div{
+  padding:.38rem 0 !important;
+  font-size:.58rem !important;
+}
+
+.uniform-selected-list small{
+  font-size:.48rem !important;
+}
+
+.uniform-add-cart-primary{
+  min-height:58px !important;
+  font-size:.68rem !important;
+  font-weight:500;
+}
+
+/* Mobile: even quieter controls, larger product imagery */
+@media(max-width:700px){
+  .uniform-intro{
+    margin-bottom:.25rem !important;
+  }
+
+  .uniform-intro-actions{
+    margin-top:.35rem !important;
+  }
+
+  .uniform-pick-btn{
+    min-height:28px !important;
+    font-size:.48rem !important;
+  }
+
+  .uniform-category{
+    padding:.34rem 0 .58rem !important;
+  }
+
+  .uniform-category-head{
+    min-height:22px !important;
+  }
+
+  .uniform-choice{
+    grid-template-columns:24px minmax(0,1fr) 24px !important;
+    gap:.05rem !important;
+  }
+
+  .uniform-choice-stage{
+    height:176px !important;
+  }
+
+  .uniform-arrow{
+    width:24px !important;
+    height:24px !important;
+    font-size:.66rem !important;
+  }
+
+  .uniform-choice-info{
+    display:flex !important;
+    flex-wrap:wrap;
+    gap:.25rem !important;
+  }
+
+  .uniform-choice-info strong{
+    font-size:.62rem !important;
+  }
+
+  .uniform-choice-info span{
+    font-size:.52rem !important;
+  }
+
+  .uniform-size-chip{
+    min-width:23px !important;
+    min-height:22px !important;
+    font-size:.44rem !important;
+  }
+
+  .uniform-remove-layer{
+    font-size:.4rem !important;
+  }
+
+  .uniform-add-layer{
+    min-height:20px !important;
+    font-size:.42rem !important;
+  }
+
+  .uniform-none-btn{
+    font-size:.43rem !important;
+  }
+}
+
+@media(max-width:390px){
+  .uniform-choice-stage{
+    height:164px !important;
+  }
+}
