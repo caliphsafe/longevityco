@@ -12,6 +12,7 @@
   <link rel="stylesheet" href="admin-mobile.css?v=1" />
   <link rel="stylesheet" href="admin-bulk.css?v=1" />
   <link rel="stylesheet" href="admin-bulk-edit.css?v=1" />
+  <link rel="stylesheet" href="admin-v2.css?v=1" />
 </head>
 <body>
   <div class="admin-login-screen" id="admin-login-screen">
@@ -32,17 +33,163 @@
     <div class="admin-shell">
       <aside class="admin-sidebar">
         <nav>
-          <button class="admin-nav-link is-active" data-view="products" type="button">Products</button>
+          <button class="admin-nav-link is-active" data-view="dashboard" type="button">Dashboard</button>
+          <button class="admin-nav-link" data-view="orders" type="button">Orders</button>
+          <button class="admin-nav-link" data-view="customers" type="button">Customers</button>
+          <button class="admin-nav-link" data-view="products" type="button">Products</button>
           <button class="admin-nav-link" data-view="editor" type="button">Add Product</button>
           <button class="admin-nav-link" data-view="bulk" type="button">Bulk Upload</button>
           <button class="admin-nav-link" data-view="inventory" type="button">Inventory</button>
+          <button class="admin-nav-link" data-view="discounts" type="button">Discounts</button>
+          <button class="admin-nav-link" data-view="draft-orders" type="button">Draft Orders</button>
+          <button class="admin-nav-link" data-view="abandoned" type="button">Abandoned</button>
           <button class="admin-nav-link" data-view="archive" type="button">Archive</button>
         </nav>
         <p class="admin-sidebar-note">SHOPIFY IS THE SOURCE OF TRUTH.</p>
       </aside>
 
       <main class="admin-main">
-        <section class="admin-view is-active" id="view-products" data-view-panel="products">
+
+        <!-- ADMIN V2 DASHBOARD -->
+        <section class="admin-view is-active" id="view-dashboard" data-view-panel="dashboard">
+          <div class="admin-page-head">
+            <div><p class="admin-kicker">Store Overview</p><h1>Dashboard</h1></div>
+            <button class="admin-text-btn" id="dashboard-refresh-btn" type="button">Refresh</button>
+          </div>
+
+          <div class="v2-period-tabs" id="dashboard-period-tabs">
+            <button class="is-active" data-days="1" type="button">Today</button>
+            <button data-days="7" type="button">7 Days</button>
+            <button data-days="30" type="button">30 Days</button>
+          </div>
+
+          <div class="v2-metrics-grid" id="dashboard-metrics">
+            <article><span>Revenue</span><strong>—</strong></article>
+            <article><span>Orders</span><strong>—</strong></article>
+            <article><span>Average Order</span><strong>—</strong></article>
+            <article><span>Units Sold</span><strong>—</strong></article>
+            <article><span>Needs Shipping</span><strong>—</strong></article>
+            <article><span>Low Stock</span><strong>—</strong></article>
+            <article><span>Sold Out</span><strong>—</strong></article>
+            <article><span>Abandoned</span><strong>—</strong></article>
+          </div>
+
+          <div class="v2-dashboard-grid">
+            <section class="v2-panel">
+              <div class="v2-panel-head"><div><p class="admin-kicker">Priority</p><h2>Needs Shipping</h2></div><button type="button" data-go-view="orders">View Orders</button></div>
+              <div id="dashboard-shipping-list" class="v2-list"></div>
+            </section>
+
+            <section class="v2-panel">
+              <div class="v2-panel-head"><div><p class="admin-kicker">Inventory</p><h2>Low Stock</h2></div><button type="button" data-go-view="inventory">Inventory</button></div>
+              <div id="dashboard-stock-list" class="v2-list"></div>
+            </section>
+
+            <section class="v2-panel">
+              <div class="v2-panel-head"><div><p class="admin-kicker">Performance</p><h2>Top Products</h2></div></div>
+              <div id="dashboard-top-products" class="v2-list"></div>
+            </section>
+
+            <section class="v2-panel">
+              <div class="v2-panel-head"><div><p class="admin-kicker">Recovery</p><h2>Abandoned</h2></div><button type="button" data-go-view="abandoned">View All</button></div>
+              <div id="dashboard-abandoned-list" class="v2-list"></div>
+            </section>
+          </div>
+        </section>
+
+        <!-- ORDERS -->
+        <section class="admin-view" id="view-orders" data-view-panel="orders">
+          <div class="admin-page-head">
+            <div><p class="admin-kicker">Commerce</p><h1>Orders</h1></div>
+            <button class="admin-text-btn" id="orders-refresh-btn" type="button">Refresh</button>
+          </div>
+          <div class="admin-toolbar v2-toolbar">
+            <input id="orders-search" type="search" placeholder="Search order, customer, email" />
+            <select id="orders-status-filter">
+              <option value="ALL">All fulfillment</option>
+              <option value="UNFULFILLED">Unfulfilled</option>
+              <option value="FULFILLED">Fulfilled</option>
+              <option value="PARTIALLY_FULFILLED">Partial</option>
+            </select>
+          </div>
+          <div id="orders-summary" class="v2-summary-strip"></div>
+          <div id="orders-list" class="v2-table-list"></div>
+          <div class="admin-empty" id="orders-empty" hidden>No orders found.</div>
+        </section>
+
+        <!-- CUSTOMERS -->
+        <section class="admin-view" id="view-customers" data-view-panel="customers">
+          <div class="admin-page-head">
+            <div><p class="admin-kicker">Audience</p><h1>Customers</h1></div>
+            <button class="admin-text-btn" id="customers-refresh-btn" type="button">Refresh</button>
+          </div>
+          <div class="admin-toolbar v2-toolbar">
+            <input id="customers-search" type="search" placeholder="Search customer, email, phone" />
+            <select id="customers-filter">
+              <option value="ALL">All customers</option>
+              <option value="REPEAT">Repeat customers</option>
+              <option value="VIP">Spent $500+</option>
+            </select>
+          </div>
+          <div id="customers-list" class="v2-table-list"></div>
+          <div class="admin-empty" id="customers-empty" hidden>No customers found.</div>
+        </section>
+
+        <!-- DISCOUNTS -->
+        <section class="admin-view" id="view-discounts" data-view-panel="discounts">
+          <div class="admin-page-head">
+            <div><p class="admin-kicker">Promotions</p><h1>Discounts</h1></div>
+            <button class="admin-primary-link" id="new-discount-btn" type="button">+ Create Discount</button>
+          </div>
+          <div id="discount-create-panel" class="v2-create-panel" hidden>
+            <div class="v2-panel-head"><div><p class="admin-kicker">New Code</p><h2>Percentage Discount</h2></div><button class="admin-text-btn" id="cancel-discount-btn" type="button">Cancel</button></div>
+            <div class="admin-form-grid">
+              <label class="admin-field">Code<input id="discount-code" type="text" placeholder="LONGEVITY20" /></label>
+              <label class="admin-field">Percent Off<input id="discount-percent" type="number" min="1" max="100" step="1" placeholder="20" /></label>
+              <label class="admin-field">Usage Limit<input id="discount-limit" type="number" min="1" step="1" placeholder="Optional" /></label>
+              <label class="admin-field">Ends<input id="discount-end" type="datetime-local" /></label>
+              <label class="admin-field admin-field-full v2-checkbox-field"><input id="discount-once" type="checkbox" /> One use per customer</label>
+            </div>
+            <button class="admin-primary-btn" id="create-discount-btn" type="button">Create Discount</button>
+            <p class="admin-message" id="discount-message"></p>
+          </div>
+          <div id="discounts-list" class="v2-table-list"></div>
+          <div class="admin-empty" id="discounts-empty" hidden>No discounts found.</div>
+        </section>
+
+        <!-- DRAFT ORDERS -->
+        <section class="admin-view" id="view-draft-orders" data-view-panel="draft-orders">
+          <div class="admin-page-head">
+            <div><p class="admin-kicker">Manual Sales</p><h1>Draft Orders</h1></div>
+            <button class="admin-primary-link" id="new-draft-btn" type="button">+ New Draft Order</button>
+          </div>
+          <div id="draft-create-panel" class="v2-create-panel" hidden>
+            <div class="v2-panel-head"><div><p class="admin-kicker">Create Order</p><h2>Customer + Items</h2></div><button class="admin-text-btn" id="cancel-draft-btn" type="button">Cancel</button></div>
+            <div class="admin-form-grid">
+              <label class="admin-field">Customer Email<input id="draft-email" type="email" placeholder="customer@email.com" /></label>
+              <label class="admin-field">Note<input id="draft-note" type="text" placeholder="VIP order / preorder / phone order" /></label>
+            </div>
+            <div class="v2-draft-items">
+              <div class="v2-panel-head"><h3>Items</h3><button class="admin-text-btn" id="add-draft-item-btn" type="button">+ Add Item</button></div>
+              <div id="draft-item-rows"></div>
+            </div>
+            <button class="admin-primary-btn" id="create-draft-btn" type="button">Create Draft Order</button>
+            <p class="admin-message" id="draft-message"></p>
+          </div>
+          <div id="draft-orders-list" class="v2-table-list"></div>
+          <div class="admin-empty" id="draft-orders-empty" hidden>No draft orders found.</div>
+        </section>
+
+        <!-- ABANDONED -->
+        <section class="admin-view" id="view-abandoned" data-view-panel="abandoned">
+          <div class="admin-page-head">
+            <div><p class="admin-kicker">Recovery</p><h1>Abandoned Checkouts</h1></div>
+            <button class="admin-text-btn" id="abandoned-refresh-btn" type="button">Refresh</button>
+          </div>
+          <div id="abandoned-list" class="v2-table-list"></div>
+          <div class="admin-empty" id="abandoned-empty" hidden>No abandoned checkouts found.</div>
+        </section>
+        <section class="admin-view" id="view-products" data-view-panel="products">
           <div class="admin-page-head">
             <div><p class="admin-kicker">Catalog</p><h1>Products</h1></div>
             <button class="admin-primary-link" id="add-product-btn" type="button">+ Add Product</button>
@@ -213,9 +360,20 @@
     </div>
   </div>
 
+
+    <div class="v2-drawer-backdrop" id="v2-drawer-backdrop" hidden></div>
+    <aside class="v2-drawer" id="v2-drawer" aria-hidden="true">
+      <div class="v2-drawer-head">
+        <div><p class="admin-kicker" id="v2-drawer-kicker">Details</p><h2 id="v2-drawer-title">Details</h2></div>
+        <button class="admin-text-btn" id="v2-drawer-close" type="button">Close</button>
+      </div>
+      <div id="v2-drawer-body" class="v2-drawer-body"></div>
+    </aside>
+
   <script src="admin.js?v=5"></script>
   <script src="admin-bulk.js?v=1"></script>
   <script src="admin-image-optimizer.js?v=1"></script>
   <script src="admin-bulk-edit.js?v=1"></script>
+  <script src="admin-v2.js?v=1"></script>
 </body>
 </html>
