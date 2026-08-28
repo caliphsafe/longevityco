@@ -305,3 +305,89 @@
     top:78px !important;
   }
 }
+
+
+/* SHOP V10 — make BOTH header layers sticky on Shop only */
+
+/*
+  Root cause:
+  The visible .site-header is injected inside #site-header. A sticky child
+  cannot remain sticky beyond the height of its own parent wrapper, so the
+  entire main header was scrolling away. On Shop, make the OUTER wrapper the
+  sticky element instead.
+*/
+#site-header{
+  position:sticky !important;
+  top:0 !important;
+  z-index:145 !important;
+  display:block;
+  width:100%;
+  background:#f6f6f2;
+}
+
+/* The outer wrapper now owns the sticky behavior. */
+#site-header .site-header,
+#site-header .global-site-header{
+  position:relative !important;
+  top:auto !important;
+  z-index:auto !important;
+  background:#f6f6f2 !important;
+  -webkit-backdrop-filter:none !important;
+  backdrop-filter:none !important;
+}
+
+/* Allow the Shop's sticky category nav to work inside main. */
+.simple-category-shop{
+  overflow:visible !important;
+}
+
+.simple-category-shop-section{
+  padding-top:0 !important;
+}
+
+/* Second sticky layer, directly underneath the 78px site header. */
+.simple-shop-topbar.sticky-shop-navigation{
+  position:sticky !important;
+  top:78px !important;
+  z-index:100 !important;
+  margin-top:0 !important;
+  background:#f6f6f2 !important;
+}
+
+/* Full-width opaque mask behind Shop nav so cards vanish underneath it. */
+.simple-shop-topbar.sticky-shop-navigation::before{
+  content:"";
+  position:absolute;
+  z-index:-1;
+  left:50%;
+  transform:translateX(-50%);
+  top:0 !important;
+  bottom:0 !important;
+  width:100vw;
+  background:#f6f6f2 !important;
+  pointer-events:none;
+}
+
+/* Product content is deliberately below both sticky navigation layers. */
+#shop-featured-section,
+#categorized-shop-sections,
+.simple-featured-section,
+.simple-product-section{
+  position:relative;
+  z-index:1 !important;
+}
+
+/* Popup navigation remains above everything. */
+#site-header .site-nav{
+  z-index:9999 !important;
+}
+
+@media(max-width:900px){
+  #site-header{
+    top:0 !important;
+  }
+
+  .simple-shop-topbar.sticky-shop-navigation{
+    top:78px !important;
+  }
+}

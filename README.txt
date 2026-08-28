@@ -1,24 +1,25 @@
-LONGEVITY ADMIN — BULK EDIT OPEN FIX 43 BUILD
-
-ADD:
-- admin-bulk-edit-stability.js
+LONGEVITY ADMIN — SMART SELECT ALL / DESELECT ALL 43 BUILD
 
 REPLACE:
 - admin-sort.js
 
-WHAT WAS WRONG:
-The Shop Editor integration has a MutationObserver that watches the Admin DOM.
-When selected products were placed into the Bulk Edit queue, the observer could
-continually call renderBulkProducts(). Each render changed the DOM, which
-triggered the observer again. The result is a render loop/freeze that makes it
-look like the Bulk Edit screen never opens.
+KEEP / REPLACE FROM PRIOR FIX:
+- admin-bulk-edit-stability.js
 
-FIX:
-- Adds a stability layer around renderBulkProducts().
-- The Bulk screen renders when the selected product data changes.
-- Repeated renders of the exact same state are ignored, breaking the loop.
-- Bulk Edit is forced to get one fresh render every time the button is clicked.
-- Existing Shop Editor categories, Bulk Upload, product selection, status tools,
-  Shopify data, and save behavior remain intact.
+ADD:
+- admin-select-visible.js
 
-No Shopify API, scopes, database, product data, or environment changes.
+NEW BEHAVIOR:
+- Adds Select All and Deselect All to the Products toolbar.
+- These controls ONLY affect product rows currently showing on screen.
+- Live filter -> selects/deselects only Live products shown.
+- Draft filter -> selects/deselects only Draft products shown.
+- Archived filter -> selects/deselects only Archived products shown.
+- All Status -> selects/deselects all currently shown products.
+- Product search is also respected.
+- A small counter shows how many of the currently visible products are selected.
+- When the user changes Status or Search, selections from the previous result set are cleared BEFORE the rows change. This prevents invisible previously selected products from accidentally being included in Bulk Edit, Set Live/Draft, or Delete.
+- Sorting does not clear selection because the same visible products remain in scope.
+- Mobile layout is included.
+
+No Shopify, API, database, scopes, product data, or environment changes.
