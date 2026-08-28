@@ -44,10 +44,49 @@ export default async function handler(req, res) {
         query DashboardAbandoned {
           abandonedCheckouts(first: 50, reverse: true) {
             nodes {
-              id createdAt completedAt email recoveryUrl
+              id
+              name
+              createdAt
+              updatedAt
+              completedAt
+              abandonedCheckoutUrl
               totalPriceSet { shopMoney { amount currencyCode } }
-              customer { firstName lastName }
-              lineItems(first: 20) { nodes { title quantity } }
+              customer {
+                id
+                firstName
+                lastName
+                defaultEmailAddress { emailAddress }
+                defaultPhoneNumber { phoneNumber }
+              }
+              shippingAddress {
+                name
+                address1
+                address2
+                city
+                province
+                provinceCode
+                country
+                zip
+                phone
+              }
+              billingAddress {
+                name
+                address1
+                address2
+                city
+                province
+                provinceCode
+                country
+                zip
+                phone
+              }
+              lineItems(first: 20) {
+                nodes {
+                  title
+                  quantity
+                  variantTitle
+                }
+              }
             }
           }
         }
@@ -99,6 +138,13 @@ export default async function handler(req, res) {
       topProducts: [...topMap.values()].sort((a,b) => b.units - a.units).slice(0, 10),
       abandonedCheckouts: abandoned.slice(0, 10).map(c => ({
         ...c,
+        email: c.customer?.defaultEmailAddress?.emailAddress || "",
+        phone:
+          c.customer?.defaultPhoneNumber?.phoneNumber ||
+          c.shippingAddress?.phone ||
+          c.billingAddress?.phone ||
+          "",
+        recoveryUrl: c.abandonedCheckoutUrl || "",
         customer: [c.customer?.firstName, c.customer?.lastName].filter(Boolean).join(" "),
         itemCount: (c.lineItems?.nodes || []).reduce((s,i)=>s+Number(i.quantity||0),0)
       })),

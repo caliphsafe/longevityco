@@ -10,15 +10,47 @@ export default async function handler(req, res) {
       query AdminAbandoned {
         abandonedCheckouts(first: 100, reverse: true) {
           nodes {
-            id createdAt updatedAt completedAt email phone recoveryUrl
+            id
+            name
+            createdAt
+            updatedAt
+            completedAt
+            abandonedCheckoutUrl
             totalPriceSet { shopMoney { amount currencyCode } }
             customer {
-              id firstName lastName
+              id
+              firstName
+              lastName
               defaultEmailAddress { emailAddress }
+              defaultPhoneNumber { phoneNumber }
+            }
+            shippingAddress {
+              name
+              address1
+              address2
+              city
+              province
+              provinceCode
+              country
+              zip
+              phone
+            }
+            billingAddress {
+              name
+              address1
+              address2
+              city
+              province
+              provinceCode
+              country
+              zip
+              phone
             }
             lineItems(first: 50) {
               nodes {
-                id title quantity
+                id
+                title
+                quantity
                 variantTitle
               }
             }
@@ -26,7 +58,19 @@ export default async function handler(req, res) {
         }
       }
     `);
-    return res.status(200).json({ checkouts:data.abandonedCheckouts?.nodes || [] });
+
+    const checkouts = (data.abandonedCheckouts?.nodes || []).map(checkout => ({
+      ...checkout,
+      email: checkout.customer?.defaultEmailAddress?.emailAddress || "",
+      phone:
+        checkout.customer?.defaultPhoneNumber?.phoneNumber ||
+        checkout.shippingAddress?.phone ||
+        checkout.billingAddress?.phone ||
+        "",
+      recoveryUrl: checkout.abandonedCheckoutUrl || "",
+    }));
+
+    return res.status(200).json({ checkouts });
   } catch (error) {
     console.error("ADMIN ABANDONED ERROR:", error);
     return res.status(500).json({ error:error.message });
