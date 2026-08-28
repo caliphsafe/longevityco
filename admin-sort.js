@@ -1,13 +1,12 @@
-
 (() => {
   const value = section => document.querySelector(`[data-sort-section="${section}"]`)?.value || "";
   const stock = p => (p?.variants?.nodes || []).reduce((s,v)=>s+Number(v.inventoryQuantity||0),0);
   const price = p => Number(p?.variants?.nodes?.[0]?.price || 0);
-  const alpha = (a,b) => String(a||"").localeCompare(String(b||""),undefined,{numeric:true,sensitivity:"base"});
   const created = p => {
     const time = new Date(p?.createdAt || 0).getTime();
     return Number.isFinite(time) ? time : 0;
   };
+  const alpha = (a,b) => String(a||"").localeCompare(String(b||""),undefined,{numeric:true,sensitivity:"base"});
 
   function sorted(section, products) {
     const mode=value(section);
@@ -30,22 +29,35 @@
     const select = document.querySelector('[data-sort-section="products"]');
     if (!select || select.querySelector('option[value="date-desc"]')) return;
 
-    const statusOption = select.querySelector('option[value="status-asc"]');
-
+    const status = select.querySelector('option[value="status-asc"]');
     const newest = document.createElement("option");
     newest.value = "date-desc";
     newest.textContent = "Newest Added";
-
     const oldest = document.createElement("option");
     oldest.value = "date-asc";
     oldest.textContent = "Oldest Added";
 
-    if (statusOption) {
-      select.insertBefore(newest, statusOption);
-      select.insertBefore(oldest, statusOption);
+    if (status) {
+      select.insertBefore(newest, status);
+      select.insertBefore(oldest, status);
     } else {
-      select.appendChild(newest);
-      select.appendChild(oldest);
+      select.append(newest, oldest);
+    }
+  }
+
+  function loadShopEditorAssets() {
+    if (!document.querySelector('link[href^="admin-shop-editor.css"]')) {
+      const link = document.createElement("link");
+      link.rel = "stylesheet";
+      link.href = "admin-shop-editor.css?v=1";
+      document.head.appendChild(link);
+    }
+
+    if (!document.querySelector('script[src^="admin-shop-editor.js"]')) {
+      const script = document.createElement("script");
+      script.src = "admin-shop-editor.js?v=1";
+      script.defer = true;
+      document.head.appendChild(script);
     }
   }
 
@@ -68,5 +80,7 @@
     document.querySelector('[data-sort-section="products"]')?.addEventListener("change",()=>renderProductList());
     document.querySelector('[data-sort-section="inventory"]')?.addEventListener("change",()=>renderInventory());
     document.querySelector('[data-sort-section="archive"]')?.addEventListener("change",()=>renderArchive());
+
+    loadShopEditorAssets();
   });
 })();

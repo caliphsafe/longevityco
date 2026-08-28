@@ -14,6 +14,55 @@ export default async function handler(req, res) {
   const endpoint = `https://${SHOPIFY_STORE_DOMAIN}/api/${SHOPIFY_API_VERSION}/graphql.json`;
   const collectionHandle = typeof req.query.collection === "string" ? req.query.collection.trim() : "";
 
+  const productFields = `
+    id
+    handle
+    title
+    description
+    createdAt
+    productType
+    tags
+    featuredImage {
+      url
+      altText
+    }
+    images(first: 10) {
+      nodes {
+        url
+        altText
+      }
+    }
+    options {
+      name
+      values
+    }
+    priceRange {
+      minVariantPrice {
+        amount
+        currencyCode
+      }
+    }
+    variants(first: 50) {
+      nodes {
+        id
+        title
+        availableForSale
+        selectedOptions {
+          name
+          value
+        }
+        price {
+          amount
+          currencyCode
+        }
+        image {
+          url
+          altText
+        }
+      }
+    }
+  `;
+
   const query = collectionHandle
     ? `
       query ProductsByCollection($handle: String!) {
@@ -21,53 +70,7 @@ export default async function handler(req, res) {
           title
           handle
           products(first: 100, sortKey: MANUAL) {
-            nodes {
-              id
-              handle
-              title
-              description
-              createdAt
-              productType
-              featuredImage {
-                url
-                altText
-              }
-              images(first: 10) {
-                nodes {
-                  url
-                  altText
-                }
-              }
-              options {
-                name
-                values
-              }
-              priceRange {
-                minVariantPrice {
-                  amount
-                  currencyCode
-                }
-              }
-              variants(first: 50) {
-                nodes {
-                  id
-                  title
-                  availableForSale
-                  selectedOptions {
-                    name
-                    value
-                  }
-                  price {
-                    amount
-                    currencyCode
-                  }
-                  image {
-                    url
-                    altText
-                  }
-                }
-              }
-            }
+            nodes { ${productFields} }
           }
         }
       }
@@ -75,53 +78,7 @@ export default async function handler(req, res) {
     : `
       query Products {
         products(first: 100, sortKey: CREATED_AT, reverse: true) {
-          nodes {
-            id
-            handle
-            title
-            description
-            createdAt
-            productType
-            featuredImage {
-              url
-              altText
-            }
-            images(first: 10) {
-              nodes {
-                url
-                altText
-              }
-            }
-            options {
-              name
-              values
-            }
-            priceRange {
-              minVariantPrice {
-                amount
-                currencyCode
-              }
-            }
-            variants(first: 50) {
-              nodes {
-                id
-                title
-                availableForSale
-                selectedOptions {
-                  name
-                  value
-                }
-                price {
-                  amount
-                  currencyCode
-                }
-                image {
-                  url
-                  altText
-                }
-              }
-            }
-          }
+          nodes { ${productFields} }
         }
       }
     `;
