@@ -3,117 +3,74 @@
 <head>
 <meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
 <title>Uniform | Longevity Co.</title>
-<meta name="description" content="Build a complete Longevity Co. uniform from headwear, tops, and bottoms.">
+<meta name="description" content="Build a complete Longevity Co. uniform look.">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="style.css?v=12">
-<link rel="stylesheet" href="uniform.css?v=7">
+<link rel="stylesheet" href="uniform.css?v=8">
 </head>
 <body>
 <div class="site-shell">
-  <div id="site-header"></div>
-
-  <main class="uniform-page">
-    <div class="container uniform-container">
-      <header class="uniform-intro">
-        <p>UNIFORM / OUTFIT BUILDER</p>
+<div id="site-header"></div>
+<main class="uniform-page">
+  <div class="uniform-studio">
+    <header class="uniform-studio-head">
+      <div>
+        <p>UNIFORM / LOOK STUDIO</p>
         <h1>Build Your Uniform</h1>
-        <span>Choose a look, add layers, or let us put one together.</span>
-
-        <div class="uniform-intro-actions">
-          <button id="uniform-pick-for-me" class="uniform-pick-btn" type="button">
-            <span>Pick For Me</span><span aria-hidden="true">↻</span>
-          </button>
-        </div>
-      </header>
-
-      <div class="uniform-builder-wrap">
-        <div class="uniform-body-line" aria-hidden="true"></div>
-
-        <section class="uniform-category" data-category="headwear">
-          <div class="uniform-category-head">
-            <div><span>01</span><strong>Headwear</strong></div>
-            <button class="uniform-none-btn" id="uniform-headwear-none" type="button" aria-pressed="false">None</button>
-          </div>
-          <div class="uniform-selection-list" id="uniform-headwear-list"></div>
-        </section>
-
-        <section class="uniform-category" data-category="tops">
-          <div class="uniform-category-head">
-            <div><span>02</span><strong>Tops</strong></div>
-            <span class="uniform-category-hint">Layer up to 3</span>
-          </div>
-          <div class="uniform-selection-list" id="uniform-tops-list"></div>
-          <button class="uniform-add-layer" data-add-layer="tops" type="button">+ Add Another Top</button>
-        </section>
-
-        <section class="uniform-category" data-category="bottoms">
-          <div class="uniform-category-head">
-            <div><span>03</span><strong>Bottoms</strong></div>
-            <span class="uniform-category-hint">Add up to 2</span>
-          </div>
-          <div class="uniform-selection-list" id="uniform-bottoms-list"></div>
-          <button class="uniform-add-layer" data-add-layer="bottoms" type="button">+ Add Another Bottom</button>
-        </section>
       </div>
+      <button id="uniform-pick-for-me" class="uniform-random" type="button">PICK FOR ME <span>↻</span></button>
+    </header>
 
-      <aside class="uniform-summary" id="uniform-summary">
-        <div class="uniform-summary-head">
-          <div>
-            <p>YOUR UNIFORM</p>
-            <span id="uniform-item-count">0 items</span>
-          </div>
-          <strong id="uniform-total">$0</strong>
-        </div>
+    <div class="uniform-canvas" id="uniform-canvas">
+      <section class="uniform-look-slot" data-category="headwear">
+        <div class="uniform-slot-label"><span>01</span> HEADWEAR</div>
+        <button class="uniform-swap uniform-swap-prev" type="button" data-slot-prev="headwear" aria-label="Previous headwear">‹</button>
+        <div class="uniform-slot-content" id="uniform-headwear-list"></div>
+        <button class="uniform-swap uniform-swap-next" type="button" data-slot-next="headwear" aria-label="Next headwear">›</button>
+        <button id="uniform-headwear-none" class="uniform-none-toggle" type="button" aria-pressed="false"><span class="uniform-toggle-track"><i></i></span><span>NO HEADWEAR</span></button>
+      </section>
 
-        <div class="uniform-selected-list" id="uniform-selected-list"></div>
+      <section class="uniform-look-slot" data-category="tops">
+        <div class="uniform-slot-label"><span>02</span> TOPS</div>
+        <button class="uniform-swap uniform-swap-prev" type="button" data-slot-prev="tops" aria-label="Previous top">‹</button>
+        <div class="uniform-slot-content" id="uniform-tops-list"></div>
+        <button class="uniform-swap uniform-swap-next" type="button" data-slot-next="tops" aria-label="Next top">›</button>
+        <button class="uniform-layer-action" data-add-layer="tops" type="button">+ LAYER TOP</button>
+      </section>
 
-        <div class="uniform-summary-actions">
-          <button id="uniform-add-all" class="uniform-add-cart-primary" type="button">
-            <span>Add Uniform to Cart</span>
-            <strong id="uniform-add-cart-total">$0</strong>
-          </button>
-          <a href="shop.html">Shop All</a>
-        </div>
-        <p class="uniform-cart-message" id="uniform-cart-message" aria-live="polite"></p>
-      </aside>
+      <section class="uniform-look-slot" data-category="bottoms">
+        <div class="uniform-slot-label"><span>03</span> BOTTOMS</div>
+        <button class="uniform-swap uniform-swap-prev" type="button" data-slot-prev="bottoms" aria-label="Previous bottom">‹</button>
+        <div class="uniform-slot-content" id="uniform-bottoms-list"></div>
+        <button class="uniform-swap uniform-swap-next" type="button" data-slot-next="bottoms" aria-label="Next bottom">›</button>
+        <button class="uniform-layer-action" data-add-layer="bottoms" type="button">+ ADD BOTTOM</button>
+      </section>
     </div>
-  </main>
 
-  <div class="uniform-mobile-cartbar" id="uniform-mobile-cartbar">
-    <div><span id="uniform-mobile-count">0 items</span><strong id="uniform-mobile-total">$0</strong></div>
-    <button id="uniform-mobile-add" type="button">Add to Cart</button>
+    <aside class="uniform-summary" id="uniform-summary">
+      <div class="uniform-summary-line">
+        <span id="uniform-item-count">0 items selected</span>
+        <button id="uniform-add-all" class="uniform-buy" type="button">ADD LOOK TO CART</button>
+      </div>
+      <div class="uniform-selected-list" id="uniform-selected-list"></div>
+      <p id="uniform-cart-message" class="uniform-cart-message" aria-live="polite"></p>
+    </aside>
   </div>
+</main>
 
-  <div class="shop-drawer-overlay" id="shop-drawer-overlay"></div>
-
-  <aside class="side-panel" id="favorites-panel" aria-hidden="true">
-    <div class="side-panel-header">
-      <p>Favorites</p>
-      <button class="side-panel-close" type="button" data-close-panel="favorites-panel">×</button>
-    </div>
-    <div class="side-panel-body" id="favorites-items"></div>
-    <div class="side-panel-empty" id="favorites-empty">No favorites yet.</div>
-  </aside>
-
-  <aside class="side-panel" id="cart-panel" aria-hidden="true">
-    <div class="side-panel-header">
-      <p>Cart</p>
-      <button class="side-panel-close" type="button" data-close-panel="cart-panel">×</button>
-    </div>
-    <div class="side-panel-body" id="cart-panel-items"></div>
-    <div class="side-panel-empty" id="cart-panel-empty">Your cart is empty.</div>
-    <div class="side-panel-footer">
-      <div class="side-panel-total"><span>Subtotal</span><span id="cart-panel-subtotal">$0</span></div>
-      <a href="cart.html" class="add-cart-btn panel-cart-link" data-checkout-link>View Cart</a>
-    </div>
-  </aside>
-
-  <div id="site-footer"></div>
+<div class="uniform-mobile-cartbar" id="uniform-mobile-cartbar">
+  <span id="uniform-mobile-count">0 items</span>
+  <button id="uniform-mobile-add" type="button">ADD LOOK TO CART</button>
+  <span id="uniform-mobile-total" hidden>$0</span>
 </div>
 
+<div class="shop-drawer-overlay" id="shop-drawer-overlay"></div>
+<aside class="side-panel" id="favorites-panel" aria-hidden="true"><div class="side-panel-header"><p>Favorites</p><button class="side-panel-close" type="button" data-close-panel="favorites-panel">×</button></div><div class="side-panel-body" id="favorites-items"></div><div class="side-panel-empty" id="favorites-empty">No favorites yet.</div></aside>
+<aside class="side-panel" id="cart-panel" aria-hidden="true"><div class="side-panel-header"><p>Cart</p><button class="side-panel-close" type="button" data-close-panel="cart-panel">×</button></div><div class="side-panel-body" id="cart-panel-items"></div><div class="side-panel-empty" id="cart-panel-empty">Your cart is empty.</div><div class="side-panel-footer"><div class="side-panel-total"><span>Subtotal</span><span id="cart-panel-subtotal">$0</span></div><a href="cart.html" class="add-cart-btn panel-cart-link" data-checkout-link>View Cart</a></div></aside>
+<div id="site-footer"></div>
+</div>
 <script src="components.js?v=2"></script>
 <script src="script.js?v=15"></script>
-<script src="uniform.js?v=7"></script>
-</body>
-</html>
+<script src="uniform.js?v=8"></script>
+</body></html>
