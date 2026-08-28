@@ -13,6 +13,7 @@
   <link rel="stylesheet" href="admin-bulk.css?v=1" />
   <link rel="stylesheet" href="admin-bulk-edit.css?v=1" />
   <link rel="stylesheet" href="admin-v2.css?v=1" />
+  <link rel="stylesheet" href="admin-sort.css?v=1" />
 </head>
 <body>
   <div class="admin-login-screen" id="admin-login-screen">
@@ -111,6 +112,16 @@
               <option value="FULFILLED">Fulfilled</option>
               <option value="PARTIALLY_FULFILLED">Partial</option>
             </select>
+            <select class="admin-sort-select" data-sort-section="orders">
+              <option value="date-desc">Newest First</option>
+              <option value="date-asc">Oldest First</option>
+              <option value="total-desc">Highest Total</option>
+              <option value="total-asc">Lowest Total</option>
+              <option value="items-desc">Most Items</option>
+              <option value="items-asc">Fewest Items</option>
+              <option value="customer-asc">Customer A–Z</option>
+              <option value="customer-desc">Customer Z–A</option>
+            </select>
           </div>
           <div id="orders-summary" class="v2-summary-strip"></div>
           <div id="orders-list" class="v2-table-list"></div>
@@ -130,6 +141,16 @@
               <option value="REPEAT">Repeat customers</option>
               <option value="VIP">Spent $500+</option>
             </select>
+            <select class="admin-sort-select" data-sort-section="customers">
+              <option value="spend-desc">Highest Spend</option>
+              <option value="spend-asc">Lowest Spend</option>
+              <option value="orders-desc">Most Orders</option>
+              <option value="orders-asc">Fewest Orders</option>
+              <option value="date-desc">Newest Customer</option>
+              <option value="date-asc">Oldest Customer</option>
+              <option value="name-asc">Name A–Z</option>
+              <option value="name-desc">Name Z–A</option>
+            </select>
           </div>
           <div id="customers-list" class="v2-table-list"></div>
           <div class="admin-empty" id="customers-empty" hidden>No customers found.</div>
@@ -140,6 +161,17 @@
           <div class="admin-page-head">
             <div><p class="admin-kicker">Promotions</p><h1>Discounts</h1></div>
             <button class="admin-primary-link" id="new-discount-btn" type="button">+ Create Discount</button>
+          </div>
+          <div class="admin-toolbar v2-toolbar admin-sort-only">
+            <select class="admin-sort-select" data-sort-section="discounts">
+              <option value="start-desc">Newest First</option>
+              <option value="start-asc">Oldest First</option>
+              <option value="end-asc">Ending Soonest</option>
+              <option value="end-desc">Ending Latest</option>
+              <option value="status-asc">Status</option>
+              <option value="title-asc">Name A–Z</option>
+              <option value="title-desc">Name Z–A</option>
+            </select>
           </div>
           <div id="discount-create-panel" class="v2-create-panel" hidden>
             <div class="v2-panel-head"><div><p class="admin-kicker">New Code</p><h2>Percentage Discount</h2></div><button class="admin-text-btn" id="cancel-discount-btn" type="button">Cancel</button></div>
@@ -162,6 +194,17 @@
           <div class="admin-page-head">
             <div><p class="admin-kicker">Manual Sales</p><h1>Draft Orders</h1></div>
             <button class="admin-primary-link" id="new-draft-btn" type="button">+ New Draft Order</button>
+          </div>
+          <div class="admin-toolbar v2-toolbar admin-sort-only">
+            <select class="admin-sort-select" data-sort-section="drafts">
+              <option value="date-desc">Newest First</option>
+              <option value="date-asc">Oldest First</option>
+              <option value="total-desc">Highest Total</option>
+              <option value="total-asc">Lowest Total</option>
+              <option value="items-desc">Most Items</option>
+              <option value="items-asc">Fewest Items</option>
+              <option value="status-asc">Status</option>
+            </select>
           </div>
           <div id="draft-create-panel" class="v2-create-panel" hidden>
             <div class="v2-panel-head"><div><p class="admin-kicker">Create Order</p><h2>Customer + Items</h2></div><button class="admin-text-btn" id="cancel-draft-btn" type="button">Cancel</button></div>
@@ -186,6 +229,18 @@
             <div><p class="admin-kicker">Recovery</p><h1>Abandoned Checkouts</h1></div>
             <button class="admin-text-btn" id="abandoned-refresh-btn" type="button">Refresh</button>
           </div>
+          <div class="admin-toolbar v2-toolbar admin-sort-only">
+            <select class="admin-sort-select" data-sort-section="abandoned">
+              <option value="date-desc">Newest First</option>
+              <option value="date-asc">Oldest First</option>
+              <option value="total-desc">Highest Cart Value</option>
+              <option value="total-asc">Lowest Cart Value</option>
+              <option value="items-desc">Most Items</option>
+              <option value="items-asc">Fewest Items</option>
+              <option value="customer-asc">Customer A–Z</option>
+              <option value="status-asc">Recovery Status</option>
+            </select>
+          </div>
           <div id="abandoned-list" class="v2-table-list"></div>
           <div class="admin-empty" id="abandoned-empty" hidden>No abandoned checkouts found.</div>
         </section>
@@ -201,6 +256,15 @@
               <option value="ACTIVE">Live</option>
               <option value="DRAFT">Draft</option>
               <option value="ARCHIVED">Archived</option>
+            </select>
+            <select class="admin-sort-select" data-sort-section="products">
+              <option value="title-asc">Product A–Z</option>
+              <option value="title-desc">Product Z–A</option>
+              <option value="price-desc">Highest Price</option>
+              <option value="price-asc">Lowest Price</option>
+              <option value="stock-desc">Most Stock</option>
+              <option value="stock-asc">Lowest Stock</option>
+              <option value="status-asc">Status</option>
             </select>
           </div>
           <div class="admin-product-list" id="admin-product-list"></div>
@@ -353,6 +417,16 @@
 
         <section class="admin-view" id="view-archive" data-view-panel="archive">
           <div class="admin-page-head"><div><p class="admin-kicker">Retired</p><h1>Archive</h1></div></div>
+          <div class="admin-toolbar v2-toolbar admin-sort-only">
+            <select class="admin-sort-select" data-sort-section="archive">
+              <option value="title-asc">Product A–Z</option>
+              <option value="title-desc">Product Z–A</option>
+              <option value="price-desc">Highest Price</option>
+              <option value="price-asc">Lowest Price</option>
+              <option value="stock-desc">Most Stock</option>
+              <option value="stock-asc">Lowest Stock</option>
+            </select>
+          </div>
           <div class="admin-product-list" id="admin-archive-list"></div>
           <div class="admin-empty" id="archive-empty" hidden>No archived products.</div>
         </section>
@@ -375,5 +449,6 @@
   <script src="admin-image-optimizer.js?v=1"></script>
   <script src="admin-bulk-edit.js?v=1"></script>
   <script src="admin-v2.js?v=1"></script>
+  <script src="admin-sort.js?v=1"></script>
 </body>
 </html>

@@ -1,0 +1,38 @@
+
+/* LONGEVITY ADMIN — UNIVERSAL SORT CONTROLS */
+.admin-sort-select {
+  min-width: 170px;
+}
+.admin-sort-only {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 12px;
+}
+.admin-sort-only .admin-sort-select {
+  margin-left: auto;
+}
+@media (max-width: 900px) {
+  .v2-toolbar {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+  }
+  .v2-toolbar > input:first-child {
+    grid-column: 1 / -1;
+  }
+  .admin-sort-select {
+    width: 100%;
+    min-width: 0;
+  }
+  .admin-sort-only {
+    display: flex;
+  }
+}
+@media (max-width: 520px) {
+  .v2-toolbar {
+    grid-template-columns: 1fr;
+  }
+  .v2-toolbar > input:first-child {
+    grid-column: auto;
+  }
+}

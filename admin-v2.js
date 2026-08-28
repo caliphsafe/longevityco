@@ -16,6 +16,72 @@
   const safeMoney = (moneySet) => money(moneySet?.shopMoney?.amount ?? moneySet?.amount ?? 0);
   const text = (v) => escapeHtml(v ?? "");
 
+  const sortMode = (section, fallback) => document.querySelector(`[data-sort-section="${section}"]`)?.value || fallback;
+  const sortCopy = (items, compare) => [...items].sort(compare);
+  const alpha = v => String(v || "").toLowerCase();
+  const cmpAlpha = (a,b) => alpha(a).localeCompare(alpha(b), undefined, { numeric:true, sensitivity:"base" });
+  const ts = v => v ? (new Date(v).getTime() || 0) : 0;
+  const totalAmount = v => Number(v?.totalPriceSet?.shopMoney?.amount || 0);
+  const itemCount = v => (v?.lineItems?.nodes || []).reduce((s,i)=>s+Number(i.quantity||0),0);
+
+  function sortV2(section, items) {
+    const mode = sortMode(section, "");
+    return sortCopy(items, (a,b) => {
+      if (section === "orders") {
+        if (mode==="date-asc") return ts(a.createdAt)-ts(b.createdAt);
+        if (mode==="total-desc") return totalAmount(b)-totalAmount(a);
+        if (mode==="total-asc") return totalAmount(a)-totalAmount(b);
+        if (mode==="items-desc") return itemCount(b)-itemCount(a);
+        if (mode==="items-asc") return itemCount(a)-itemCount(b);
+        if (mode==="customer-asc") return cmpAlpha(customerName(a.customer,a.email),customerName(b.customer,b.email));
+        if (mode==="customer-desc") return cmpAlpha(customerName(b.customer,b.email),customerName(a.customer,a.email));
+        return ts(b.createdAt)-ts(a.createdAt);
+      }
+      if (section === "customers") {
+        if (mode==="spend-asc") return Number(a.amountSpent?.amount||0)-Number(b.amountSpent?.amount||0);
+        if (mode==="orders-desc") return Number(b.numberOfOrders||0)-Number(a.numberOfOrders||0);
+        if (mode==="orders-asc") return Number(a.numberOfOrders||0)-Number(b.numberOfOrders||0);
+        if (mode==="date-desc") return ts(b.createdAt)-ts(a.createdAt);
+        if (mode==="date-asc") return ts(a.createdAt)-ts(b.createdAt);
+        const an=[a.firstName,a.lastName].filter(Boolean).join(" ");
+        const bn=[b.firstName,b.lastName].filter(Boolean).join(" ");
+        if (mode==="name-asc") return cmpAlpha(an,bn);
+        if (mode==="name-desc") return cmpAlpha(bn,an);
+        return Number(b.amountSpent?.amount||0)-Number(a.amountSpent?.amount||0);
+      }
+      if (section === "discounts") {
+        if (mode==="start-asc") return ts(a.startsAt)-ts(b.startsAt);
+        if (mode==="end-asc") return (a.endsAt?ts(a.endsAt):Number.MAX_SAFE_INTEGER)-(b.endsAt?ts(b.endsAt):Number.MAX_SAFE_INTEGER);
+        if (mode==="end-desc") return ts(b.endsAt)-ts(a.endsAt);
+        if (mode==="status-asc") return cmpAlpha(a.status,b.status);
+        if (mode==="title-asc") return cmpAlpha(a.title,b.title);
+        if (mode==="title-desc") return cmpAlpha(b.title,a.title);
+        return ts(b.startsAt)-ts(a.startsAt);
+      }
+      if (section === "drafts") {
+        if (mode==="date-asc") return ts(a.createdAt)-ts(b.createdAt);
+        if (mode==="total-desc") return totalAmount(b)-totalAmount(a);
+        if (mode==="total-asc") return totalAmount(a)-totalAmount(b);
+        if (mode==="items-desc") return Number(b.totalQuantityOfLineItems||0)-Number(a.totalQuantityOfLineItems||0);
+        if (mode==="items-asc") return Number(a.totalQuantityOfLineItems||0)-Number(b.totalQuantityOfLineItems||0);
+        if (mode==="status-asc") return cmpAlpha(a.status,b.status);
+        return ts(b.createdAt)-ts(a.createdAt);
+      }
+      if (section === "abandoned") {
+        if (mode==="date-asc") return ts(a.createdAt)-ts(b.createdAt);
+        if (mode==="total-desc") return totalAmount(b)-totalAmount(a);
+        if (mode==="total-asc") return totalAmount(a)-totalAmount(b);
+        if (mode==="items-desc") return itemCount(b)-itemCount(a);
+        if (mode==="items-asc") return itemCount(a)-itemCount(b);
+        if (mode==="customer-asc") return cmpAlpha(customerName(a.customer,a.email),customerName(b.customer,b.email));
+        if (mode==="status-asc") return Number(!!a.completedAt)-Number(!!b.completedAt);
+        return ts(b.createdAt)-ts(a.createdAt);
+      }
+      return 0;
+    });
+  }
+
+
   document.addEventListener("DOMContentLoaded", () => {
     bindV2();
     setTimeout(() => loadDashboard(), 400);
@@ -47,6 +113,11 @@
     $("orders-status-filter")?.addEventListener("change", renderOrders);
     $("customers-search")?.addEventListener("input", renderCustomers);
     $("customers-filter")?.addEventListener("change", renderCustomers);
+    document.querySelector('[data-sort-section="orders"]')?.addEventListener("change", renderOrders);
+    document.querySelector('[data-sort-section="customers"]')?.addEventListener("change", renderCustomers);
+    document.querySelector('[data-sort-section="discounts"]')?.addEventListener("change", renderDiscounts);
+    document.querySelector('[data-sort-section="drafts"]')?.addEventListener("change", renderDraftOrders);
+    document.querySelector('[data-sort-section="abandoned"]')?.addEventListener("change", renderAbandoned);
 
     $("new-discount-btn")?.addEventListener("click", () => $("discount-create-panel").hidden = false);
     $("cancel-discount-btn")?.addEventListener("click", () => $("discount-create-panel").hidden = true);
@@ -137,10 +208,12 @@
   function renderOrders() {
     const q = ($("orders-search")?.value || "").toLowerCase().trim();
     const filter = $("orders-status-filter")?.value || "ALL";
-    const orders = V2.orders.filter(order => {
+    let orders = V2.orders.filter(order => {
       const hay = [order.name, order.email, order.customer?.firstName, order.customer?.lastName].join(" ").toLowerCase();
       return (!q || hay.includes(q)) && (filter === "ALL" || order.displayFulfillmentStatus === filter);
     });
+
+    orders = sortV2("orders", orders);
 
     const revenue = orders.reduce((sum, o) => sum + Number(o.totalPriceSet?.shopMoney?.amount || 0), 0);
     $("orders-summary").textContent = `${orders.length} ORDERS · ${money(revenue)} TOTAL`;
@@ -204,13 +277,15 @@
   function renderCustomers() {
     const q = ($("customers-search")?.value || "").toLowerCase().trim();
     const filter = $("customers-filter")?.value || "ALL";
-    const customers = V2.customers.filter(c => {
+    let customers = V2.customers.filter(c => {
       const spend = Number(c.amountSpent?.amount || 0);
       const orders = Number(c.numberOfOrders || 0);
       const hay = [c.firstName,c.lastName,c.defaultEmailAddress?.emailAddress,c.defaultPhoneNumber?.phoneNumber].join(" ").toLowerCase();
       const filterMatch = filter === "ALL" || (filter === "REPEAT" && orders > 1) || (filter === "VIP" && spend >= 500);
       return (!q || hay.includes(q)) && filterMatch;
     });
+
+    customers = sortV2("customers", customers);
 
     $("customers-empty").hidden = !!customers.length;
     $("customers-list").innerHTML = customers.map(c => `
@@ -256,8 +331,9 @@
   }
 
   function renderDiscounts() {
-    $("discounts-empty").hidden = !!V2.discounts.length;
-    $("discounts-list").innerHTML = V2.discounts.map(d => `
+    const discounts = sortV2("discounts", V2.discounts);
+    $("discounts-empty").hidden = !!discounts.length;
+    $("discounts-list").innerHTML = discounts.map(d => `
       <article class="v2-table-row">
         <div class="v2-main"><strong>${text(d.title || "Discount")}</strong><small>${text(d.code || d.type || "")}</small></div>
         <span class="v2-status ${d.status === "ACTIVE" ? "is-live" : ""}">${text(d.status || "—")}</span>
@@ -313,8 +389,9 @@
   }
 
   function renderDraftOrders() {
-    $("draft-orders-empty").hidden = !!V2.drafts.length;
-    $("draft-orders-list").innerHTML = V2.drafts.map(d => `
+    const drafts = sortV2("drafts", V2.drafts);
+    $("draft-orders-empty").hidden = !!drafts.length;
+    $("draft-orders-list").innerHTML = drafts.map(d => `
       <article class="v2-table-row">
         <div class="v2-main"><strong>${text(d.name)}</strong><small>${text(d.customer ? customerName(d.customer,d.email) : d.email || "No customer")} · ${fmtDateTime(d.createdAt)}</small></div>
         <span class="v2-status">${text(d.status)}</span>
@@ -396,8 +473,9 @@
   }
 
   function renderAbandoned() {
-    $("abandoned-empty").hidden = !!V2.abandoned.length;
-    $("abandoned-list").innerHTML = V2.abandoned.map(c => `
+    const abandoned = sortV2("abandoned", V2.abandoned);
+    $("abandoned-empty").hidden = !!abandoned.length;
+    $("abandoned-list").innerHTML = abandoned.map(c => `
       <article class="v2-table-row">
         <div class="v2-main"><strong>${text(c.customer ? customerName(c.customer,c.email) : c.email || "Unknown Customer")}</strong><small>${text(c.email || "")} · ${fmtDateTime(c.createdAt)}</small></div>
         <span>${Number(c.lineItems?.nodes?.reduce((s,i)=>s+Number(i.quantity||0),0) || 0)} items</span>
