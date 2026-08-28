@@ -61,6 +61,14 @@
     }
   }
 
+  function loadBulkEditStabilityFix() {
+    if (document.querySelector('script[src^="admin-bulk-edit-stability.js"]')) return;
+    const script = document.createElement("script");
+    script.src = "admin-bulk-edit-stability.js?v=1";
+    script.defer = true;
+    document.head.appendChild(script);
+  }
+
   document.addEventListener("DOMContentLoaded",()=>{
     addProductDateOptions();
 
@@ -81,6 +89,7 @@
     document.querySelector('[data-sort-section="inventory"]')?.addEventListener("change",()=>renderInventory());
     document.querySelector('[data-sort-section="archive"]')?.addEventListener("change",()=>renderArchive());
 
+    loadBulkEditStabilityFix();
     loadShopEditorAssets();
   });
 })();

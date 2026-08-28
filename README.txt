@@ -1,17 +1,24 @@
-LONGEVITY CO. — SHOP FLUSH STICKY MASK 43 BUILD
+LONGEVITY ADMIN — BULK EDIT OPEN FIX 43 BUILD
+
+ADD:
+- admin-bulk-edit-stability.js
 
 REPLACE:
-- shop.html
-- shop-editorial.js
-- shop-editorial.css
+- admin-sort.js
 
-CHANGE:
-- Keeps the current Shop layout and navigation exactly as-is.
-- Removes the space above the Shop navigation so it sits flush directly beneath the main site header.
-- Keeps the Shop navigation sticky beneath the main header.
-- Makes both the main header and Shop navigation opaque on the Shop page.
-- Product cards now scroll underneath both layers and disappear cleanly behind them instead of showing through.
-- Desktop and mobile behavior preserved.
-- No category/order/Shopify behavior changed.
+WHAT WAS WRONG:
+The Shop Editor integration has a MutationObserver that watches the Admin DOM.
+When selected products were placed into the Bulk Edit queue, the observer could
+continually call renderBulkProducts(). Each render changed the DOM, which
+triggered the observer again. The result is a render loop/freeze that makes it
+look like the Bulk Edit screen never opens.
 
-No API, Shopify, admin, database, or environment changes.
+FIX:
+- Adds a stability layer around renderBulkProducts().
+- The Bulk screen renders when the selected product data changes.
+- Repeated renders of the exact same state are ignored, breaking the loop.
+- Bulk Edit is forced to get one fresh render every time the button is clicked.
+- Existing Shop Editor categories, Bulk Upload, product selection, status tools,
+  Shopify data, and save behavior remain intact.
+
+No Shopify API, scopes, database, product data, or environment changes.
