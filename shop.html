@@ -4,40 +4,33 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Shop | Longevity Co.</title>
-  <meta
-    name="description"
-    content="Shop Longevity Co. featured pieces, hoodies, T-shirts, pants, shorts, headwear, and accessories."
-  />
+  <meta name="description" content="Shop Longevity Co. hoodies, T-shirts, pants, shorts, headwear, and accessories." />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link
-    href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
-    rel="stylesheet"
-  />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="style.css?v=12" />
-  <link rel="stylesheet" href="shop-editorial.css?v=1" />
+  <link rel="stylesheet" href="shop-editorial.css?v=2" />
 </head>
 <body>
   <div class="site-shell">
     <div id="site-header"></div>
 
-    <main class="editorial-shop">
-      <section class="editorial-shop-intro">
+    <main class="simple-category-shop">
+      <section class="simple-category-shop-section">
         <div class="container">
-          <div class="editorial-shop-intro-grid reveal-up">
-            <div>
-              <p class="shop-hero-kicker">Longevity Co.</p>
-              <h1>Shop</h1>
-            </div>
+          <div class="simple-shop-topbar">
+            <nav class="simple-category-menu" aria-label="Shop categories">
+              <button class="simple-category-button is-active" type="button" data-editorial-filter="all">All</button>
+              <button class="simple-category-button" type="button" data-editorial-filter="hoodies">Hoodies</button>
+              <button class="simple-category-button" type="button" data-editorial-filter="t-shirts">T-Shirts</button>
+              <button class="simple-category-button" type="button" data-editorial-filter="pants">Pants</button>
+              <button class="simple-category-button" type="button" data-editorial-filter="shorts">Shorts</button>
+              <button class="simple-category-button" type="button" data-editorial-filter="headwear">Headwear</button>
+              <button class="simple-category-button" type="button" data-editorial-filter="accessories">Accessories</button>
+            </nav>
 
-            <div class="editorial-shop-statement">
-              <p>
-                Built for the everyday rotation. Explore current pieces,
-                seasonal favorites, and the full Longevity collection.
-              </p>
-            </div>
-
-            <div class="editorial-shop-tools">
+            <div class="simple-shop-utilities">
+              <span class="shop-count" id="shop-count">0 Items</span>
               <button class="utility-pill" id="favorites-toggle-btn" type="button">
                 Favorites <span class="utility-count" data-favorites-count>0</span>
               </button>
@@ -46,47 +39,8 @@
               </button>
             </div>
           </div>
-        </div>
-      </section>
 
-      <section class="editorial-featured-section" id="shop-featured-section">
-        <div class="container">
-          <div class="editorial-section-head reveal-up">
-            <div>
-              <p class="editorial-index">01 / FEATURED</p>
-              <h2>Selected Pieces</h2>
-            </div>
-            <p class="editorial-section-note">Four pieces selected by Longevity.</p>
-          </div>
-
-          <div class="editorial-featured-grid" id="shop-featured-grid"></div>
-        </div>
-      </section>
-
-      <section class="editorial-catalog-section">
-        <div class="container">
-          <div class="editorial-section-head editorial-catalog-head reveal-up">
-            <div>
-              <p class="editorial-index">02 / COLLECTION</p>
-              <h2>All Items</h2>
-            </div>
-            <span class="shop-count" id="shop-count">0 Items</span>
-          </div>
-
-          <nav class="editorial-category-menu" aria-label="Shop categories">
-            <button class="editorial-category-button is-active" type="button" data-editorial-filter="all">All</button>
-            <button class="editorial-category-button" type="button" data-editorial-filter="hoodies">Hoodies</button>
-            <button class="editorial-category-button" type="button" data-editorial-filter="t-shirts">T-Shirts</button>
-            <button class="editorial-category-button" type="button" data-editorial-filter="pants">Pants</button>
-            <button class="editorial-category-button" type="button" data-editorial-filter="shorts">Shorts</button>
-            <button class="editorial-category-button" type="button" data-editorial-filter="headwear">Headwear</button>
-            <button class="editorial-category-button" type="button" data-editorial-filter="accessories">Accessories</button>
-          </nav>
-
-          <div id="editorial-catalog-sections"></div>
-
-          <!-- Kept for the existing storefront bootstrap; editorial JS owns the visible catalog. -->
-          <div class="product-grid shop-grid editorial-bootstrap-grid" id="shop-grid" aria-hidden="true"></div>
+          <div class="product-grid shop-grid simple-category-grid" id="shop-grid"></div>
         </div>
       </section>
     </main>
@@ -109,10 +63,8 @@
               <span>♡</span>
             </button>
           </div>
-
           <p class="shop-drawer-price" id="drawer-price"></p>
           <p class="shop-drawer-description" id="drawer-description"></p>
-
           <div class="drawer-size-wrap">
             <p class="drawer-label">Size</p>
             <div class="size-row drawer-size-row" data-size-group>
@@ -122,7 +74,6 @@
               <button class="size-chip" type="button" data-size="XL">XL</button>
             </div>
           </div>
-
           <a id="drawer-product-link" class="text-link" href="product.html">View Product</a>
           <div class="drawer-actions">
             <button class="add-cart-btn drawer-add-cart-btn" id="drawer-add-cart-btn" type="button">Add to Cart</button>
@@ -161,6 +112,6 @@
 
   <script src="components.js?v=1"></script>
   <script src="script.js?v=15"></script>
-  <script src="shop-editorial.js?v=1"></script>
+  <script src="shop-editorial.js?v=2"></script>
 </body>
 </html>
