@@ -19,6 +19,8 @@ export default async function handler(req, res) {
             productType
             vendor
             status
+            createdAt
+            updatedAt
             descriptionHtml
             featuredImage {
               url
