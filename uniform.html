@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Uniform | Longevity Co.</title>
+<meta name="description" content="Build a complete Longevity Co. uniform from headwear, tops, and bottoms.">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css?v=12"><link rel="stylesheet" href="uniform.css?v=1">
+</head>
+<body>
+<div class="site-shell"><div id="site-header"></div>
+<main class="uniform-page">
+<div class="container uniform-container">
+<header class="uniform-intro"><p>UNIFORM / OUTFIT BUILDER</p><h1>Build Your Uniform</h1><span>Select each piece from top to bottom.</span></header>
+
+<div class="uniform-builder" id="uniform-builder">
+<section class="uniform-slot" data-slot="headwear">
+<div class="uniform-slot-label"><span>01</span><strong>Headwear</strong></div>
+<button class="uniform-arrow prev" type="button" aria-label="Previous headwear">←</button>
+<div class="uniform-piece"><div class="uniform-image-stage"><img alt="" /></div><div class="uniform-piece-info"><strong></strong><span></span></div></div>
+<button class="uniform-arrow next" type="button" aria-label="Next headwear">→</button>
+<div class="uniform-dots"></div>
+</section>
+
+<section class="uniform-slot" data-slot="tops">
+<div class="uniform-slot-label"><span>02</span><strong>Top</strong></div>
+<button class="uniform-arrow prev" type="button" aria-label="Previous top">←</button>
+<div class="uniform-piece"><div class="uniform-image-stage"><img alt="" /></div><div class="uniform-piece-info"><strong></strong><span></span></div></div>
+<button class="uniform-arrow next" type="button" aria-label="Next top">→</button>
+<div class="uniform-dots"></div>
+</section>
+
+<section class="uniform-slot" data-slot="bottoms">
+<div class="uniform-slot-label"><span>03</span><strong>Bottom</strong></div>
+<button class="uniform-arrow prev" type="button" aria-label="Previous bottom">←</button>
+<div class="uniform-piece"><div class="uniform-image-stage"><img alt="" /></div><div class="uniform-piece-info"><strong></strong><span></span></div></div>
+<button class="uniform-arrow next" type="button" aria-label="Next bottom">→</button>
+<div class="uniform-dots"></div>
+</section>
+</div>
+
+<aside class="uniform-summary">
+<div><p>YOUR UNIFORM</p><strong id="uniform-total">$0.00</strong></div>
+<div id="uniform-selected-list"></div>
+<div class="uniform-summary-actions"><button id="uniform-add-all" class="add-cart-btn" type="button">Add Uniform to Cart</button><a href="shop.html">Shop All</a></div>
+</aside>
+</div>
+</main>
+<div id="site-footer"></div></div>
+<script src="components.js?v=2"></script><script src="script.js?v=15"></script><script src="uniform.js?v=1"></script>
+</body></html>

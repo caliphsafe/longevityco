@@ -1,20 +1,28 @@
-LONGEVITY CO. — STICKY SHOP NAV 43 BUILD
+LONGEVITY CO. — UNIFORM OUTFIT BUILDER 43 BUILD
 
-REPLACE ONLY:
-- shop.html
-- shop-editorial.js
-- shop-editorial.css
+ADD:
+- uniform.html
+- uniform.css
+- uniform.js
 
-CHANGES:
-- Product navigation is now the first element at the top of the Shop.
-- Featured is the first navigation selection and the default view.
-- Navigation stays visible while scrolling.
-- Featured shows the 4 admin-selected featured products.
-- All shows Featured followed by all category sections.
-- Category selections show that product category.
-- Category order remains Hoodies, T-Shirts, Pants, Shorts, Headwear, Accessories.
-- Desktop remains 4 products per row.
-- Mobile remains 2 products per row.
-- Mobile navigation scrolls horizontally with touch-friendly buttons.
-- Sticky navigation, product grids, Featured, filters, cart and favorites are mobile-aware.
-- Shop Editor/admin functionality remains unchanged.
+REPLACE:
+- components.js
+
+FEATURES:
+- Adds Uniform to the global header navigation and footer.
+- New visual outfit builder arranged vertically:
+  01 Headwear
+  02 Top
+  03 Bottom
+- Products automatically populate from the existing Shopify shop-all collection and current product categories.
+- Tops include T-Shirts and Hoodies.
+- Bottoms include Pants and Shorts.
+- Arrow controls cycle through available products while keeping the full outfit visible top-to-bottom.
+- Product name and price update with each selection.
+- Outfit summary shows selected pieces and combined price.
+- Add Uniform to Cart adds the selected headwear, top and bottom using available Shopify variants.
+- Responsive mobile layout with touch-sized controls and contained product imagery.
+- No new API, database, Shopify scope or environment variable is required.
+
+NOTE:
+This build assumes the category/productType system from the Shop Editor build is already deployed.
