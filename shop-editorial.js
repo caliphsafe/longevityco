@@ -1,78 +1,92 @@
-/*
-  LONGEVITY CO. — SIMPLE SHOP CATEGORY FILTERS
-  Keeps the original single product grid and adds Shopify-backed categories.
-*/
 (() => {
-  let activeFilter = "all";
+  const ORDER = [["hoodies","Hoodies"],["t-shirts","T-Shirts"],["pants","Pants"],["shorts","Shorts"],["headwear","Headwear"],["accessories","Accessories"]];
+  let active="all", rendered=false;
+  const clean=v=>String(v||"").trim().toLowerCase().replace(/[_/]+/g," ").replace(/\s+/g," ");
 
-  function clean(value) {
-    return String(value || "").trim().toLowerCase().replace(/[_/]+/g, " ").replace(/\s+/g, " ");
-  }
-
-  function categoryFor(product) {
-    const raw = clean(product?.category || product?.raw?.productType);
-    if (["hoodie","hoodies","sweatshirt","sweatshirts"].includes(raw)) return "hoodies";
-    if (["t-shirt","t-shirts","t shirt","t shirts","tee","tees","shirt","shirts"].includes(raw)) return "t-shirts";
-    if (["pant","pants","trouser","trousers","jogger","joggers"].includes(raw)) return "pants";
-    if (["short","shorts"].includes(raw)) return "shorts";
-    if (["headwear","hat","hats","cap","caps","beanie","beanies"].includes(raw)) return "headwear";
-    if (["accessory","accessories"].includes(raw)) return "accessories";
-
-    const clue = clean([product?.name, product?.raw?.title, product?.raw?.productType].filter(Boolean).join(" "));
-    if (/(hoodie|hooded|sweatshirt|pullover)/.test(clue)) return "hoodies";
-    if (/(t[\s-]?shirt|tee\b|shirt\b|long[\s-]?sleeve|jersey)/.test(clue)) return "t-shirts";
-    if (/(sweatpant|jogger|trouser|jean|pants?\b)/.test(clue)) return "pants";
-    if (/(shorts?\b)/.test(clue)) return "shorts";
-    if (/(hat\b|cap\b|beanie|headwear|snapback)/.test(clue)) return "headwear";
+  function categoryFor(p){
+    const raw=clean(p?.category||p?.raw?.productType);
+    if(["hoodie","hoodies","sweatshirt","sweatshirts"].includes(raw)) return "hoodies";
+    if(["t-shirt","t-shirts","t shirt","t shirts","tee","tees","shirt","shirts"].includes(raw)) return "t-shirts";
+    if(["pant","pants","trouser","trousers","jogger","joggers"].includes(raw)) return "pants";
+    if(["short","shorts"].includes(raw)) return "shorts";
+    if(["headwear","hat","hats","cap","caps","beanie","beanies"].includes(raw)) return "headwear";
+    if(["accessory","accessories"].includes(raw)) return "accessories";
+    const clue=clean([p?.name,p?.raw?.title,p?.raw?.productType].filter(Boolean).join(" "));
+    if(/(hoodie|hooded|sweatshirt|pullover)/.test(clue)) return "hoodies";
+    if(/(t[\s-]?shirt|tee\b|shirt\b|long[\s-]?sleeve|jersey)/.test(clue)) return "t-shirts";
+    if(/(sweatpant|jogger|trouser|jean|pants?\b)/.test(clue)) return "pants";
+    if(/(shorts?\b)/.test(clue)) return "shorts";
+    if(/(hat\b|cap\b|beanie|headwear|snapback)/.test(clue)) return "headwear";
     return "accessories";
   }
 
-  function applyFilter() {
-    const cards = [...document.querySelectorAll("#shop-grid .shop-product-card")];
-    let visible = 0;
-
-    cards.forEach(card => {
-      const handle = card.dataset.productHandle;
-      const product = Array.isArray(SHOP_PRODUCTS) ? SHOP_PRODUCTS.find(item => item.handle === handle) : null;
-      const show = activeFilter === "all" || (product && categoryFor(product) === activeFilter);
-      card.hidden = !show;
-      if (show) visible++;
-    });
-
-    const count = document.getElementById("shop-count");
-    if (count) count.textContent = `${visible} Item${visible === 1 ? "" : "s"}`;
-
-    document.querySelectorAll("[data-editorial-filter]").forEach(button => {
-      button.classList.toggle("is-active", button.dataset.editorialFilter === activeFilter);
-    });
+  function slot(p){
+    for(const tag of (p?.raw?.tags||[])){ const m=String(tag).match(/^LC_FEATURED:([1-4])$/i); if(m) return Number(m[1]); }
+    return 0;
   }
 
-  function bind() {
-    document.querySelectorAll("[data-editorial-filter]").forEach(button => {
-      button.addEventListener("click", () => {
-        activeFilter = button.dataset.editorialFilter || "all";
-        applyFilter();
-      });
-    });
-
-    const grid = document.getElementById("shop-grid");
-    if (grid) {
-      new MutationObserver(() => requestAnimationFrame(applyFilter))
-        .observe(grid, { childList: true });
-    }
-
-    let attempts = 0;
-    const timer = setInterval(() => {
-      attempts++;
-      if (document.querySelector("#shop-grid .shop-product-card")) {
-        clearInterval(timer);
-        applyFilter();
-      } else if (attempts > 100) {
-        clearInterval(timer);
-      }
-    }, 100);
+  function card(p,i=0){
+    const reveal=i%3===0?"reveal-left":i%3===1?"reveal-up":"reveal-right";
+    return `<article class="product-card shop-product-card ${reveal}"
+      data-product-handle="${escapeHtml(p.handle)}" data-product-name="${escapeHtml(p.name)}"
+      data-product-price="${escapeHtml(p.price)}" data-product-image="${escapeHtml(p.image)}"
+      data-product-second-image="${escapeHtml(p.secondImage||"")}" data-product-description="${escapeHtml(p.description)}"
+      data-product-category="${escapeHtml(p.category)}" data-variants='${escapeHtml(JSON.stringify(p.variants))}'>
+      <button class="favorite-btn" type="button" aria-label="Add to favorites"><span>${isFavorite(p.handle)?"♥":"♡"}</span></button>
+      <a class="product-image-link" href="product.html?handle=${encodeURIComponent(p.handle)}" aria-label="View ${escapeHtml(p.name)} product page">
+        <div class="product-image-wrap"><img class="product-image-primary" src="${escapeHtml(p.image)}" alt="${escapeHtml(p.imageAlt||p.name)}" />
+        ${p.secondImage?`<img class="product-image-secondary" src="${escapeHtml(p.secondImage)}" alt="${escapeHtml(p.name)} alternate image" />`:""}</div>
+      </a>
+      <div class="product-meta"><div><button class="product-title product-title-trigger" type="button">${escapeHtml(p.name)}</button><p class="product-sub">${escapeHtml(p.price)}</p></div></div>
+      <div class="product-actions"><div class="size-row" data-size-group>${buildSizeOptions(p)}</div><button class="add-cart-btn" type="button">Add to Cart</button></div>
+    </article>`;
   }
 
-  if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", bind);
-  else bind();
+  function activate(scope){ initSizeChips(scope); initShopInteractions(); syncFavoriteButtons(); initRevealAnimations(); }
+
+  function featured(){
+    const tagged=SHOP_PRODUCTS.filter(slot).sort((a,b)=>slot(a)-slot(b)).slice(0,4);
+    return tagged.length?tagged:SHOP_PRODUCTS.slice(0,4);
+  }
+
+  function renderFeatured(){
+    const wrap=document.getElementById("shop-featured-grid"), section=document.getElementById("shop-featured-section");
+    if(!wrap||!section)return;
+    const items=featured();
+    section.hidden=!items.length;
+    wrap.innerHTML=items.map(card).join("");
+    const count=document.getElementById("featured-count"); if(count) count.textContent=`${items.length} / 4`;
+    activate(wrap);
+  }
+
+  function renderCatalog(){
+    const host=document.getElementById("categorized-shop-sections"); if(!host)return;
+    const featuredHandles=new Set(featured().map(p=>p.handle));
+    const catalog=SHOP_PRODUCTS.filter(p=>!featuredHandles.has(p.handle));
+    const visible=active==="all"?catalog:catalog.filter(p=>categoryFor(p)===active);
+    const count=document.getElementById("shop-count"); if(count) count.textContent=`${visible.length} Item${visible.length===1?"":"s"}`;
+    document.querySelectorAll("[data-editorial-filter]").forEach(b=>b.classList.toggle("is-active",b.dataset.editorialFilter===active));
+
+    const sections=(active==="all"?ORDER:ORDER.filter(([key])=>key===active)).map(([key,label])=>{
+      const items=catalog.filter(p=>categoryFor(p)===key);
+      if(!items.length)return "";
+      return `<section class="simple-product-section"><div class="simple-section-heading"><span>${escapeHtml(label)}</span><span>${items.length}</span></div>
+        <div class="product-grid shop-grid simple-category-grid">${items.map(card).join("")}</div></section>`;
+    }).join("");
+    host.innerHTML=sections || `<div class="simple-empty-category">No items in this category.</div>`;
+    activate(host);
+  }
+
+  function render(){
+    if(!Array.isArray(SHOP_PRODUCTS)||!SHOP_PRODUCTS.length)return;
+    const bootstrap=document.getElementById("shop-grid"); if(bootstrap){bootstrap.innerHTML="";bootstrap.classList.add("shop-bootstrap-grid");}
+    renderFeatured(); renderCatalog(); rendered=true;
+  }
+
+  function boot(){
+    document.querySelectorAll("[data-editorial-filter]").forEach(b=>b.addEventListener("click",()=>{active=b.dataset.editorialFilter||"all";renderCatalog();}));
+    let tries=0; const timer=setInterval(()=>{tries++; if(Array.isArray(SHOP_PRODUCTS)&&SHOP_PRODUCTS.length){clearInterval(timer);setTimeout(render,50);} else if(tries>100)clearInterval(timer);},100);
+    const grid=document.getElementById("shop-grid"); if(grid)new MutationObserver(()=>{if(rendered&&grid.children.length){grid.innerHTML="";}}).observe(grid,{childList:true});
+  }
+  if(document.readyState==="loading")document.addEventListener("DOMContentLoaded",boot);else boot();
 })();

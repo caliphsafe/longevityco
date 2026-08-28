@@ -4,20 +4,27 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Shop | Longevity Co.</title>
-  <meta name="description" content="Shop Longevity Co. hoodies, T-shirts, pants, shorts, headwear, and accessories." />
+  <meta name="description" content="Shop Longevity Co. featured pieces, hoodies, T-shirts, pants, shorts, headwear, and accessories." />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="style.css?v=12" />
-  <link rel="stylesheet" href="shop-editorial.css?v=2" />
+  <link rel="stylesheet" href="shop-editorial.css?v=3" />
 </head>
 <body>
   <div class="site-shell">
     <div id="site-header"></div>
-
     <main class="simple-category-shop">
       <section class="simple-category-shop-section">
         <div class="container">
+          <section class="simple-featured-section" id="shop-featured-section">
+            <div class="simple-section-heading">
+              <span>Featured</span>
+              <span id="featured-count"></span>
+            </div>
+            <div class="product-grid shop-grid simple-featured-grid" id="shop-featured-grid"></div>
+          </section>
+
           <div class="simple-shop-topbar">
             <nav class="simple-category-menu" aria-label="Shop categories">
               <button class="simple-category-button is-active" type="button" data-editorial-filter="all">All</button>
@@ -28,40 +35,28 @@
               <button class="simple-category-button" type="button" data-editorial-filter="headwear">Headwear</button>
               <button class="simple-category-button" type="button" data-editorial-filter="accessories">Accessories</button>
             </nav>
-
             <div class="simple-shop-utilities">
               <span class="shop-count" id="shop-count">0 Items</span>
-              <button class="utility-pill" id="favorites-toggle-btn" type="button">
-                Favorites <span class="utility-count" data-favorites-count>0</span>
-              </button>
-              <button class="utility-pill" id="cart-toggle-btn" type="button">
-                Cart <span class="utility-count" data-cart-count>0</span>
-              </button>
+              <button class="utility-pill" id="favorites-toggle-btn" type="button">Favorites <span class="utility-count" data-favorites-count>0</span></button>
+              <button class="utility-pill" id="cart-toggle-btn" type="button">Cart <span class="utility-count" data-cart-count>0</span></button>
             </div>
           </div>
 
-          <div class="product-grid shop-grid simple-category-grid" id="shop-grid"></div>
+          <div id="categorized-shop-sections"></div>
+          <div class="product-grid shop-grid simple-category-grid shop-bootstrap-grid" id="shop-grid" aria-hidden="true"></div>
         </div>
       </section>
     </main>
 
     <div class="shop-drawer-overlay" id="shop-drawer-overlay"></div>
-
     <aside class="shop-drawer" id="shop-drawer" aria-hidden="true">
       <button class="shop-drawer-close" id="shop-drawer-close" type="button" aria-label="Close quick view">×</button>
       <div class="shop-drawer-inner">
-        <div class="shop-drawer-media">
-          <img id="drawer-image" src="" alt="" />
-        </div>
+        <div class="shop-drawer-media"><img id="drawer-image" src="" alt="" /></div>
         <div class="shop-drawer-content">
           <div class="shop-drawer-top">
-            <div>
-              <p class="shop-drawer-kicker">Product</p>
-              <h2 id="drawer-title"></h2>
-            </div>
-            <button class="favorite-btn drawer-favorite-btn" id="drawer-favorite-btn" type="button" aria-label="Add to favorites">
-              <span>♡</span>
-            </button>
+            <div><p class="shop-drawer-kicker">Product</p><h2 id="drawer-title"></h2></div>
+            <button class="favorite-btn drawer-favorite-btn" id="drawer-favorite-btn" type="button" aria-label="Add to favorites"><span>♡</span></button>
           </div>
           <p class="shop-drawer-price" id="drawer-price"></p>
           <p class="shop-drawer-description" id="drawer-description"></p>
@@ -75,43 +70,30 @@
             </div>
           </div>
           <a id="drawer-product-link" class="text-link" href="product.html">View Product</a>
-          <div class="drawer-actions">
-            <button class="add-cart-btn drawer-add-cart-btn" id="drawer-add-cart-btn" type="button">Add to Cart</button>
-          </div>
+          <div class="drawer-actions"><button class="add-cart-btn drawer-add-cart-btn" id="drawer-add-cart-btn" type="button">Add to Cart</button></div>
         </div>
       </div>
     </aside>
 
     <aside class="side-panel" id="favorites-panel" aria-hidden="true">
-      <div class="side-panel-header">
-        <p>Favorites</p>
-        <button class="side-panel-close" type="button" data-close-panel="favorites-panel">×</button>
-      </div>
+      <div class="side-panel-header"><p>Favorites</p><button class="side-panel-close" type="button" data-close-panel="favorites-panel">×</button></div>
       <div class="side-panel-body" id="favorites-items"></div>
       <div class="side-panel-empty" id="favorites-empty">No favorites yet.</div>
     </aside>
 
     <aside class="side-panel" id="cart-panel" aria-hidden="true">
-      <div class="side-panel-header">
-        <p>Cart</p>
-        <button class="side-panel-close" type="button" data-close-panel="cart-panel">×</button>
-      </div>
+      <div class="side-panel-header"><p>Cart</p><button class="side-panel-close" type="button" data-close-panel="cart-panel">×</button></div>
       <div class="side-panel-body" id="cart-panel-items"></div>
       <div class="side-panel-empty" id="cart-panel-empty">Your cart is empty.</div>
       <div class="side-panel-footer">
-        <div class="side-panel-total">
-          <span>Subtotal</span>
-          <span id="cart-panel-subtotal">$0</span>
-        </div>
+        <div class="side-panel-total"><span>Subtotal</span><span id="cart-panel-subtotal">$0</span></div>
         <a href="cart.html" class="add-cart-btn panel-cart-link" data-checkout-link>View Cart</a>
       </div>
     </aside>
-
     <div id="site-footer"></div>
   </div>
-
   <script src="components.js?v=1"></script>
   <script src="script.js?v=15"></script>
-  <script src="shop-editorial.js?v=2"></script>
+  <script src="shop-editorial.js?v=3"></script>
 </body>
 </html>
