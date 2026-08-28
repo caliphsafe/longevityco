@@ -1,4 +1,4 @@
-LONGEVITY CO. — UNIFORM FULL-VIEW EXPERIENCE 43 BUILD
+LONGEVITY CO. — UNIFORM RESTORE + COMPACT HEADER 43 BUILD
 
 REPLACE:
 - uniform.html
@@ -6,14 +6,12 @@ REPLACE:
 - uniform.css
 
 CHANGES:
-- Significantly reduced the Uniform page intro/header footprint.
-- Rebalanced the page around the outfit builder instead of the title.
-- Headwear, Top, and Bottom are vertically compressed so the complete outfit can be seen together.
-- Product images remain large enough to be the visual focus.
-- Summary area is condensed.
-- Desktop/laptop viewport-height rules keep the full experience visible on common screens.
-- Mobile has its own compact layout designed to show all three outfit zones without requiring normal page scrolling.
-- On very short phones, secondary intro copy is automatically removed to preserve space for the outfit.
-- Existing Shopify product/category/cart logic is unchanged.
+- Restores the Uniform outfit experience to the previous larger version.
+- Restores the previous garment image sizes, spacing, controls, outfit stack, summary, and overall experience.
+- Keeps ONLY the smaller intro/header treatment from the most recent version:
+  UNIFORM / OUTFIT BUILDER
+  Build Your Uniform
+  Select each piece from top to bottom.
+- Mobile also keeps the smaller intro/header while restoring the larger outfit experience.
 
-No API, Shopify, admin, database, or environment changes.
+No Shopify, API, admin, database, or environment changes.
