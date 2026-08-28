@@ -14,8 +14,16 @@ function mainCarousel(c){let s=state[c].selections[0],p=prod(c,s);if(!p)return""
 function layers(c){return `<div class="uniform-layer-grid">${state[c].selections.map((s,i)=>{let p=prod(c,s);return `<div class="uniform-layer-card"><img src="${esc(p.image)}" alt="${esc(p.title)}"><span>${esc(p.title)}</span>${i?`<button class="uniform-layer-remove" data-remove="${c}" data-index="${i}">REMOVE</button>`:""}</div>`}).join("")}</div>`}
 function render(c){
  let w=document.getElementById(`uniform-${c}-list`);if(!w)return;
- if(c==="headwear"&&state.headwear.none)w.innerHTML=`<div class="uniform-none-state"><div><strong>NO HEADWEAR</strong><small>Top + bottom look</small></div></div>`;
- else w.innerHTML=mainCarousel(c);
+ if(c==="headwear"){
+   const slot=w.closest(".uniform-look-slot"),canvas=w.closest(".uniform-canvas");
+   if(slot)slot.classList.toggle("is-none",state.headwear.none);
+   if(canvas)canvas.classList.toggle("headwear-off",state.headwear.none);
+ }
+ if(c==="headwear"&&state.headwear.none){
+   w.innerHTML=`<div class="uniform-none-state"><div><strong>NO HEADWEAR</strong><small>Top + bottom look</small></div></div>`;
+ }else{
+   w.innerHTML=mainCarousel(c);
+ }
  w.querySelectorAll("[data-change]").forEach(b=>b.onclick=()=>change(b.dataset.change,+b.dataset.dir));
 }
 function picks(){let r=[];["headwear","tops","bottoms"].forEach(c=>{if(c==="headwear"&&state.headwear.none)return;state[c].selections.forEach(s=>{let p=prod(c,s),v=vari(c,s);if(p&&v)r.push({c,s,p,v})})});return r}
@@ -26,7 +34,20 @@ function openSizes(){let body=document.getElementById("uniform-size-sheet-body")
 function closeSizes(){document.getElementById("uniform-size-overlay").classList.remove("is-open");document.getElementById("uniform-size-sheet").classList.remove("is-open");document.getElementById("uniform-size-overlay").setAttribute("aria-hidden","true");document.getElementById("uniform-size-sheet").setAttribute("aria-hidden","true")}
 function lines(){let m=new Map;picks().forEach(x=>m.set(x.v.id,(m.get(x.v.id)||0)+1));return [...m].map(([merchandiseId,quantity])=>({merchandiseId,quantity}))}
 async function buy(){let btn=document.getElementById("uniform-confirm-cart");btn.disabled=true;try{let cart=await ensureShopifyCart(),res=await apiPostJson("/api/shopify-cart-lines-add",{cartId:cart.id,lines:lines()}),u=res?.cart;if(u?.id)setShopifyCartId(u.id);updateCartCountUI(u?.totalQuantity||0);renderCartPanel(u);closeSizes();openPanel("cart-panel")}catch(e){console.error(e);document.getElementById("uniform-cart-message").textContent="Unable to add look. Please try again."}finally{btn.disabled=false}}
-function swipe(){document.querySelectorAll(".uniform-carousel").forEach(w=>{let x=0;w.ontouchstart=e=>x=e.touches[0].clientX;w.ontouchend=e=>{let d=e.changedTouches[0].clientX-x;if(Math.abs(d)>40){let c=w.id.replace("uniform-","").replace("-list","");change(c,d<0?1:-1)}}})}
+function swipe(){
+ document.querySelectorAll(".uniform-carousel").forEach(w=>{
+   let x=0,y=0;
+   w.ontouchstart=e=>{x=e.touches[0].clientX;y=e.touches[0].clientY};
+   w.ontouchend=e=>{
+     const d=e.changedTouches[0].clientX-x;
+     const dy=e.changedTouches[0].clientY-y;
+     if(Math.abs(d)>30&&Math.abs(d)>Math.abs(dy)){
+       const c=w.id.replace("uniform-","").replace("-list","");
+       change(c,d<0?1:-1);
+     }
+   };
+ });
+}
 function bind(){document.getElementById("uniform-headwear-none").onclick=none;document.getElementById("uniform-pick-for-me").onclick=random;document.getElementById("uniform-add-all").onclick=openSizes;document.getElementById("uniform-mobile-add").onclick=openSizes;document.getElementById("uniform-size-close").onclick=closeSizes;document.getElementById("uniform-size-overlay").onclick=closeSizes;document.getElementById("uniform-confirm-cart").onclick=buy}
 async function boot(){bind();try{let r=await fetch("/api/shopify-products?collection=shop-all"),d=await r.json();(d.products||d||[]).map(norm).forEach(p=>{let c=cat(p);if(c)state[c].items.push(p)});ensure();["headwear","tops","bottoms"].forEach(render);summary();swipe()}catch(e){console.error(e)}}
 document.addEventListener("DOMContentLoaded",boot);

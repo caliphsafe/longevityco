@@ -78,3 +78,108 @@
 .uniform-layer-remove{
   display:none !important;
 }
+
+
+/* =========================================================
+   V9.3 — OUTFIT STACK
+   Main garments dominate; side peeks stay small and subtle.
+   Mobile remains full-screen and swipe-first.
+   ========================================================= */
+
+.uniform-current-name{display:none!important}
+
+.uniform-track{gap:0!important}
+
+.uniform-current{width:68%!important}
+
+.uniform-peek{
+  width:16%!important;
+  opacity:.18!important;
+  transform:scale(.68);
+  transition:opacity .2s ease,transform .2s ease;
+}
+.uniform-peek:hover{
+  opacity:.42!important;
+  transform:scale(.74);
+}
+.uniform-peek img{
+  max-width:170%!important;
+  max-height:68%!important;
+}
+.uniform-current img{
+  max-width:100%!important;
+  max-height:98%!important;
+}
+.uniform-peek:after{opacity:.5}
+
+.uniform-look-slot[data-category="headwear"].is-none{
+  min-height:46px!important;
+  height:46px!important;
+  padding-top:18px!important;
+}
+.uniform-look-slot[data-category="headwear"].is-none .uniform-carousel{
+  height:22px!important;
+}
+.uniform-look-slot[data-category="headwear"].is-none .uniform-none-state{
+  height:22px!important;
+  min-height:0!important;
+}
+.uniform-look-slot[data-category="headwear"].is-none .uniform-none-state strong{
+  font-size:7px!important;
+  opacity:.45;
+}
+.uniform-look-slot[data-category="headwear"].is-none .uniform-none-state small{
+  display:none!important;
+}
+
+@media(min-width:701px){
+  .uniform-look-slot{min-height:202px!important}
+  .uniform-carousel{height:181px!important}
+  .uniform-current img{max-height:100%!important}
+}
+
+@media(max-width:700px){
+  .uniform-canvas{
+    grid-template-rows:.78fr 1.12fr 1.10fr!important;
+  }
+  .uniform-look-slot{
+    padding-top:13px!important;
+  }
+  .uniform-current{
+    width:72%!important;
+  }
+  .uniform-peek{
+    width:14%!important;
+    transform:scale(.60);
+    opacity:.16!important;
+  }
+  .uniform-peek:hover{
+    transform:scale(.60);
+    opacity:.16!important;
+  }
+  .uniform-peek img{
+    max-width:200%!important;
+    max-height:62%!important;
+  }
+  .uniform-current img{
+    max-width:100%!important;
+    max-height:100%!important;
+  }
+  .uniform-peek:after{
+    display:none!important;
+  }
+  .uniform-look-slot[data-category="headwear"].is-none{
+    min-height:34px!important;
+    height:34px!important;
+    padding-top:13px!important;
+  }
+  .uniform-look-slot[data-category="headwear"].is-none .uniform-carousel{
+    height:18px!important;
+  }
+  .uniform-look-slot[data-category="headwear"].is-none .uniform-none-state{
+    height:18px!important;
+  }
+  .uniform-canvas.headwear-off{
+    grid-template-rows:34px 1fr 1fr!important;
+  }
+}
