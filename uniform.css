@@ -598,3 +598,55 @@
     transition:none!important;
   }
 }
+
+
+/* =========================================================
+   V10.3 — MOBILE SWIPE BUFFER
+   Keeps the next off-screen product rendered while dragging.
+   ========================================================= */
+.uniform-track{position:relative}
+
+.uniform-swipe-buffer{
+  display:none;
+}
+
+@media(max-width:700px){
+  .uniform-swipe-buffer{
+    display:flex;
+    position:absolute;
+    top:0;
+    bottom:0;
+    width:14%;
+    align-items:center;
+    justify-content:center;
+    opacity:.12;
+    filter:grayscale(.15);
+    transform:scale(.56);
+    pointer-events:none;
+    z-index:0;
+  }
+
+  .uniform-swipe-buffer.far-prev{
+    left:-14%;
+  }
+
+  .uniform-swipe-buffer.far-next{
+    right:-14%;
+  }
+
+  .uniform-swipe-buffer img{
+    max-width:205%;
+    max-height:60%;
+    object-fit:contain;
+  }
+
+  .uniform-peek,
+  .uniform-current{
+    z-index:2;
+  }
+
+  /* allow a slightly longer controlled drag without revealing blank space */
+  .uniform-carousel.is-dragging .uniform-track{
+    overflow:visible;
+  }
+}
