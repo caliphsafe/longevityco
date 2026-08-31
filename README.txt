@@ -1,27 +1,22 @@
-LONGEVITY CO. — UNIFORM INTELLIGENCE V10 — 43 BUILD
+LONGEVITY CO. — UNIFORM MOBILE SWIPE ANIMATION V10.1 — 43 BUILD
 
 REPLACE ONLY:
 - uniform.html
 - uniform.css
 - uniform.js
 
-WHAT'S NEW
-- Cart-aware Uniform: exact selected variants already in Shopify cart show IN CART.
-- Consolidated duplicate confirmation before adding a look.
-- Choice: ADD NEW ITEMS ONLY or ADD DUPLICATES + NEW ITEMS.
-- Cart quantities shown in duplicate confirmation.
-- Existing View Cart remains and now refreshes cart-aware badges.
-- Persistent unfinished look across refresh/navigation using localStorage.
-- Persistent size memory by garment category.
-- Size preference carries to newly toggled products.
-- If preferred size is unavailable: nearest smaller available size first, then nearest larger.
-- Supports common XXL/2XL aliases and numeric sizes.
-- Sold-out products are excluded from the Uniform browsing pool.
-- Product changes skip products without purchasable variants.
-- Pick For Me remains random.
-- Pick For Me does NOT use compatibility/styling logic.
-- Pick For Me retries so it does not simply return the exact same look repeatedly.
-- No admin/API/Shop files changed.
+WHAT CHANGED
+- Mobile swiping now follows the user's finger in real time.
+- The current product physically slides left/right while dragging.
+- Releasing past the swipe threshold animates the old item out.
+- The next/previous product animates into the center from the opposite side.
+- Short/incomplete swipes spring the current product back into place.
+- Vertical page gestures are not hijacked.
+- Existing faded side-product previews remain.
+- Desktop behavior is unchanged.
+- All V10 cart awareness, duplicate confirmation, look memory, size memory, sold-out protection, and Pick For Me behavior remain intact.
+- Reduced-motion accessibility is respected.
 
-IMPORTANT
-This intentionally holds off on smart styling/compatibility for Pick For Me, per request.
+CACHE
+- uniform.css?v=10.1
+- uniform.js?v=10.1

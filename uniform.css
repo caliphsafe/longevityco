@@ -484,3 +484,57 @@
   .uniform-confirm.is-open{transform:none}
   .uniform-confirm h2{font-size:19px}
 }
+
+
+/* =========================================================
+   V10.1 — MOBILE LIVE SWIPE ANIMATION
+   ========================================================= */
+@media(max-width:700px){
+  .uniform-carousel{
+    overflow:hidden!important;
+  }
+
+  .uniform-track{
+    will-change:transform;
+    transition:transform .26s cubic-bezier(.22,.72,.2,1), opacity .18s ease;
+  }
+
+  .uniform-carousel.is-dragging .uniform-track{
+    transition:none!important;
+  }
+
+  .uniform-carousel.is-swipe-out-left .uniform-track{
+    transform:translateX(-34%)!important;
+    opacity:.2;
+  }
+
+  .uniform-carousel.is-swipe-out-right .uniform-track{
+    transform:translateX(34%)!important;
+    opacity:.2;
+  }
+
+  .uniform-carousel.is-swipe-enter-left .uniform-track{
+    animation:uniformSwipeEnterLeft .28s cubic-bezier(.22,.72,.2,1) both;
+  }
+
+  .uniform-carousel.is-swipe-enter-right .uniform-track{
+    animation:uniformSwipeEnterRight .28s cubic-bezier(.22,.72,.2,1) both;
+  }
+
+  @keyframes uniformSwipeEnterLeft{
+    from{transform:translateX(34%);opacity:.2}
+    to{transform:translateX(0);opacity:1}
+  }
+
+  @keyframes uniformSwipeEnterRight{
+    from{transform:translateX(-34%);opacity:.2}
+    to{transform:translateX(0);opacity:1}
+  }
+}
+
+@media(prefers-reduced-motion:reduce){
+  .uniform-track{
+    transition:none!important;
+    animation:none!important;
+  }
+}

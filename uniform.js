@@ -70,7 +70,68 @@ async function buy(){
  catch(e){console.error(e);let msg=document.getElementById("uniform-cart-message");if(msg)msg.textContent="Unable to add look. Please try again."}
  finally{buttons.forEach(b=>b.disabled=false);summary()}
 }
-function swipe(){document.querySelectorAll(".uniform-carousel").forEach(w=>{let x=0,y=0;w.ontouchstart=e=>{x=e.touches[0].clientX;y=e.touches[0].clientY};w.ontouchend=e=>{const d=e.changedTouches[0].clientX-x,dy=e.changedTouches[0].clientY-y;if(Math.abs(d)>30&&Math.abs(d)>Math.abs(dy)){const c=w.id.replace("uniform-","").replace("-list","");change(c,d<0?1:-1)}}})}
+function swipe(){
+ document.querySelectorAll(".uniform-carousel").forEach(w=>{
+   let x=0,y=0,dx=0,dragging=false,locked=false;
+   const track=()=>w.querySelector(".uniform-track");
+   const resetDrag=()=>{
+     const t=track();
+     if(t){t.style.transform="";t.style.opacity=""}
+     w.classList.remove("is-dragging");
+     dragging=false;locked=false;dx=0;
+   };
+   const animateCommit=(dir,c)=>{
+     w.classList.remove("is-dragging");
+     w.classList.add(dir>0?"is-swipe-out-left":"is-swipe-out-right");
+     setTimeout(()=>{
+       change(c,dir);
+       w.classList.remove("is-swipe-out-left","is-swipe-out-right");
+       w.classList.add(dir>0?"is-swipe-enter-left":"is-swipe-enter-right");
+       setTimeout(()=>w.classList.remove("is-swipe-enter-left","is-swipe-enter-right"),300);
+     },170);
+   };
+   w.ontouchstart=e=>{
+     if(e.touches.length!==1)return;
+     x=e.touches[0].clientX;y=e.touches[0].clientY;dx=0;dragging=true;locked=false;
+     w.classList.add("is-dragging");
+   };
+   w.ontouchmove=e=>{
+     if(!dragging||e.touches.length!==1)return;
+     const mx=e.touches[0].clientX-x,my=e.touches[0].clientY-y;
+     if(!locked){
+       if(Math.abs(mx)<5&&Math.abs(my)<5)return;
+       if(Math.abs(my)>Math.abs(mx)){resetDrag();return}
+       locked=true;
+     }
+     dx=mx;
+     const t=track();
+     if(t){
+       const limited=Math.max(-110,Math.min(110,dx));
+       t.style.transform=`translateX(${limited}px)`;
+       t.style.opacity=String(Math.max(.55,1-Math.abs(limited)/260));
+     }
+     if(e.cancelable)e.preventDefault();
+   };
+   w.ontouchcancel=resetDrag;
+   w.ontouchend=e=>{
+     if(!dragging)return;
+     const endX=e.changedTouches?.[0]?.clientX ?? x;
+     const endY=e.changedTouches?.[0]?.clientY ?? y;
+     const d=endX-x,dy=endY-y;
+     const c=w.id.replace("uniform-","").replace("-list","");
+     if(Math.abs(d)>42&&Math.abs(d)>Math.abs(dy)){
+       const dir=d<0?1:-1;
+       const t=track();
+       if(t){t.style.transform="";t.style.opacity=""}
+       animateCommit(dir,c);
+     }else{
+       const t=track();
+       if(t){t.style.transform="translateX(0)";t.style.opacity="1"}
+       setTimeout(resetDrag,220);
+     }
+   };
+ })
+}
 function bind(){
  document.getElementById("uniform-headwear-none").onclick=none;document.getElementById("uniform-pick-for-me").onclick=random;
  document.getElementById("uniform-view-cart").onclick=async()=>{try{await syncCart();if(CART)renderCartPanel(CART);["headwear","tops","bottoms"].forEach(render);openPanel("cart-panel")}catch(e){console.error(e);openPanel("cart-panel")}};
