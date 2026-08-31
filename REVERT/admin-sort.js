@@ -85,21 +85,6 @@
     document.head.appendChild(script);
   }
 
-  function loadOpsExpansion() {
-    if (!document.querySelector('link[href^="admin-ops.css"]')) {
-      const link = document.createElement("link");
-      link.rel = "stylesheet";
-      link.href = "admin-ops.css?v=1";
-      document.head.appendChild(link);
-    }
-    if (!document.querySelector('script[src^="admin-ops.js"]')) {
-      const script = document.createElement("script");
-      script.src = "admin-ops.js?v=1";
-      script.defer = true;
-      document.head.appendChild(script);
-    }
-  }
-
   document.addEventListener("DOMContentLoaded",()=>{
     addProductDateOptions();
 
@@ -124,6 +109,5 @@
     loadVisibleSelectionTools();
     loadMobileAdminUX();
     loadShopEditorAssets();
-    loadOpsExpansion();
   });
 })();
