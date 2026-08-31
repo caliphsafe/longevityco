@@ -1,5 +1,5 @@
 
-/* LONGEVITY ADMIN OPERATIONS EXPANSION — modular and reversible */
+/* LONGEVITY ADMIN OPERATIONS EXPANSION V2 */
 .ops-kicker{margin:0 0 5px;font-size:8px;letter-spacing:.14em;text-transform:uppercase;opacity:.48}
 .ops-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;margin:14px 0}
 .ops-metric{border:1px solid rgba(0,0,0,.12);padding:15px;min-height:90px;display:flex;flex-direction:column;justify-content:space-between;background:transparent}
@@ -24,14 +24,5 @@
 .ops-form-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}.ops-field{display:grid;gap:5px;font-size:8px;letter-spacing:.06em;text-transform:uppercase}.ops-field-full{grid-column:1/-1}
 .ops-note{border-left:2px solid #111;padding:8px 10px;font-size:9px;line-height:1.45;background:rgba(0,0,0,.025)}
 .ops-bars{display:grid;gap:8px}.ops-bar{display:grid;grid-template-columns:minmax(120px,1fr) 2fr 70px;gap:8px;align-items:center}.ops-bar span{font-size:9px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.ops-bar-track{height:7px;background:rgba(0,0,0,.08)}.ops-bar-fill{height:100%;background:#111}.ops-bar strong{text-align:right;font-size:9px}
-.admin-sidebar .ops-hidden-legacy{display:none!important}
-
-@media(max-width:900px){
- .ops-grid{grid-template-columns:1fr 1fr}.ops-toolbar{grid-template-columns:1fr}.ops-row{grid-template-columns:1fr 1fr}.ops-row .ops-row-actions{grid-column:1/-1;justify-content:flex-start}
- .ops-product-card{grid-template-columns:48px minmax(0,1fr)}.ops-product-card .ops-segment{grid-column:1/-1;justify-content:flex-start}
- .ops-form-grid{grid-template-columns:1fr}.ops-field-full{grid-column:auto}
- .ops-bar{grid-template-columns:1fr 80px}.ops-bar-track{grid-column:1/-1;grid-row:2}
-}
-@media(max-width:520px){
- .ops-grid{grid-template-columns:1fr 1fr}.ops-metric{min-height:76px;padding:11px}.ops-metric strong{font-size:21px}
-}
+@media(max-width:900px){.ops-grid{grid-template-columns:1fr 1fr}.ops-toolbar{grid-template-columns:1fr}.ops-row{grid-template-columns:1fr 1fr}.ops-row .ops-row-actions{grid-column:1/-1;justify-content:flex-start}.ops-product-card{grid-template-columns:48px minmax(0,1fr)}.ops-product-card .ops-segment{grid-column:1/-1;justify-content:flex-start}.ops-form-grid{grid-template-columns:1fr}.ops-field-full{grid-column:auto}.ops-bar{grid-template-columns:1fr 80px}.ops-bar-track{grid-column:1/-1;grid-row:2}}
+@media(max-width:520px){.ops-grid{grid-template-columns:1fr 1fr}.ops-metric{min-height:76px;padding:11px}.ops-metric strong{font-size:21px}}

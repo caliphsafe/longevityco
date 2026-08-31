@@ -1,49 +1,29 @@
-LONGEVITY CO. — ADMIN OPERATIONS EXPANSION V1 — 43 BUILD
+LONGEVITY CO. — ADMIN OPERATIONS FIXED V2 — 43 BUILD
 
-PURPOSE
-Expands the primary admin navigation to:
-Dashboard → Orders → Fulfillment → Products → Shop Editor → Uniform Editor → Inventory → Drops → Customers → Discounts → Draft Orders → Returns → Abandoned → Analytics → Settings
+WHY THE PREVIOUS BUILD DID NOT SHOW
+The repo still loads admin-sort.js as admin-sort.css/admin-sort.js ?v=1 from admin.html.
+The expansion was chained through admin-sort.js, which then dynamically injected admin-ops.js/admin-ops.css.
+That made the whole expansion dependent on the browser/Vercel receiving the latest cached admin-sort.js and on the addon initialization timing.
+
+THIS FIX
+- Replaces admin-sort.js with a more robust loader.
+- Bumps the dynamically loaded addon assets to ?v=2.
+- Makes admin-ops.js initialize whether it loads before or after DOMContentLoaded.
+- Retries until the admin navigation/main area actually exists.
+- Rebuilds the sidebar only after the admin structure is present.
+- Keeps the existing Shop Editor, mobile UX, sorting, visible selection, and bulk stability loaders.
+- Restores api/admin-merchandising.js, which is REQUIRED for Uniform Editor and Drops to work.
 
 REPLACE
 - admin-sort.js
-
-ADD
-- admin-ops.css
 - admin-ops.js
+- admin-ops.css
+
+ADD / RESTORE
 - api/admin-merchandising.js
 
-REVERSAL
-A copy of the exact pre-expansion admin-sort.js is included at:
-- REVERT/admin-sort.js
-
-To disable/revert the expansion:
-1. Replace the root admin-sort.js with REVERT/admin-sort.js.
-2. admin-ops.css, admin-ops.js and api/admin-merchandising.js can remain in the repo because nothing will load them after the revert, or you may delete them.
-
-WHAT THIS VERSION ADDS
-- Reordered primary navigation.
-- Fulfillment queue from existing Shopify Orders data.
-- Uniform Editor using LC_UNIFORM:HEADWEAR / TOPS / BOTTOMS product tags.
-- Drops workspace using LC_DROP:<name> product tags.
-- Returns workspace that safely surfaces refunded / partially-refunded orders without issuing refunds.
-- Analytics summary using the existing dashboard/orders APIs.
-- Settings page for local admin-interface preferences.
-- Existing Dashboard, Orders, Products, Shop Editor, Inventory, Customers, Discounts, Draft Orders and Abandoned functionality remains underneath this modular layer.
-
-IMPORTANT SAFETY / SCOPE NOTES
-- No new Shopify scopes are required for this V1.
-- Uniform Editor and Drops use the already-granted product write access through Shopify product tags.
-- Fulfillment is currently an operational queue, not a fulfillment mutation.
-- Returns is currently a review workspace, not a refund/restock mutation.
-- Drops do not publish/unpublish products or change inventory.
-- Settings are browser-local and do not change Shopify.
-- Shopify remains the source of truth.
-- No database changes and no new environment variables are required.
-- Existing Add Product, Bulk Upload and Archive views are not deleted; they are simply removed from the primary navigation to keep it focused.
-
-FILES NOT TO REPLACE
-- admin.html
-- admin.js
-- admin-v2.js
-- admin-v2.css
-- any existing Shopify API files
+IMPORTANT
+Do NOT delete api/admin-merchandising.js. The navigation can display without it, but Uniform Editor and Drops need that API.
+No revert folder is included.
+No GitHub files were changed automatically.
+No new environment variables or Shopify scopes are required.

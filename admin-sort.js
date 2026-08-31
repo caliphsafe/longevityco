@@ -28,102 +28,52 @@
   function addProductDateOptions() {
     const select = document.querySelector('[data-sort-section="products"]');
     if (!select || select.querySelector('option[value="date-desc"]')) return;
-
     const status = select.querySelector('option[value="status-asc"]');
-    const newest = document.createElement("option");
-    newest.value = "date-desc";
-    newest.textContent = "Newest Added";
-    const oldest = document.createElement("option");
-    oldest.value = "date-asc";
-    oldest.textContent = "Oldest Added";
-
-    if (status) {
-      select.insertBefore(newest, status);
-      select.insertBefore(oldest, status);
-    } else {
-      select.append(newest, oldest);
-    }
+    const newest = document.createElement("option"); newest.value="date-desc"; newest.textContent="Newest Added";
+    const oldest = document.createElement("option"); oldest.value="date-asc"; oldest.textContent="Oldest Added";
+    if(status){select.insertBefore(newest,status);select.insertBefore(oldest,status)}else{select.append(newest,oldest)}
   }
 
-  function loadShopEditorAssets() {
-    if (!document.querySelector('link[href^="admin-shop-editor.css"]')) {
-      const link = document.createElement("link");
-      link.rel = "stylesheet";
-      link.href = "admin-shop-editor.css?v=1";
-      document.head.appendChild(link);
-    }
-
-    if (!document.querySelector('script[src^="admin-shop-editor.js"]')) {
-      const script = document.createElement("script");
-      script.src = "admin-shop-editor.js?v=1";
-      script.defer = true;
-      document.head.appendChild(script);
-    }
+  function loadStyle(href) {
+    if(document.querySelector(`link[href^="${href}"]`)) return;
+    const link=document.createElement("link"); link.rel="stylesheet"; link.href=`${href}?v=2`; document.head.appendChild(link);
+  }
+  function loadScript(src) {
+    if(document.querySelector(`script[src^="${src}"]`)) return;
+    const script=document.createElement("script"); script.src=`${src}?v=2`; script.defer=true; document.head.appendChild(script);
+  }
+  function bootAddons(){
+    loadScript("admin-bulk-edit-stability.js");
+    loadScript("admin-select-visible.js");
+    loadScript("admin-mobile-ux.js");
+    loadStyle("admin-shop-editor.css");
+    loadScript("admin-shop-editor.js");
+    loadStyle("admin-ops.css");
+    loadScript("admin-ops.js");
   }
 
-  function loadBulkEditStabilityFix() {
-    if (document.querySelector('script[src^="admin-bulk-edit-stability.js"]')) return;
-    const script = document.createElement("script");
-    script.src = "admin-bulk-edit-stability.js?v=1";
-    script.defer = true;
-    document.head.appendChild(script);
-  }
-
-  function loadVisibleSelectionTools() {
-    if (document.querySelector('script[src^="admin-select-visible.js"]')) return;
-    const script = document.createElement("script");
-    script.src = "admin-select-visible.js?v=1";
-    script.defer = true;
-    document.head.appendChild(script);
-  }
-
-  function loadMobileAdminUX() {
-    if (document.querySelector('script[src^="admin-mobile-ux.js"]')) return;
-    const script = document.createElement("script");
-    script.src = "admin-mobile-ux.js?v=1";
-    script.defer = true;
-    document.head.appendChild(script);
-  }
-
-  function loadOpsExpansion() {
-    if (!document.querySelector('link[href^="admin-ops.css"]')) {
-      const link = document.createElement("link");
-      link.rel = "stylesheet";
-      link.href = "admin-ops.css?v=1";
-      document.head.appendChild(link);
-    }
-    if (!document.querySelector('script[src^="admin-ops.js"]')) {
-      const script = document.createElement("script");
-      script.src = "admin-ops.js?v=1";
-      script.defer = true;
-      document.head.appendChild(script);
-    }
-  }
-
-  document.addEventListener("DOMContentLoaded",()=>{
+  function install(){
     addProductDateOptions();
-
     const wrapLegacy=(name,section)=>{
       const old=window[name];
-      if(typeof old!=="function") return;
-      window[name]=function(...args){
+      if(typeof old!=="function"||old.__sortWrapped)return;
+      const wrapped=function(...args){
         const source=ADMIN_PRODUCTS;
-        try { ADMIN_PRODUCTS=sorted(section,source); return old.apply(this,args); }
-        finally { ADMIN_PRODUCTS=source; }
+        try{ADMIN_PRODUCTS=sorted(section,source);return old.apply(this,args)}
+        finally{ADMIN_PRODUCTS=source}
       };
+      wrapped.__sortWrapped=true;
+      window[name]=wrapped;
     };
     wrapLegacy("renderProductList","products");
     wrapLegacy("renderInventory","inventory");
     wrapLegacy("renderArchive","archive");
-
     document.querySelector('[data-sort-section="products"]')?.addEventListener("change",()=>renderProductList());
     document.querySelector('[data-sort-section="inventory"]')?.addEventListener("change",()=>renderInventory());
     document.querySelector('[data-sort-section="archive"]')?.addEventListener("change",()=>renderArchive());
+    bootAddons();
+  }
 
-    loadBulkEditStabilityFix();
-    loadVisibleSelectionTools();
-    loadMobileAdminUX();
-    loadShopEditorAssets();
-    loadOpsExpansion();
-  });
+  if(document.readyState==="loading") document.addEventListener("DOMContentLoaded",install,{once:true});
+  else install();
 })();
