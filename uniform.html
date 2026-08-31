@@ -6,7 +6,7 @@
 <meta name="description" content="Build and shop a complete Longevity Co. uniform look.">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="style.css?v=12"><link rel="stylesheet" href="uniform.css?v=9.7">
+<link rel="stylesheet" href="style.css?v=12"><link rel="stylesheet" href="uniform.css?v=9.8">
 </head>
 <body>
 <div class="site-shell">
@@ -15,7 +15,10 @@
 <div class="uniform-studio">
 <header class="uniform-studio-head">
 <div><p>UNIFORM / DRESSING ROOM</p><h1>Build Your Uniform</h1></div>
+<div class="uniform-head-actions">
+<button id="uniform-view-cart" class="uniform-view-cart" type="button">VIEW CART <span data-cart-count-label>0 items</span></button>
 <button id="uniform-pick-for-me" class="uniform-random" type="button">PICK FOR ME <span>↻</span></button>
+</div>
 </header>
 
 <div class="uniform-canvas">
@@ -47,5 +50,5 @@
 <aside class="side-panel" id="cart-panel" aria-hidden="true"><div class="side-panel-header"><p>Cart</p><button class="side-panel-close" type="button" data-close-panel="cart-panel">×</button></div><div class="side-panel-body" id="cart-panel-items"></div><div class="side-panel-empty" id="cart-panel-empty">Your cart is empty.</div><div class="side-panel-footer"><div class="side-panel-total"><span>Subtotal</span><span id="cart-panel-subtotal">$0</span></div><a href="cart.html" class="add-cart-btn panel-cart-link" data-checkout-link>View Cart</a></div></aside>
 <div id="site-footer"></div>
 </div>
-<script src="components.js?v=2"></script><script src="script.js?v=15"></script><script src="uniform.js?v=9.7"></script>
+<script src="components.js?v=2"></script><script src="script.js?v=15"></script><script src="uniform.js?v=9.8"></script>
 </body></html>

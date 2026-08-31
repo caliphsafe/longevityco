@@ -26,10 +26,40 @@ function sizeRow(c,s,p){
 }
 function money(v){let p=v?.price||{},n=Number(p.amount||0);try{return new Intl.NumberFormat("en-US",{style:"currency",currency:p.currencyCode||"USD"}).format(n)}catch(e){return `$${n.toFixed(2)}`}}
 function first(p){return p?.variants?.find(v=>v.availableForSale)||p?.variants?.[0]||null}
+const SIZE_ORDER=["xxxs","xxs","xs","s","m","l","xl","xxl","2xl","xxxl","3xl","4xl","5xl","6xl"];
+function sizeKey(v){
+ return String(label(v)||"").trim().toLowerCase().replace(/\s+/g,"").replace(/-/g,"");
+}
+function smartVariant(p,preferredLabel=""){
+ if(!p?.variants?.length)return null;
+ let available=p.variants.filter(v=>v.availableForSale);
+ if(!available.length)return p.variants[0]||null;
+ if(!preferredLabel)return available[0];
+ let wanted=String(preferredLabel).trim().toLowerCase().replace(/\s+/g,"").replace(/-/g,"");
+ let exact=available.find(v=>sizeKey(v)===wanted);
+ if(exact)return exact;
+ let target=SIZE_ORDER.indexOf(wanted);
+ if(target>=0){
+   let ranked=available.map(v=>({v,i:SIZE_ORDER.indexOf(sizeKey(v))})).filter(x=>x.i>=0);
+   let smaller=ranked.filter(x=>x.i<target).sort((a,b)=>b.i-a.i)[0];
+   if(smaller)return smaller.v;
+   let larger=ranked.filter(x=>x.i>target).sort((a,b)=>a.i-b.i)[0];
+   if(larger)return larger.v;
+ }
+ return available[0];
+}
 function make(c,i=0){let a=state[c].items;if(!a.length)return null;i=(i+a.length)%a.length;return{productIndex:i,variantId:first(a[i])?.id||"",uid:Math.random().toString(36).slice(2)}}
 function prod(c,s){return state[c].items[s.productIndex]} function vari(c,s){let p=prod(c,s);return p?.variants.find(v=>v.id===s.variantId)||first(p)}
 function ensure(){["headwear","tops","bottoms"].forEach(c=>{if(state[c].items.length&&!state[c].selections.length)state[c].selections=[make(c)]})}
-function change(c,d){let s=state[c].selections[0],a=state[c].items;if(!s||!a.length)return;s.productIndex=(s.productIndex+d+a.length)%a.length;s.variantId=first(prod(c,s))?.id||"";render(c);summary()}
+function change(c,d){
+ let s=state[c].selections[0],a=state[c].items;
+ if(!s||!a.length)return;
+ let previous=vari(c,s),preferred=label(previous);
+ s.productIndex=(s.productIndex+d+a.length)%a.length;
+ let next=prod(c,s),picked=smartVariant(next,preferred);
+ s.variantId=picked?.id||"";
+ render(c);summary();
+}
 function peek(c,index,cls,d){let a=state[c].items;if(!a.length)return"";let i=(index+d+a.length)%a.length,p=a[i];return `<button class="uniform-peek ${cls}" data-change="${c}" data-dir="${d}" aria-label="${d<0?"Previous":"Next"} ${c}"><img src="${esc(p.image)}" alt=""></button>`}
 function mainCarousel(c){let s=state[c].selections[0],p=prod(c,s);if(!p)return"";return `<div class="uniform-track">${peek(c,s.productIndex,"prev",-1)}<div class="uniform-current"><div class="uniform-current-visual"><img src="${esc(p.image)}" alt="${esc(p.title)}"></div>${sizeRow(c,s,p)}</div>${peek(c,s.productIndex,"next",1)}</div>`}
 function layers(c){return `<div class="uniform-layer-grid">${state[c].selections.map((s,i)=>{let p=prod(c,s);return `<div class="uniform-layer-card"><img src="${esc(p.image)}" alt="${esc(p.title)}"><span>${esc(p.title)}</span>${i?`<button class="uniform-layer-remove" data-remove="${c}" data-index="${i}">REMOVE</button>`:""}</div>`}).join("")}</div>`}
@@ -57,7 +87,18 @@ function render(c){
 function picks(){let r=[];["headwear","tops","bottoms"].forEach(c=>{if(c==="headwear"&&state.headwear.none)return;state[c].selections.forEach(s=>{let p=prod(c,s),v=vari(c,s);if(p&&v)r.push({c,s,p,v})})});return r}
 function summary(){let p=picks(),t=`${p.length} item${p.length===1?"":"s"} selected`;document.getElementById("uniform-item-count").textContent=t;document.getElementById("uniform-mobile-count").textContent=t;let dis=!p.length;document.getElementById("uniform-add-all").disabled=dis;document.getElementById("uniform-mobile-add").disabled=dis}
 function none(){state.headwear.none=!state.headwear.none;let b=document.getElementById("uniform-headwear-none");b.classList.toggle("is-active",state.headwear.none);b.setAttribute("aria-pressed",state.headwear.none);render("headwear");summary()}
-function random(){["headwear","tops","bottoms"].forEach(c=>{if(c==="headwear"&&state.headwear.none)return;let a=state[c].items;if(a.length)state[c].selections=[make(c,Math.floor(Math.random()*a.length))]});["headwear","tops","bottoms"].forEach(render);summary()}
+function random(){
+ ["headwear","tops","bottoms"].forEach(c=>{
+   if(c==="headwear"&&state.headwear.none)return;
+   let a=state[c].items;if(!a.length)return;
+   let old=state[c].selections[0],preferred=old?label(vari(c,old)):"";
+   let next=make(c,Math.floor(Math.random()*a.length));
+   let picked=smartVariant(prod(c,next),preferred);
+   next.variantId=picked?.id||"";
+   state[c].selections=[next];
+ });
+ ["headwear","tops","bottoms"].forEach(render);summary();
+}
 function lines(){let m=new Map;picks().forEach(x=>m.set(x.v.id,(m.get(x.v.id)||0)+1));return [...m].map(([merchandiseId,quantity])=>({merchandiseId,quantity}))}
 async function buy(){
  const buttons=[document.getElementById("uniform-add-all"),document.getElementById("uniform-mobile-add")].filter(Boolean);
@@ -96,6 +137,13 @@ function swipe(){
 function bind(){
  document.getElementById("uniform-headwear-none").onclick=none;
  document.getElementById("uniform-pick-for-me").onclick=random;
+ document.getElementById("uniform-view-cart").onclick=async()=>{
+   try{
+     let cart=await fetchCurrentShopifyCart();
+     if(cart)renderCartPanel(cart);
+     openPanel("cart-panel");
+   }catch(e){console.error(e);openPanel("cart-panel")}
+ };
  document.getElementById("uniform-add-all").onclick=buy;
  document.getElementById("uniform-mobile-add").onclick=buy;
 }

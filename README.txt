@@ -1,26 +1,19 @@
-LONGEVITY CO. — UNIFORM INLINE SIZES V9.7 43 BUILD
+LONGEVITY CO. — UNIFORM SMART SIZES + VIEW CART V9.8
 
 REPLACE ONLY:
 - uniform.html
 - uniform.css
 - uniform.js
 
-CHANGES LIMITED TO THE UNIFORM PAGE:
-- Tops and Bottoms now show available Shopify sizes directly beneath the selected garment.
-- Sizes can be selected directly in the outfit builder.
-- One-size / one-size-fits-all products show no size controls.
-- Headwear shows no size controls.
-- Sold-out variants are not shown as selectable sizes.
-- The old Finish This Look size popup is removed from the Uniform flow.
-- Desktop CTA is ADD LOOK TO CART.
-- Mobile CTA is ADD TO CART.
-- Add to Cart sends the selected variants directly to the existing Shopify cart and opens the existing cart drawer.
+UNIFORM-ONLY CHANGES:
+- A chosen top/bottom size now stays selected when switching to another product.
+- If the same size exists and is available on the new product, it remains selected.
+- If that size is unavailable, the builder chooses the nearest smaller available standard size.
+- If no smaller standard size exists, it uses the nearest larger available size.
+- Pick For Me also preserves the user's selected size preference per garment category where possible.
+- Added VIEW CART to the Uniform page header.
+- VIEW CART opens the existing Shopify cart drawer and refreshes the current cart first.
+- Existing direct Add to Cart flow remains unchanged.
+- One-size/headwear behavior remains unchanged.
 
-UNCHANGED:
-- Outfit carousel and smaller faded side products.
-- Mobile swipe.
-- No Headwear behavior.
-- Pick For Me behavior.
-- Single headwear/top/bottom outfit model.
-- Existing Shopify cart architecture.
-- Shop page, global scripts, APIs, and all non-Uniform files.
+No Shop page, API, global script, or non-Uniform file is changed.

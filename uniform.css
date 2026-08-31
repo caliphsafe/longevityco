@@ -394,3 +394,50 @@
     font-size:6px;
   }
 }
+
+
+/* =========================================================
+   V9.8 — SMART SIZE MEMORY + VIEW CART
+   Uniform page only.
+   ========================================================= */
+
+.uniform-head-actions{
+  display:flex;
+  align-items:center;
+  gap:6px;
+}
+.uniform-view-cart{
+  height:30px;
+  padding:0 10px;
+  border:1px solid rgba(0,0,0,.17);
+  background:transparent;
+  color:#111 !important;
+  font-size:8px;
+  letter-spacing:.08em;
+  white-space:nowrap;
+}
+.uniform-view-cart span{
+  margin-left:5px;
+  opacity:.45;
+}
+.uniform-view-cart:hover{
+  background:#111;
+  color:#fff !important;
+}
+.uniform-view-cart:hover span{
+  opacity:.7;
+}
+
+@media(max-width:700px){
+  .uniform-head-actions{
+    gap:4px;
+  }
+  .uniform-view-cart{
+    height:36px;
+    padding:0 9px;
+    font-size:7px;
+  }
+  .uniform-view-cart span{
+    display:none;
+  }
+}
