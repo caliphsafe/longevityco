@@ -441,3 +441,46 @@
     display:none;
   }
 }
+
+
+/* =========================================================
+   V10 — CART + LOOK INTELLIGENCE
+   ========================================================= */
+.uniform-current-visual{position:relative}
+.uniform-in-cart-badge{
+  position:absolute;right:7px;top:7px;z-index:5;
+  min-height:20px;padding:0 7px;display:flex;align-items:center;
+  background:#111;color:#fff;font-size:6px;letter-spacing:.09em;
+  text-transform:uppercase;pointer-events:none
+}
+.uniform-confirm-overlay{
+  position:fixed;inset:0;z-index:10020;background:rgba(0,0,0,.3);
+  opacity:0;pointer-events:none;transition:opacity .2s ease
+}
+.uniform-confirm-overlay.is-open{opacity:1;pointer-events:auto}
+.uniform-confirm{
+  position:fixed;z-index:10021;left:50%;top:50%;width:min(430px,calc(100% - 28px));
+  transform:translate(-50%,-46%);background:#f4f4ef;border:1px solid rgba(0,0,0,.15);
+  padding:22px;opacity:0;pointer-events:none;transition:opacity .2s ease,transform .2s ease
+}
+.uniform-confirm.is-open{opacity:1;pointer-events:auto;transform:translate(-50%,-50%)}
+.uniform-confirm-close{position:absolute;right:12px;top:9px;border:0;background:transparent;font-size:24px}
+.uniform-confirm-kicker{font-size:7px;letter-spacing:.13em;margin:0 0 7px;opacity:.55}
+.uniform-confirm h2{font-size:20px;line-height:1.08;font-weight:400;letter-spacing:-.035em;margin:0 28px 15px 0}
+.uniform-confirm-items{display:grid;gap:6px;margin:0 0 17px}
+.uniform-confirm-item{display:grid;grid-template-columns:42px minmax(0,1fr) auto;gap:9px;align-items:center;border-top:1px solid rgba(0,0,0,.09);padding-top:7px}
+.uniform-confirm-item img{width:42px;height:48px;object-fit:contain}
+.uniform-confirm-item strong{display:block;font-size:9px;font-weight:500}.uniform-confirm-item small{font-size:7px;opacity:.5}
+.uniform-confirm-item>span{font-size:7px;letter-spacing:.06em}
+.uniform-confirm-actions{display:grid;gap:7px}
+.uniform-confirm-actions button{min-height:44px;border:1px solid #111;background:#111;color:#fff;font-size:8px;letter-spacing:.07em}
+.uniform-confirm-actions button:first-child{background:transparent;color:#111}
+.uniform-size-adjusted{
+  display:block;text-align:center;margin-top:3px;font-size:6px;letter-spacing:.04em;opacity:.52
+}
+@media(max-width:700px){
+  .uniform-in-cart-badge{right:3px;top:3px;min-height:17px;font-size:5px;padding:0 5px}
+  .uniform-confirm{left:0;right:0;top:auto;bottom:0;width:100%;transform:translateY(102%);padding:18px 15px calc(16px + env(safe-area-inset-bottom));border:0;border-radius:14px 14px 0 0}
+  .uniform-confirm.is-open{transform:none}
+  .uniform-confirm h2{font-size:19px}
+}
