@@ -1,22 +1,26 @@
-LONGEVITY CO. — UNIFORM DESKTOP TIGHTEN V9.6
+LONGEVITY CO. — UNIFORM INLINE SIZES V9.7 43 BUILD
 
-REPLACE:
+REPLACE ONLY:
 - uniform.html
 - uniform.css
 - uniform.js
 
-ONLY CHANGE:
-- Tightened vertical spacing on the Uniform page for desktop only.
-- Reduced top/bottom studio padding.
-- Reduced spacing between Headwear, Top, and Bottom.
-- Slightly reduced section heights while keeping selected products visually dominant.
-- Brought Finish Look closer to the outfit.
-- Collapsed No Headwear desktop state a little further.
+CHANGES LIMITED TO THE UNIFORM PAGE:
+- Tops and Bottoms now show available Shopify sizes directly beneath the selected garment.
+- Sizes can be selected directly in the outfit builder.
+- One-size / one-size-fits-all products show no size controls.
+- Headwear shows no size controls.
+- Sold-out variants are not shown as selectable sizes.
+- The old Finish This Look size popup is removed from the Uniform flow.
+- Desktop CTA is ADD LOOK TO CART.
+- Mobile CTA is ADD TO CART.
+- Add to Cart sends the selected variants directly to the existing Shopify cart and opens the existing cart drawer.
 
 UNCHANGED:
-- Mobile layout and viewport-fit experience.
-- Mobile swipe behavior.
-- Mobile Pick For Me and No Headwear sizing.
-- Product scale hierarchy.
-- Finish Look popup details.
-- Shopify cart and sizing flow.
+- Outfit carousel and smaller faded side products.
+- Mobile swipe.
+- No Headwear behavior.
+- Pick For Me behavior.
+- Single headwear/top/bottom outfit model.
+- Existing Shopify cart architecture.
+- Shop page, global scripts, APIs, and all non-Uniform files.
