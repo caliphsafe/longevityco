@@ -538,3 +538,63 @@
     animation:none!important;
   }
 }
+
+
+/* =========================================================
+   V10.2 — SECOND PRODUCT IMAGE PREVIEW
+   Desktop: hover the selected product.
+   Mobile: tap the selected product.
+   ========================================================= */
+.uniform-current-visual{
+  position:relative;
+}
+.uniform-product-image{
+  transition:opacity .24s ease, transform .24s ease;
+}
+.uniform-product-image-hover{
+  position:absolute;
+  inset:0;
+  margin:auto;
+  width:auto;
+  height:auto;
+  opacity:0;
+  pointer-events:none;
+}
+.uniform-current-visual.has-hover-image{
+  cursor:pointer;
+}
+.uniform-current-visual.has-hover-image .uniform-product-image-primary{
+  opacity:1;
+}
+.uniform-current-visual.has-hover-image .uniform-product-image-hover{
+  opacity:0;
+}
+
+@media(min-width:701px){
+  .uniform-current-visual.has-hover-image:hover .uniform-product-image-primary,
+  .uniform-current-visual.has-hover-image:focus .uniform-product-image-primary{
+    opacity:0;
+  }
+  .uniform-current-visual.has-hover-image:hover .uniform-product-image-hover,
+  .uniform-current-visual.has-hover-image:focus .uniform-product-image-hover{
+    opacity:1;
+  }
+}
+
+@media(max-width:700px){
+  .uniform-current-visual.has-hover-image{
+    -webkit-tap-highlight-color:rgba(0,0,0,.04);
+  }
+  .uniform-current-visual.has-hover-image.show-hover-image .uniform-product-image-primary{
+    opacity:0;
+  }
+  .uniform-current-visual.has-hover-image.show-hover-image .uniform-product-image-hover{
+    opacity:1;
+  }
+}
+
+@media(prefers-reduced-motion:reduce){
+  .uniform-product-image{
+    transition:none!important;
+  }
+}

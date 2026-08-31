@@ -1,4 +1,4 @@
-LONGEVITY CO. — UNIFORM MOBILE SWIPE ANIMATION V10.1 — 43 BUILD
+LONGEVITY CO. — UNIFORM SECOND IMAGE PREVIEW V10.2 — 43 BUILD
 
 REPLACE ONLY:
 - uniform.html
@@ -6,17 +6,16 @@ REPLACE ONLY:
 - uniform.js
 
 WHAT CHANGED
-- Mobile swiping now follows the user's finger in real time.
-- The current product physically slides left/right while dragging.
-- Releasing past the swipe threshold animates the old item out.
-- The next/previous product animates into the center from the opposite side.
-- Short/incomplete swipes spring the current product back into place.
-- Vertical page gestures are not hijacked.
-- Existing faded side-product previews remain.
-- Desktop behavior is unchanged.
-- All V10 cart awareness, duplicate confirmation, look memory, size memory, sold-out protection, and Pick For Me behavior remain intact.
+- Products with a second Shopify product image now use it as an alternate/hover image.
+- Desktop: hover the selected/current garment to smoothly reveal image #2.
+- Mobile: tap the selected/current garment to toggle between image #1 and image #2.
+- Tap again to return to the primary image.
+- Products with only one image behave exactly as before.
+- Mobile swipe animation remains intact.
+- Neighboring faded products still work as previous/next controls.
+- Cart awareness, duplicate confirmation, size memory, look memory, sold-out protection and Pick For Me behavior all remain intact.
 - Reduced-motion accessibility is respected.
 
 CACHE
-- uniform.css?v=10.1
-- uniform.js?v=10.1
+- uniform.css?v=10.2
+- uniform.js?v=10.2
