@@ -1,0 +1,55 @@
+
+/* Longevity Admin — Bulk Upload / Edit Plus */
+.bulk-plus-workflow{
+  display:grid;
+  grid-template-columns:minmax(0,1fr) auto;
+  gap:24px;
+  align-items:center;
+  border:1px solid rgba(0,0,0,.13);
+  padding:22px;
+  margin:0 0 16px;
+  background:#fff;
+}
+.bulk-plus-workflow-copy h2{margin:2px 0 7px;font-size:22px;font-weight:500;letter-spacing:-.035em}
+.bulk-plus-workflow-copy>p:last-child{margin:0;max-width:620px;font-size:11px;line-height:1.55;opacity:.6}
+.bulk-plus-workflow-actions{display:flex;gap:7px;flex-wrap:wrap;justify-content:flex-end}
+.bulk-plus-primary,.bulk-plus-secondary{
+  min-height:42px;padding:0 14px;border:1px solid #111;font:inherit;font-size:9px;letter-spacing:.07em;cursor:pointer
+}
+.bulk-plus-primary{background:#111;color:#fff}
+.bulk-plus-secondary{background:transparent;color:#111}
+.bulk-plus-steps{
+  grid-column:1/-1;
+  display:grid;
+  grid-template-columns:repeat(4,minmax(0,1fr));
+  gap:8px;
+  padding-top:15px;
+  border-top:1px solid rgba(0,0,0,.08)
+}
+.bulk-plus-steps span{font-size:8px;letter-spacing:.05em;text-transform:uppercase;opacity:.7}
+.bulk-plus-steps b{font-weight:400;opacity:.4;margin-right:5px}
+.bulk-plus-card-image-tools{
+  display:flex;align-items:center;justify-content:space-between;gap:10px;
+  padding:8px 0 14px;border-bottom:1px solid rgba(0,0,0,.08)
+}
+.bulk-plus-card-image-tools button{
+  border:1px solid rgba(0,0,0,.24);background:transparent;min-height:34px;padding:0 10px;
+  font-size:8px;letter-spacing:.06em
+}
+.bulk-plus-card-image-tools small{font-size:7px;letter-spacing:.04em;opacity:.46}
+.bulk-plus-manual-label{
+  display:inline-flex;align-items:center;min-height:22px;padding:0 7px;
+  border:1px solid rgba(0,0,0,.18);font-size:7px;letter-spacing:.08em
+}
+
+@media(max-width:900px){
+  .bulk-plus-workflow{grid-template-columns:1fr;padding:15px;gap:14px}
+  .bulk-plus-workflow-actions{justify-content:stretch;display:grid;grid-template-columns:1fr 1fr}
+  .bulk-plus-primary,.bulk-plus-secondary{width:100%;min-height:44px}
+  .bulk-plus-steps{grid-template-columns:1fr 1fr;padding-top:12px}
+  .bulk-plus-card-image-tools{align-items:stretch;flex-direction:column}
+  .bulk-plus-card-image-tools button{width:100%;min-height:42px}
+}
+@media(max-width:520px){
+  .bulk-plus-workflow-actions,.bulk-plus-steps{grid-template-columns:1fr}
+}
