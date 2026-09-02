@@ -62,7 +62,7 @@
   function view(id,kicker,title,body){return `<section class="admin-view" id="view-${id}" data-view-panel="${id}"><div class="admin-page-head"><div><p class="admin-kicker">${kicker}</p><h1>${title}</h1></div></div>${body}</section>`}
 
   function rebuildNav(nav){
-    const wanted=[["dashboard","Dashboard"],["orders","Orders"],["fulfillment","Fulfillment"],["products","Products"],["shop-editor","Shop Editor"],["uniform-editor","Uniform Editor"],["inventory","Inventory"],["drops","Drops"],["customers","Customers"],["discounts","Discounts"],["draft-orders","Draft Orders"],["returns","Returns"],["abandoned","Abandoned"],["analytics","Analytics"],["settings","Settings"]];
+    const wanted=[["dashboard","Dashboard"],["orders","Orders"],["fulfillment","Fulfillment"],["products","Products"],["bulk","Bulk Upload"],["shop-editor","Shop Editor"],["uniform-editor","Uniform Editor"],["inventory","Inventory"],["drops","Drops"],["customers","Customers"],["discounts","Discounts"],["draft-orders","Draft Orders"],["returns","Returns"],["abandoned","Abandoned"],["analytics","Analytics"],["settings","Settings"]];
     const existing={};
     nav.querySelectorAll("[data-view]").forEach(b=>existing[b.dataset.view]=b);
     nav.innerHTML="";
