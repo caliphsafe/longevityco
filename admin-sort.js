@@ -36,11 +36,11 @@
 
   function loadStyle(href) {
     if(document.querySelector(`link[href^="${href}"]`)) return;
-    const link=document.createElement("link"); link.rel="stylesheet"; link.href=`${href}?v=3`; document.head.appendChild(link);
+    const link=document.createElement("link"); link.rel="stylesheet"; link.href=`${href}?v=4`; document.head.appendChild(link);
   }
   function loadScript(src) {
     if(document.querySelector(`script[src^="${src}"]`)) return;
-    const script=document.createElement("script"); script.src=`${src}?v=3`; script.defer=true; document.head.appendChild(script);
+    const script=document.createElement("script"); script.src=`${src}?v=4`; script.defer=true; document.head.appendChild(script);
   }
   function bootAddons(){
     loadScript("admin-bulk-edit-stability.js");
