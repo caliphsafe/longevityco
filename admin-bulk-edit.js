@@ -15,6 +15,13 @@
     return product?.variants?.nodes?.[0]?.price ?? "";
   }
 
+  function productColor(product) {
+    const tag = (product?.tags || []).find(value =>
+      String(value || "").toUpperCase().startsWith("LC_COLOR:")
+    );
+    return tag ? String(tag).slice("LC_COLOR:".length).trim() : "";
+  }
+
   function variantSize(variant) {
     if (typeof getVariantSize === "function") return getVariantSize(variant);
     const option = (variant.selectedOptions || []).find(o => String(o.name).toLowerCase() === "size");
@@ -44,6 +51,7 @@
       name: product.title || "",
       price: productPrice(product),
       type: product.productType || "Product",
+      color: productColor(product),
       status: product.status === "ACTIVE" ? "ACTIVE" : "DRAFT",
       vendor: product.vendor || "Longevity Co.",
       description: typeof stripHtml === "function"
@@ -419,6 +427,7 @@
           status: product.status || "DRAFT",
           vendor: String(product.vendor || "").trim() || "Longevity Co.",
           price: Number(product.price || 0),
+          color: String(product.color || "").trim(),
           locationId: ADMIN_LOCATIONS?.[0]?.id || null,
           collectionIds: product.collectionIds || [],
           sizes: (product.sizes || []).map(size => ({

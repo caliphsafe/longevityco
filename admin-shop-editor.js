@@ -474,12 +474,19 @@
       const wrapped = function(...args) {
         const result = originalIngest.apply(this, args);
         if (typeof BULK_PRODUCTS !== "undefined") {
+          let changed = false;
+
           BULK_PRODUCTS.forEach(product => {
             if (!CATEGORIES.includes(product.type)) {
-              product.type = inferCategory(product.name, product.type);
+              const nextType = inferCategory(product.name, product.type);
+              if (product.type !== nextType) {
+                product.type = nextType;
+                changed = true;
+              }
             }
           });
-          if (typeof renderBulkProducts === "function") renderBulkProducts();
+
+          if (changed && typeof renderBulkProducts === "function") renderBulkProducts();
         }
         return result;
       };
@@ -510,11 +517,24 @@
     }
 
     // Existing bulk products may already be on screen.
+    // Only rerender when a category actually had to be corrected.
+    // Previously this rerender ran after every DOM mutation, including
+    // typing into a bulk field, which replaced the focused input and
+    // caused the page to jump / feel like it was glitching.
     if (typeof BULK_PRODUCTS !== "undefined" && BULK_PRODUCTS.length && typeof renderBulkProducts === "function") {
+      let changed = false;
+
       BULK_PRODUCTS.forEach(product => {
-        if (!CATEGORIES.includes(product.type)) product.type = inferCategory(product.name, product.type);
+        if (!CATEGORIES.includes(product.type)) {
+          const nextType = inferCategory(product.name, product.type);
+          if (product.type !== nextType) {
+            product.type = nextType;
+            changed = true;
+          }
+        }
       });
-      renderBulkProducts();
+
+      if (changed) renderBulkProducts();
     }
   }
 

@@ -41,20 +41,33 @@ function initBulkUpload() {
   renderBulkGlobalCollections();
 }
 
+function inferBulkCategory(garmentClue = "") {
+  const clue = String(garmentClue || "").toLowerCase().replace(/[_-]+/g, " ");
+
+  if (/(hoodie|hooded|sweatshirt|pullover)/.test(clue)) return "Hoodies";
+  if (/(t[\s-]?shirt|tee\b|shirt\b|long[\s-]?sleeve|jersey)/.test(clue)) return "T-Shirts";
+  if (/(shorts?\b)/.test(clue)) return "Shorts";
+  if (/(sweatpant|jogger|trouser|jean|denim|chino|cargo|pants?\b)/.test(clue)) return "Pants";
+  if (/(hat\b|cap\b|beanie|headwear|snapback|trucker|bucket hat|skully)/.test(clue)) return "Headwear";
+  return "Accessories";
+}
+
 function cleanBulkFilename(filename = "") {
   const withoutExt = String(filename).replace(/\.[^.]+$/, "").trim();
 
   let order = null;
   let base = withoutExt;
 
-  const patterns = [
+  // Keep support for numbered product images:
+  // "product $60 (2).png", "product $60 2.png", etc.
+  const orderPatterns = [
     /^(.*?)[\s_-]+\((\d+)\)\s*$/,
     /^(.*?)[\s_-]+(\d+)\s*$/,
     /^(.*?)\s*\((\d+)\)\s*$/,
   ];
 
-  for (const pattern of patterns) {
-    const match = withoutExt.match(pattern);
+  for (const pattern of orderPatterns) {
+    const match = base.match(pattern);
     if (match) {
       base = match[1].trim();
       order = Number(match[2]);
@@ -64,9 +77,48 @@ function cleanBulkFilename(filename = "") {
 
   if (!base) base = withoutExt;
 
+  // Preferred filename format:
+  // name_garment type [color] $price.png
+  //
+  // Example:
+  // speed_light heavyweight hoodie [black] $60.png
+  //
+  // Product name: speed_light heavyweight hoodie
+  // Category clue: light heavyweight hoodie -> Hoodies
+  // Color: black
+  // Price: 60
+  const formatMatch = base.match(
+    /^(.+?)_(.+?)\s*\[([^\]]+)\]\s*\$\s*(\d+(?:\.\d{1,2})?)\s*$/i
+  );
+
+  if (formatMatch) {
+    const namePart = formatMatch[1].trim().replace(/\s+/g, " ");
+    const garmentClue = formatMatch[2].trim().replace(/\s+/g, " ");
+    const color = formatMatch[3].trim().replace(/\s+/g, " ");
+    const price = formatMatch[4].trim();
+
+    return {
+      productName: `${namePart}_${garmentClue}`,
+      garmentClue,
+      category: inferBulkCategory(garmentClue),
+      color,
+      price,
+      order,
+      matchedFormat: true,
+    };
+  }
+
+  // Legacy fallback remains available for older image names.
+  const fallbackName = base.replace(/[_-]+/g, " ").replace(/\s+/g, " ").trim();
+
   return {
-    productName: base.replace(/[_-]+/g, " ").replace(/\s+/g, " ").trim(),
+    productName: fallbackName,
+    garmentClue: fallbackName,
+    category: inferBulkCategory(fallbackName),
+    color: "",
+    price: "",
     order,
+    matchedFormat: false,
   };
 }
 
@@ -94,14 +146,17 @@ function ingestBulkFiles(files) {
 
   imageFiles.forEach((file, inputIndex) => {
     const parsed = cleanBulkFilename(file.name);
-    const key = parsed.productName.toLowerCase();
+    // Color is part of the grouping key so two colorways with the same
+    // product name do not get merged into one product card.
+    const key = `${parsed.productName.toLowerCase()}||${String(parsed.color || "").toLowerCase()}`;
 
     if (!groups.has(key)) {
       groups.set(key, {
         id: makeBulkId("product"),
         name: parsed.productName,
-        price: "",
-        type: "Tops",
+        price: parsed.price || "",
+        type: parsed.category || "Accessories",
+        color: parsed.color || "",
         status: "DRAFT",
         vendor: "Longevity Co.",
         description: "",
@@ -132,7 +187,9 @@ function ingestBulkFiles(files) {
     });
 
     const existing = BULK_PRODUCTS.find(
-      (product) => product.name.toLowerCase() === group.name.toLowerCase()
+      (product) =>
+        product.name.toLowerCase() === group.name.toLowerCase() &&
+        String(product.color || "").toLowerCase() === String(group.color || "").toLowerCase()
     );
 
     if (existing) {
@@ -298,6 +355,7 @@ function buildBulkProductCard(product, index) {
         <div class="bulk-fields-grid">
           <label class="bulk-field bulk-field-full">Product name<input data-bulk-field="name" type="text" value="${escapeHtml(product.name)}" /></label>
           <label class="bulk-field">Price<input data-bulk-field="price" type="number" min="0" step="0.01" inputmode="decimal" value="${escapeHtml(product.price)}" placeholder="Required" /></label>
+          <label class="bulk-field">Color<input data-bulk-field="color" type="text" value="${escapeHtml(product.color || "")}" placeholder="Black" /></label>
           <label class="bulk-field">Type<select data-bulk-field="type">
             <option value="Tops" ${product.type === "Tops" ? "selected" : ""}>Tops</option>
             <option value="Bottoms" ${product.type === "Bottoms" ? "selected" : ""}>Bottoms</option>
@@ -600,6 +658,7 @@ async function publishBulkProducts() {
           status: product.status || "DRAFT",
           vendor: String(product.vendor || "").trim() || "Longevity Co.",
           price: Number(product.price || 0),
+          color: String(product.color || "").trim(),
           locationId: typeof ADMIN_LOCATIONS !== "undefined" ? ADMIN_LOCATIONS[0]?.id || null : null,
           collectionIds: product.collectionIds,
           sizes: product.sizes

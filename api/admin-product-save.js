@@ -15,6 +15,57 @@ function cleanSizes(sizes = []) {
     .filter((size) => size.name);
 }
 
+
+async function syncProductColorTag(productId, color = "") {
+  const normalizedColor = String(color || "").trim();
+
+  const current = await shopifyAdminGraphql(`
+    query AdminProductColorTags($id: ID!) {
+      product(id: $id) {
+        id
+        tags
+      }
+    }
+  `, { id: productId });
+
+  const oldColorTags = (current.product?.tags || [])
+    .filter((tag) => String(tag || "").toUpperCase().startsWith("LC_COLOR:"));
+
+  if (oldColorTags.length) {
+    const removed = await shopifyAdminGraphql(`
+      mutation AdminRemoveColorTags($id: ID!, $tags: [String!]!) {
+        tagsRemove(id: $id, tags: $tags) {
+          node { id }
+          userErrors { field message }
+        }
+      }
+    `, {
+      id: productId,
+      tags: oldColorTags,
+    });
+
+    throwUserErrors(removed.tagsRemove?.userErrors);
+  }
+
+  if (!normalizedColor) return null;
+
+  const colorTag = `LC_COLOR:${normalizedColor}`;
+  const added = await shopifyAdminGraphql(`
+    mutation AdminAddColorTag($id: ID!, $tags: [String!]!) {
+      tagsAdd(id: $id, tags: $tags) {
+        node { id }
+        userErrors { field message }
+      }
+    }
+  `, {
+    id: productId,
+    tags: [colorTag],
+  });
+
+  throwUserErrors(added.tagsAdd?.userErrors);
+  return colorTag;
+}
+
 async function publishProductEverywhere(productId) {
   const publicationsData = await shopifyAdminGraphql(`
     query AdminPublications {
@@ -93,6 +144,7 @@ export default async function handler(req, res) {
       vendor = "Longevity Co.",
       status = "DRAFT",
       price = 0,
+      color = "",
       collectionIds = [],
       sizes = [],
       files = [],
@@ -231,6 +283,8 @@ export default async function handler(req, res) {
       throw new Error("Shopify saved the request but did not return a product ID.");
     }
 
+    const colorTag = await syncProductColorTag(product.id, color);
+
     let publication = null;
 
     if (normalizedStatus === "ACTIVE") {
@@ -242,6 +296,7 @@ export default async function handler(req, res) {
       product,
       published: normalizedStatus === "ACTIVE",
       publication,
+      colorTag,
       note:
         normalizedStatus === "ACTIVE"
           ? "Product is ACTIVE and has been published to the Shopify publications available to this app."
