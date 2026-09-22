@@ -328,10 +328,19 @@
     message.textContent = "";
 
     try {
-      await apiJson("/api/admin-models", {
+      const result = await apiJson("/api/admin-models", {
         method: "POST",
         body: JSON.stringify({ action: payload.modelId ? "update" : "add", model: payload }),
       });
+
+      // Google Apps Script can briefly return an HTML redirect/temporary page
+      // immediately after a Sheet write. Give the Sheet a moment to settle,
+      // then refresh. The API also verifies writes without repeating them.
+      if (result?.recovered) {
+        message.textContent = "Saved to Google Sheet. Syncing…";
+      }
+
+      await new Promise(resolve => setTimeout(resolve, 350));
       await loadModelsAdmin(true);
       closeEditor();
     } catch (error) {
@@ -358,6 +367,7 @@
         method: "POST",
         body: JSON.stringify({ action: "archive", modelId }),
       });
+      await new Promise(resolve => setTimeout(resolve, 350));
       await loadModelsAdmin(true);
       closeEditor();
     } catch (error) {
