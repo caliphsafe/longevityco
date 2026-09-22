@@ -9,6 +9,7 @@
     .replaceAll("'", "&#039;");
 
   const STATUSES = ["Applicant", "Roster", "Hold", "Archived"];
+  const GENDERS = ["Male", "Female"];
   let installed = false;
 
   function ready(fn) {
@@ -56,17 +57,58 @@
         </div>
 
         <div class="models-toolbar">
-          <input id="models-search" type="search" placeholder="Search name, email, Instagram" />
+          <input class="models-filter-search" id="models-search" type="search" placeholder="Search name, email, Instagram, size" />
+
           <select id="models-status-filter">
             <option value="ALL">All status</option>
             ${STATUSES.map(status => `<option value="${status.toUpperCase()}">${status}</option>`).join("")}
           </select>
-          <select id="models-sort">
-            <option value="newest">Newest</option>
-            <option value="oldest">Oldest</option>
+
+          <select id="models-gender-filter">
+            <option value="ALL">All genders</option>
+            <option value="MALE">Male only</option>
+            <option value="FEMALE">Female only</option>
+            <option value="UNSET">Gender not set</option>
+          </select>
+
+          <select id="models-top-filter">
+            <option value="ALL">All top sizes</option>
+          </select>
+
+          <select id="models-bottom-filter">
+            <option value="ALL">All bottom sizes</option>
+          </select>
+
+          <select id="models-shoe-filter">
+            <option value="ALL">All shoe sizes</option>
+          </select>
+
+          <select id="models-data-filter">
+            <option value="ALL">All profile data</option>
+            <option value="COMPLETE_SIZING">Complete sizing</option>
+            <option value="MISSING_SIZING">Missing sizing</option>
+            <option value="HAS_INSTAGRAM">Has Instagram</option>
+            <option value="NO_INSTAGRAM">No Instagram</option>
+          </select>
+
+          <select class="models-filter-sort" id="models-sort">
+            <option value="newest">Newest applicant</option>
+            <option value="updated">Recently updated</option>
+            <option value="oldest">Oldest applicant</option>
             <option value="name">Name A–Z</option>
             <option value="status">Status</option>
+            <option value="gender">Gender</option>
+            <option value="height-desc">Height: tallest first</option>
+            <option value="height-asc">Height: shortest first</option>
+            <option value="top-asc">Top size: small → large</option>
+            <option value="top-desc">Top size: large → small</option>
+            <option value="bottom-asc">Bottom size: small → large</option>
+            <option value="bottom-desc">Bottom size: large → small</option>
+            <option value="shoe-asc">Shoe size: small → large</option>
+            <option value="shoe-desc">Shoe size: large → small</option>
           </select>
+
+          <button class="models-reset-filters" id="models-reset-filters" type="button">Reset Filters</button>
         </div>
 
         <div class="models-sync-state" id="models-sync-state">Open Models to load the connected Google Sheet.</div>
@@ -87,6 +129,7 @@
               <label class="models-field models-field-full">Name<input id="models-name" type="text" required /></label>
               <label class="models-field">Email<input id="models-email" type="email" /></label>
               <label class="models-field">Status<select id="models-status">${STATUSES.map(status => `<option value="${status}">${status}</option>`).join("")}</select></label>
+              <label class="models-field">Gender<select id="models-gender"><option value="">Not Set</option>${GENDERS.map(gender => `<option value="${gender}">${gender}</option>`).join("")}</select></label>
               <label class="models-field">Height<input id="models-height" type="text" placeholder="5'10 or 178 cm" /></label>
               <label class="models-field">Instagram Handle<input id="models-instagram" type="text" placeholder="handle" /></label>
               <label class="models-field">Pants Size<input id="models-pants" type="text" /></label>
@@ -111,7 +154,13 @@
   function bindControls() {
     $("models-search")?.addEventListener("input", renderModels);
     $("models-status-filter")?.addEventListener("change", renderModels);
+    $("models-gender-filter")?.addEventListener("change", renderModels);
+    $("models-top-filter")?.addEventListener("change", renderModels);
+    $("models-bottom-filter")?.addEventListener("change", renderModels);
+    $("models-shoe-filter")?.addEventListener("change", renderModels);
+    $("models-data-filter")?.addEventListener("change", renderModels);
     $("models-sort")?.addEventListener("change", renderModels);
+    $("models-reset-filters")?.addEventListener("click", resetFilters);
     $("models-refresh-btn")?.addEventListener("click", () => loadModelsAdmin(true));
     $("models-add-btn")?.addEventListener("click", () => openEditor(null));
     $("models-close-btn")?.addEventListener("click", closeEditor);
@@ -134,6 +183,7 @@
     if (!installed && !install()) return;
     if (STATE.loading) return;
     if (STATE.loaded && !force) {
+      refreshFilterOptions();
       renderModels();
       return;
     }
@@ -145,6 +195,7 @@
       const data = await apiJson("/api/admin-models");
       STATE.models = Array.isArray(data.models) ? data.models : [];
       STATE.loaded = true;
+      refreshFilterOptions();
       setSyncState(`Google Sheet connected · ${STATE.models.length} model${STATE.models.length === 1 ? "" : "s"} loaded.`);
       renderModels();
     } catch (error) {
@@ -168,23 +219,252 @@
     return String(model?.status || "Applicant").trim() || "Applicant";
   }
 
+  function normalizedGender(model) {
+    return String(model?.gender || "").trim();
+  }
+
+  function hasCompleteSizing(model) {
+    return Boolean(
+      String(model?.height || "").trim() &&
+      String(model?.shirt || "").trim() &&
+      String(model?.pants || "").trim() &&
+      String(model?.shoes || "").trim()
+    );
+  }
+
+  function normalizeExact(value) {
+    return String(value || "").trim().toLowerCase();
+  }
+
+  function heightInInches(value) {
+    const raw = String(value || "").trim().toLowerCase();
+    if (!raw) return null;
+
+    const cm = raw.match(/(\d+(?:\.\d+)?)\s*cm\b/);
+    if (cm) return Number(cm[1]) / 2.54;
+
+    const ft = raw.match(/(\d+)\s*(?:'|ft|feet)\s*(\d+(?:\.\d+)?)?/);
+    if (ft) return Number(ft[1]) * 12 + Number(ft[2] || 0);
+
+    const quote = raw.match(/^(\d+)\s*['’]\s*(\d+(?:\.\d+)?)\s*(?:"|in)?$/);
+    if (quote) return Number(quote[1]) * 12 + Number(quote[2]);
+
+    const inches = raw.match(/(\d+(?:\.\d+)?)\s*(?:in|inch|inches|")/);
+    if (inches) return Number(inches[1]);
+
+    const numeric = Number(raw.replace(/[^\d.]/g, ""));
+    if (Number.isFinite(numeric) && numeric > 100 && numeric < 230) return numeric / 2.54;
+    if (Number.isFinite(numeric) && numeric >= 48 && numeric <= 90) return numeric;
+
+    return null;
+  }
+
+  const TOP_SIZE_RANK = new Map([
+    ["XXXS", 0], ["3XS", 0],
+    ["XXS", 1], ["2XS", 1],
+    ["XS", 2],
+    ["S", 3], ["SMALL", 3],
+    ["M", 4], ["MEDIUM", 4],
+    ["L", 5], ["LARGE", 5],
+    ["XL", 6],
+    ["XXL", 7], ["2XL", 7],
+    ["XXXL", 8], ["3XL", 8],
+    ["4XL", 9], ["XXXXL", 9],
+    ["5XL", 10]
+  ]);
+
+  function normalizedSizeToken(value) {
+    return String(value || "")
+      .trim()
+      .toUpperCase()
+      .replace(/\s+/g, "")
+      .replace(/-/g, "");
+  }
+
+  function topSizeRank(value) {
+    const token = normalizedSizeToken(value);
+    if (TOP_SIZE_RANK.has(token)) return TOP_SIZE_RANK.get(token);
+
+    const numeric = Number(token.replace(/[^\d.]/g, ""));
+    if (Number.isFinite(numeric) && /\d/.test(token)) return 100 + numeric;
+
+    return null;
+  }
+
+  function numericSize(value) {
+    const raw = String(value || "").trim();
+    if (!raw) return null;
+    const match = raw.match(/\d+(?:\.\d+)?/);
+    return match ? Number(match[0]) : null;
+  }
+
+  function compareMissingLast(aValue, bValue, direction = 1) {
+    const aMissing = aValue == null || Number.isNaN(aValue);
+    const bMissing = bValue == null || Number.isNaN(bValue);
+    if (aMissing && bMissing) return 0;
+    if (aMissing) return 1;
+    if (bMissing) return -1;
+    return (aValue - bValue) * direction;
+  }
+
+  function compareGarmentSize(a, b, direction = 1) {
+    const aRank = topSizeRank(a);
+    const bRank = topSizeRank(b);
+
+    if (aRank != null && bRank != null) return (aRank - bRank) * direction;
+    if (aRank == null && bRank != null) return 1;
+    if (aRank != null && bRank == null) return -1;
+
+    return String(a || "").localeCompare(String(b || ""), undefined, {
+      numeric: true,
+      sensitivity: "base"
+    }) * direction;
+  }
+
+  function uniqueValues(field, comparator) {
+    const map = new Map();
+
+    STATE.models.forEach(model => {
+      const value = String(model?.[field] || "").trim();
+      if (!value) return;
+      const key = value.toLowerCase();
+      if (!map.has(key)) map.set(key, value);
+    });
+
+    const values = [...map.values()];
+    values.sort(comparator || ((a, b) => a.localeCompare(b, undefined, { numeric: true, sensitivity: "base" })));
+    return values;
+  }
+
+  function refillSelect(id, firstLabel, values) {
+    const select = $(id);
+    if (!select) return;
+    const previous = select.value || "ALL";
+
+    select.innerHTML = `<option value="ALL">${esc(firstLabel)}</option>` +
+      values.map(value => `<option value="${esc(value)}">${esc(value)}</option>`).join("");
+
+    select.value = [...select.options].some(option => option.value === previous) ? previous : "ALL";
+  }
+
+  function refreshFilterOptions() {
+    refillSelect("models-top-filter", "All top sizes", uniqueValues("shirt", (a, b) => compareGarmentSize(a, b, 1)));
+    refillSelect("models-bottom-filter", "All bottom sizes", uniqueValues("pants", (a, b) => {
+      const an = numericSize(a);
+      const bn = numericSize(b);
+      if (an != null && bn != null) return an - bn;
+      return compareGarmentSize(a, b, 1);
+    }));
+    refillSelect("models-shoe-filter", "All shoe sizes", uniqueValues("shoes", (a, b) => {
+      const an = numericSize(a);
+      const bn = numericSize(b);
+      if (an != null && bn != null) return an - bn;
+      if (an == null && bn != null) return 1;
+      if (an != null && bn == null) return -1;
+      return String(a).localeCompare(String(b), undefined, { numeric: true, sensitivity: "base" });
+    }));
+  }
+
+  function resetFilters() {
+    if ($("models-search")) $("models-search").value = "";
+    ["models-status-filter", "models-gender-filter", "models-top-filter", "models-bottom-filter", "models-shoe-filter", "models-data-filter"]
+      .forEach(id => { if ($(id)) $(id).value = "ALL"; });
+    if ($("models-sort")) $("models-sort").value = "newest";
+    renderModels();
+  }
+
   function filteredModels() {
     const query = ($("models-search")?.value || "").trim().toLowerCase();
     const status = ($("models-status-filter")?.value || "ALL").toUpperCase();
+    const gender = ($("models-gender-filter")?.value || "ALL").toUpperCase();
+    const top = $("models-top-filter")?.value || "ALL";
+    const bottom = $("models-bottom-filter")?.value || "ALL";
+    const shoe = $("models-shoe-filter")?.value || "ALL";
+    const dataFilter = $("models-data-filter")?.value || "ALL";
     const sort = $("models-sort")?.value || "newest";
 
     let rows = STATE.models.filter(model => {
-      const haystack = `${model.name || ""} ${model.email || ""} ${model.igHandle || ""} ${model.height || ""} ${model.notes || ""}`.toLowerCase();
+      const haystack = [
+        model.name,
+        model.email,
+        model.igHandle,
+        model.gender,
+        model.height,
+        model.shirt,
+        model.pants,
+        model.shoes,
+        model.notes
+      ].filter(Boolean).join(" ").toLowerCase();
+
       const matchesSearch = !query || haystack.includes(query);
       const matchesStatus = status === "ALL" || normalizedStatus(model).toUpperCase() === status;
-      return matchesSearch && matchesStatus;
+
+      const modelGender = normalizedGender(model).toUpperCase();
+      const matchesGender =
+        gender === "ALL" ||
+        (gender === "UNSET" ? !modelGender : modelGender === gender);
+
+      const matchesTop = top === "ALL" || normalizeExact(model.shirt) === normalizeExact(top);
+      const matchesBottom = bottom === "ALL" || normalizeExact(model.pants) === normalizeExact(bottom);
+      const matchesShoe = shoe === "ALL" || normalizeExact(model.shoes) === normalizeExact(shoe);
+
+      const completeSizing = hasCompleteSizing(model);
+      const hasInstagram = Boolean(String(model.igHandle || model.instagramUrl || "").trim());
+      const matchesData =
+        dataFilter === "ALL" ||
+        (dataFilter === "COMPLETE_SIZING" && completeSizing) ||
+        (dataFilter === "MISSING_SIZING" && !completeSizing) ||
+        (dataFilter === "HAS_INSTAGRAM" && hasInstagram) ||
+        (dataFilter === "NO_INSTAGRAM" && !hasInstagram);
+
+      return matchesSearch && matchesStatus && matchesGender &&
+        matchesTop && matchesBottom && matchesShoe && matchesData;
     });
 
     rows = [...rows].sort((a, b) => {
-      if (sort === "name") return String(a.name || "").localeCompare(String(b.name || ""), undefined, { sensitivity: "base" });
+      if (sort === "name") {
+        return String(a.name || "").localeCompare(String(b.name || ""), undefined, { sensitivity: "base" });
+      }
+
       if (sort === "status") return normalizedStatus(a).localeCompare(normalizedStatus(b));
-      const at = new Date(a.timestamp || 0).getTime() || 0;
-      const bt = new Date(b.timestamp || 0).getTime() || 0;
+
+      if (sort === "gender") {
+        const ag = normalizedGender(a) || "ZZZ";
+        const bg = normalizedGender(b) || "ZZZ";
+        return ag.localeCompare(bg, undefined, { sensitivity: "base" });
+      }
+
+      if (sort === "height-desc" || sort === "height-asc") {
+        return compareMissingLast(
+          heightInInches(a.height),
+          heightInInches(b.height),
+          sort === "height-desc" ? -1 : 1
+        );
+      }
+
+      if (sort === "top-asc" || sort === "top-desc") {
+        return compareGarmentSize(a.shirt, b.shirt, sort === "top-desc" ? -1 : 1);
+      }
+
+      if (sort === "bottom-asc" || sort === "bottom-desc") {
+        const an = numericSize(a.pants);
+        const bn = numericSize(b.pants);
+        const direction = sort === "bottom-desc" ? -1 : 1;
+
+        if (an != null || bn != null) return compareMissingLast(an, bn, direction);
+        return compareGarmentSize(a.pants, b.pants, direction);
+      }
+
+      if (sort === "shoe-asc" || sort === "shoe-desc") {
+        return compareMissingLast(
+          numericSize(a.shoes),
+          numericSize(b.shoes),
+          sort === "shoe-desc" ? -1 : 1
+        );
+      }
+
+      const at = new Date(sort === "updated" ? (a.lastUpdated || a.timestamp || 0) : (a.timestamp || 0)).getTime() || 0;
+      const bt = new Date(sort === "updated" ? (b.lastUpdated || b.timestamp || 0) : (b.timestamp || 0)).getTime() || 0;
       return sort === "oldest" ? at - bt : bt - at;
     });
 
@@ -220,7 +500,7 @@
             </span>
           </button>
           <span class="models-status models-status-${esc(normalizedStatus(model).toLowerCase())}">${esc(normalizedStatus(model))}</span>
-          <span class="models-measurements">${esc([model.height, model.shirt ? `Top ${model.shirt}` : "", model.pants ? `Bottom ${model.pants}` : "", model.shoes ? `Shoe ${model.shoes}` : ""].filter(Boolean).join(" · ") || "No sizing")}</span>
+          <span class="models-measurements">${esc([normalizedGender(model), model.height, model.shirt ? `Top ${model.shirt}` : "", model.pants ? `Bottom ${model.pants}` : "", model.shoes ? `Shoe ${model.shoes}` : ""].filter(Boolean).join(" · ") || "No sizing")}</span>
           <span class="models-social">${instagram ? `<a href="${esc(instagram)}" target="_blank" rel="noopener">@${esc(String(model.igHandle || "instagram").replace(/^@/, ""))}</a>` : "—"}</span>
           <button class="models-edit-btn" type="button" data-edit-model="${esc(model.modelId)}">Edit</button>
         </article>
@@ -248,6 +528,7 @@
     $("models-model-id").value = model?.modelId || "";
     $("models-name").value = model?.name || "";
     $("models-email").value = model?.email || "";
+    $("models-gender").value = normalizedGender(model);
     $("models-height").value = model?.height || "";
     $("models-pants").value = model?.pants || "";
     $("models-shirt").value = model?.shirt || "";
@@ -301,6 +582,7 @@
       modelId: $("models-model-id")?.value || null,
       name: ($("models-name")?.value || "").trim(),
       email: ($("models-email")?.value || "").trim(),
+      gender: ($("models-gender")?.value || "").trim(),
       height: ($("models-height")?.value || "").trim(),
       pants: ($("models-pants")?.value || "").trim(),
       shirt: ($("models-shirt")?.value || "").trim(),

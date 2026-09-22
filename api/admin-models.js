@@ -127,7 +127,12 @@ function modelMatchesAdd(candidate, requested) {
   return (
     same(candidate?.name, requested?.name) &&
     same(candidate?.email, requested?.email) &&
-    same(candidate?.igHandle, requested?.igHandle)
+    same(candidate?.igHandle, requested?.igHandle) &&
+    same(candidate?.gender, requested?.gender) &&
+    same(candidate?.height, requested?.height) &&
+    same(candidate?.shirt, requested?.shirt) &&
+    same(candidate?.pants, requested?.pants) &&
+    same(candidate?.shoes, requested?.shoes)
   );
 }
 
@@ -142,7 +147,14 @@ function modelMatchesUpdate(candidate, requested) {
   return (
     same(candidate.name, requested.name) &&
     same(candidate.email, requested.email) &&
-    same(candidate.status, requested.status || "Applicant")
+    same(candidate.status, requested.status || "Applicant") &&
+    same(candidate.gender, requested.gender) &&
+    same(candidate.height, requested.height) &&
+    same(candidate.shirt, requested.shirt) &&
+    same(candidate.pants, requested.pants) &&
+    same(candidate.shoes, requested.shoes) &&
+    same(candidate.igHandle, requested.igHandle) &&
+    same(candidate.notes, requested.notes)
   );
 }
 
