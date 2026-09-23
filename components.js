@@ -19,6 +19,7 @@ function getSiteHeader() {
             </p>
             <a href="index.html" class="${isActive("index.html")}">Home</a>
             <a href="shop.html" class="${isActive("shop.html")}">Shop</a>
+            <a href="uniform.html" class="${isActive("uniform.html")}">Uniform</a>
             <a href="about.html#order-info" class="${currentPage === "about.html" ? "active" : ""}">Order Info</a>
             <a href="contact.html" class="${isActive("contact.html")}">Contact</a>
             <a href="about.html" class="${isActive("about.html")}">About the Brand</a>
@@ -44,6 +45,7 @@ function getSiteFooter() {
         <div class="footer-links footer-links-global">
           <a href="index.html">Home</a>
           <a href="shop.html">Shop</a>
+          <a href="uniform.html">Uniform</a>
           <a href="about.html#order-info">Order Info</a>
           <a href="contact.html">Contact</a>
           <a href="about.html">About</a>
@@ -60,7 +62,12 @@ function setNavOverlayImage() {
 
   let imagePath = "";
 
-  if (currentPage === "shop.html" || currentPage === "product.html" || currentPage === "cart.html") {
+  if (
+    currentPage === "shop.html" ||
+    currentPage === "product.html" ||
+    currentPage === "cart.html" ||
+    currentPage === "uniform.html"
+  ) {
     imagePath = "url('assets/hoodie.png')";
   } else if (currentPage === "lookbook.html") {
     imagePath = "url('assets/look/look1_1.png')";
@@ -132,6 +139,7 @@ function injectGlobalChrome() {
     footerMount.innerHTML = getSiteFooter();
   }
 
+  setNavOverlayImage();
   initInjectedLogoOverlayNav();
 }
 
