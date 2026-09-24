@@ -1,0 +1,284 @@
+
+.inventory-bulk-workspace{
+  margin:0 0 24px;
+  padding:16px;
+  border:1px solid var(--soft);
+  background:rgba(255,255,255,.42);
+}
+.inventory-bulk-toolbar{
+  display:grid;
+  grid-template-columns:minmax(240px,1.4fr) repeat(3,minmax(150px,.7fr));
+  gap:10px;
+}
+.inventory-bulk-toolbar input,
+.inventory-bulk-toolbar select,
+.inventory-bulk-set input{
+  min-height:40px;
+  border:0;
+  border-bottom:1px solid var(--soft-2);
+  background:transparent;
+  padding:8px 0;
+  outline:none;
+}
+.inventory-bulk-summary{
+  display:flex;
+  flex-wrap:wrap;
+  gap:18px;
+  padding:12px 0;
+  margin-top:8px;
+  border-top:1px solid var(--soft);
+  border-bottom:1px solid var(--soft);
+  font-size:9px;
+  text-transform:uppercase;
+  letter-spacing:.06em;
+  color:var(--muted);
+}
+.inventory-bulk-summary strong{color:#111;font-weight:500}
+.inventory-bulk-actions{
+  display:flex;
+  flex-wrap:wrap;
+  align-items:end;
+  gap:8px;
+  padding-top:12px;
+}
+.inventory-bulk-actions button{
+  min-height:38px;
+  padding:0 11px;
+  border:1px solid var(--soft-2);
+  background:rgba(255,255,255,.58);
+  font-size:9px;
+  text-transform:uppercase;
+  letter-spacing:.05em;
+}
+.inventory-bulk-actions button.is-primary{
+  background:#111;
+  color:#fff;
+  border-color:#111;
+}
+.inventory-bulk-actions button:disabled{opacity:.35}
+.inventory-bulk-set{
+  display:grid;
+  grid-template-columns:auto 74px auto;
+  gap:8px;
+  align-items:end;
+  padding-left:8px;
+}
+.inventory-bulk-set span{
+  grid-column:1/-1;
+  font-size:8px;
+  text-transform:uppercase;
+  color:var(--muted);
+}
+.inventory-bulk-set input{
+  width:74px;
+  min-height:38px;
+  font-size:14px;
+}
+.inventory-bulk-adjust,
+.inventory-bulk-save-actions{
+  display:flex;
+  gap:8px;
+}
+.inventory-bulk-save-actions{margin-left:auto}
+.inventory-bulk-message{
+  min-height:17px;
+  margin:10px 0 0;
+  color:var(--muted);
+  font-size:9px;
+}
+.inventory-bulk-message.is-error{color:#8c1f1f}
+
+.inventory-bulk-product-row{
+  position:relative;
+  grid-template-columns:36px 72px minmax(170px,.8fr) minmax(360px,1.8fr) !important;
+  gap:12px !important;
+  padding:12px 0 !important;
+  border-bottom:1px solid var(--soft);
+}
+.inventory-product-select{
+  width:28px;
+  height:28px;
+  display:grid;
+  place-items:center;
+  align-self:start;
+  margin-top:18px;
+  cursor:pointer;
+}
+.inventory-product-select input,
+.inventory-variant-check input{
+  width:16px;
+  height:16px;
+  accent-color:#111;
+}
+.inventory-product-image{
+  width:64px;
+  height:64px;
+  display:grid;
+  place-items:center;
+  background:rgba(255,255,255,.5);
+}
+.inventory-product-image img{
+  max-width:100%;
+  max-height:100%;
+  object-fit:contain;
+}
+.inventory-product-info{
+  min-width:0;
+}
+.inventory-product-info strong{
+  display:block;
+  margin-bottom:5px;
+  font-size:11px;
+  font-weight:500;
+}
+.inventory-product-info small{
+  display:block;
+  margin-top:5px;
+  color:var(--muted);
+  font-size:9px;
+}
+.inventory-bulk-product-row .admin-inventory-variants{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(116px,1fr));
+  gap:8px;
+}
+.inventory-bulk-variant{
+  min-width:0 !important;
+  padding:9px;
+  border:1px solid var(--soft);
+  background:rgba(255,255,255,.5);
+  transition:border-color .15s ease,background .15s ease;
+}
+.inventory-bulk-variant.is-selected{
+  border-color:#111;
+  background:rgba(255,255,255,.85);
+}
+.inventory-bulk-variant.is-changed{
+  box-shadow:inset 3px 0 0 #111;
+}
+.inventory-variant-check{
+  display:flex;
+  align-items:center;
+  gap:7px;
+  min-height:22px;
+  cursor:pointer;
+}
+.inventory-variant-check span{
+  color:#111 !important;
+  font-size:9px !important;
+  text-transform:uppercase;
+}
+.inventory-qty-input{
+  width:100% !important;
+  min-height:42px;
+  margin-top:6px;
+  border:0 !important;
+  border-bottom:1px solid var(--soft-2) !important;
+  background:transparent;
+  font-size:16px;
+}
+.inventory-variant-footer{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:8px;
+  margin-top:6px;
+}
+.inventory-change-state{
+  font-size:8px !important;
+  color:var(--muted) !important;
+}
+.inventory-save-one{
+  min-height:28px;
+  padding:0 6px;
+  font-size:8px !important;
+  opacity:1 !important;
+}
+.inventory-bulk-variant.is-changed .inventory-save-one{
+  background:#111;
+  color:#fff;
+}
+
+@media(max-width:1100px){
+  .inventory-bulk-toolbar{
+    grid-template-columns:1fr 1fr;
+  }
+  .inventory-bulk-product-row{
+    grid-template-columns:32px 72px minmax(0,1fr) !important;
+  }
+  .inventory-bulk-product-row .admin-inventory-variants{
+    grid-column:1/-1 !important;
+  }
+  .inventory-bulk-save-actions{
+    width:100%;
+    margin-left:0;
+  }
+}
+@media(max-width:700px){
+  .inventory-bulk-workspace{
+    margin:0 0 14px;
+    padding:10px;
+  }
+  .inventory-bulk-toolbar{
+    grid-template-columns:1fr !important;
+  }
+  .inventory-bulk-toolbar input,
+  .inventory-bulk-toolbar select{
+    min-height:46px;
+    font-size:16px;
+  }
+  .inventory-bulk-actions{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    align-items:stretch;
+  }
+  .inventory-bulk-actions > button{
+    min-height:42px;
+  }
+  .inventory-bulk-set{
+    grid-column:1/-1;
+    grid-template-columns:1fr auto;
+    padding-left:0;
+  }
+  .inventory-bulk-set span{grid-column:1/-1}
+  .inventory-bulk-set input{
+    width:100%;
+    min-height:44px;
+    font-size:16px;
+  }
+  .inventory-bulk-adjust,
+  .inventory-bulk-save-actions{
+    grid-column:1/-1;
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    width:100%;
+  }
+  .inventory-bulk-adjust button,
+  .inventory-bulk-save-actions button{
+    min-height:44px;
+  }
+  .inventory-bulk-product-row{
+    display:grid !important;
+    grid-template-columns:28px 70px minmax(0,1fr) !important;
+    padding:10px !important;
+    border:1px solid var(--soft) !important;
+    background:rgba(255,255,255,.45);
+    margin-bottom:8px;
+  }
+  .inventory-product-select{
+    margin-top:20px;
+  }
+  .inventory-product-image{
+    width:70px;
+    height:70px;
+  }
+  .inventory-bulk-product-row .admin-inventory-variants{
+    grid-column:1/-1 !important;
+    grid-template-columns:repeat(2,minmax(0,1fr)) !important;
+  }
+}
+@media(max-width:480px){
+  .inventory-bulk-product-row .admin-inventory-variants{
+    grid-template-columns:1fr 1fr !important;
+  }
+}

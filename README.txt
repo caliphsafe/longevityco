@@ -1,17 +1,39 @@
-LONGEVITY CO. — FEATURED + CATEGORY DUPLICATION — 43 BUILD
+LONGEVITY CO. — INVENTORY EDIT + BULK EDIT — 43 BUILD
 
 REPLACE:
-- shop-editorial.js
-- shop.html
+- admin.html
+- admin-sort.js
+- api/admin-inventory-update.js
 
-NEW BEHAVIOR
-- A product selected as one of the four Featured items stays in its normal category.
-- On the default All view, a Featured item appears:
-  1. in the Featured section
-  2. again in its normal category section
-- When a customer selects Hoodies, T-Shirts, Pants, Shorts, Headwear, or Accessories,
-  the Featured product still appears if it belongs to that category.
-- The Featured filter continues to show just the Featured section/items.
-- Category item counts now include Featured products because they remain part of the catalog.
+ADD:
+- admin-inventory-bulk.js
+- admin-inventory-bulk.css
 
-No admin, Shopify, API, or environment-variable changes are required.
+WHAT THIS ADDS TO INVENTORY
+- Edit every size quantity directly from the Inventory page.
+- Save a single changed size.
+- Change multiple sizes and Save All Changes in one action.
+- Select individual sizes with checkboxes.
+- Select all visible sizes.
+- Select/clear all sizes within a product.
+- Set all selected sizes to one exact quantity.
+- Add 1 or subtract 1 across selected sizes.
+- Save only selected changed sizes.
+- Search by product, category, or size.
+- Filter by category.
+- Filter All / In Stock / Low Stock (1–5) / Out of Stock.
+- Sort by product name, total stock, or changed items first.
+- Live counts for visible, selected, and changed variants.
+- Fully responsive/mobile-friendly controls.
+
+SHOPIFY
+- The existing inventory API now supports both the original single-size update
+  and batched inventory updates.
+- Bulk saves are sent to Shopify in safe batches.
+- No new Shopify scopes or environment variables are required.
+
+IMPORTANT
+- Quantity never goes below 0.
+- Changes are only written to Shopify when Save is pressed.
+- The Inventory page updates its in-memory Shopify quantities immediately after
+  a successful save so the page stays in sync without a full reload.

@@ -36,16 +36,18 @@
 
   function loadStyle(href) {
     if(document.querySelector(`link[href^="${href}"]`)) return;
-    const link=document.createElement("link"); link.rel="stylesheet"; link.href=`${href}?v=6`; document.head.appendChild(link);
+    const link=document.createElement("link"); link.rel="stylesheet"; link.href=`${href}?v=7`; document.head.appendChild(link);
   }
   function loadScript(src) {
     if(document.querySelector(`script[src^="${src}"]`)) return;
-    const script=document.createElement("script"); script.src=`${src}?v=6`; script.defer=true; document.head.appendChild(script);
+    const script=document.createElement("script"); script.src=`${src}?v=7`; script.defer=true; document.head.appendChild(script);
   }
   function bootAddons(){
     loadScript("admin-bulk-edit-stability.js");
     loadScript("admin-select-visible.js");
     loadScript("admin-mobile-ux.js");
+    loadStyle("admin-inventory-bulk.css");
+    loadScript("admin-inventory-bulk.js");
     loadStyle("admin-shop-editor.css");
     loadScript("admin-shop-editor.js");
     loadStyle("admin-models.css");

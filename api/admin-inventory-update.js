@@ -1,6 +1,46 @@
 import { requireAdmin } from "./_admin-auth.js";
 import { shopifyAdminGraphql, throwUserErrors } from "./_shopify-admin.js";
 
+function normalizeUpdate(update = {}) {
+  const inventoryItemId = String(update.inventoryItemId || "").trim();
+  const locationId = String(update.locationId || "").trim();
+  const quantity = Math.max(0, Math.floor(Number(update.quantity || 0)));
+
+  if (!inventoryItemId || !locationId) return null;
+
+  return {
+    inventoryItemId,
+    locationId,
+    quantity,
+  };
+}
+
+async function setInventoryBatch(updates) {
+  const data = await shopifyAdminGraphql(`
+    mutation AdminInventorySet($input: InventorySetQuantitiesInput!) {
+      inventorySetQuantities(input: $input) {
+        inventoryAdjustmentGroup {
+          createdAt
+          reason
+        }
+        userErrors {
+          field
+          message
+        }
+      }
+    }
+  `, {
+    input: {
+      name: "available",
+      reason: "correction",
+      ignoreCompareQuantity: true,
+      quantities: updates,
+    },
+  });
+
+  throwUserErrors(data.inventorySetQuantities?.userErrors);
+}
+
 export default async function handler(req, res) {
   if (req.method !== "POST") {
     return res.status(405).json({ error: "Method not allowed" });
@@ -9,42 +49,48 @@ export default async function handler(req, res) {
   if (!requireAdmin(req, res)) return;
 
   try {
-    const { inventoryItemId, locationId, quantity } = req.body || {};
+    const body = req.body || {};
 
-    if (!inventoryItemId || !locationId) {
-      return res.status(400).json({ error: "Missing inventory item or location" });
+    const rawUpdates = Array.isArray(body.updates)
+      ? body.updates
+      : [{
+          inventoryItemId: body.inventoryItemId,
+          locationId: body.locationId,
+          quantity: body.quantity,
+        }];
+
+    const deduped = new Map();
+
+    for (const raw of rawUpdates) {
+      const update = normalizeUpdate(raw);
+      if (!update) continue;
+      deduped.set(`${update.inventoryItemId}::${update.locationId}`, update);
     }
 
-    const data = await shopifyAdminGraphql(`
-      mutation AdminInventorySet($input: InventorySetQuantitiesInput!) {
-        inventorySetQuantities(input: $input) {
-          inventoryAdjustmentGroup {
-            createdAt
-            reason
-          }
-          userErrors {
-            field
-            message
-          }
-        }
-      }
-    `, {
-      input: {
-        name: "available",
-        reason: "correction",
-        ignoreCompareQuantity: true,
-        quantities: [{
-          inventoryItemId,
-          locationId,
-          quantity: Math.max(0, Number(quantity || 0)),
-        }],
-      },
+    const updates = [...deduped.values()];
+
+    if (!updates.length) {
+      return res.status(400).json({
+        error: "Missing inventory item, location, or quantity.",
+      });
+    }
+
+    // Keep each Shopify mutation comfortably below common GraphQL input limits.
+    const CHUNK_SIZE = 100;
+    let updated = 0;
+
+    for (let index = 0; index < updates.length; index += CHUNK_SIZE) {
+      const chunk = updates.slice(index, index + CHUNK_SIZE);
+      await setInventoryBatch(chunk);
+      updated += chunk.length;
+    }
+
+    return res.status(200).json({
+      ok: true,
+      updated,
     });
-
-    throwUserErrors(data.inventorySetQuantities?.userErrors);
-
-    return res.status(200).json({ ok: true });
   } catch (error) {
+    console.error("ADMIN INVENTORY UPDATE ERROR:", error);
     return res.status(500).json({ error: error.message });
   }
 }

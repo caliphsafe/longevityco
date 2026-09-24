@@ -130,13 +130,85 @@ function picks(){let r=[];["headwear","tops","bottoms"].forEach(c=>{if(c==="head
 function summary(){let p=picks(),t=`${p.length} item${p.length===1?"":"s"} selected`;document.getElementById("uniform-item-count").textContent=t;document.getElementById("uniform-mobile-count").textContent=t;let dis=!p.length;document.getElementById("uniform-add-all").disabled=dis;document.getElementById("uniform-mobile-add").disabled=dis}
 function none(){state.headwear.none=!state.headwear.none;let b=document.getElementById("uniform-headwear-none");b.classList.toggle("is-active",state.headwear.none);b.setAttribute("aria-pressed",state.headwear.none);saveLook();render("headwear");summary()}
 function lookSignature(){return ["headwear","tops","bottoms"].map(c=>c==="headwear"&&state.headwear.none?"NONE":prod(c,state[c].selections[0])?.id||"").join("|")}
+function randomPool(c){
+ const all=state[c].items.filter(p=>p?.variants?.length);
+ const available=all.filter(p=>p.variants.some(v=>v.availableForSale));
+
+ // Prefer purchasable pieces when there is enough variety. If a category
+ // only has one purchasable item, keep the rest of the visible live pieces
+ // eligible so PICK FOR ME can still produce a different look.
+ return available.length>1 ? available : all;
+}
+function randomChoiceDifferent(c){
+ const pool=randomPool(c);
+ if(!pool.length)return false;
+
+ const current=state[c].selections[0];
+ const currentProduct=current?prod(c,current):null;
+ let choices=pool;
+
+ if(pool.length>1&&currentProduct){
+  const different=pool.filter(p=>p.id!==currentProduct.id);
+  if(different.length)choices=different;
+ }
+
+ const pickedProduct=choices[Math.floor(Math.random()*choices.length)];
+ const index=state[c].items.findIndex(p=>p.id===pickedProduct.id);
+ if(index<0)return false;
+
+ const preferred=preferredSize(c,current?vari(c,current):null);
+ const next=make(c,index,preferred);
+ if(!next)return false;
+
+ state[c].selections=[next];
+ return !currentProduct||pickedProduct.id!==currentProduct.id;
+}
 function random(){
- let before=lookSignature(),attempts=0;
- do{
-  ["headwear","tops","bottoms"].forEach(c=>{if(c==="headwear"&&state.headwear.none)return;let a=state[c].items.filter(p=>p.variants.some(v=>v.availableForSale));if(!a.length)return;let current=state[c].selections[0],preferred=preferredSize(c,current?vari(c,current):null),p=a[Math.floor(Math.random()*a.length)],idx=state[c].items.indexOf(p),next=make(c,idx,preferred);if(next)state[c].selections=[next]});
-  attempts++;
- }while(lookSignature()===before&&attempts<12);
- lastLookSignature=lookSignature();sizeAdjusted={};saveLook();["headwear","tops","bottoms"].forEach(render);summary()
+ const before=lookSignature();
+ let changed=false;
+
+ ["headwear","tops","bottoms"].forEach(c=>{
+  if(c==="headwear"&&state.headwear.none)return;
+  if(randomChoiceDifferent(c))changed=true;
+ });
+
+ // If the first pass somehow lands on the same overall look, force another
+ // pass through any category that actually has more than one visible product.
+ if(!changed||lookSignature()===before){
+  const candidates=["headwear","tops","bottoms"].filter(c=>{
+   if(c==="headwear"&&state.headwear.none)return false;
+   return randomPool(c).length>1;
+  });
+
+  if(candidates.length){
+   const c=candidates[Math.floor(Math.random()*candidates.length)];
+   randomChoiceDifferent(c);
+   changed=lookSignature()!==before;
+  }
+ }
+
+ lastLookSignature=lookSignature();
+ sizeAdjusted={};
+ saveLook();
+ ["headwear","tops","bottoms"].forEach(render);
+ summary();
+
+ const button=document.getElementById("uniform-pick-for-me");
+ if(button){
+  const original=button.dataset.originalLabel||button.innerHTML;
+  button.dataset.originalLabel=original;
+
+  if(changed){
+   button.innerHTML='PICKED <span>✓</span>';
+  }else{
+   button.innerHTML='ONLY LOOK AVAILABLE <span>—</span>';
+  }
+
+  clearTimeout(button._uniformFeedbackTimer);
+  button._uniformFeedbackTimer=setTimeout(()=>{
+   button.innerHTML=button.dataset.originalLabel||'PICK FOR ME <span>↻</span>';
+  },900);
+ }
 }
 function newLines(includeDuplicates=true){let m=new Map;picks().forEach(x=>{if(!includeDuplicates&&inCart(x.v.id))return;m.set(x.v.id,(m.get(x.v.id)||0)+1)});return [...m].map(([merchandiseId,quantity])=>({merchandiseId,quantity}))}
 function duplicates(){return picks().filter(x=>inCart(x.v.id))}
