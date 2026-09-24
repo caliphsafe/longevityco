@@ -1,27 +1,25 @@
-LONGEVITY CO. — UNIFORM LIVE PRODUCT VISIBILITY FIX — 43 BUILD
+LONGEVITY CO. — UNIFORM SOURCE-OF-TRUTH FIX — 43 BUILD
 
 REPLACE:
 - uniform.js
-- uniform.css
 - uniform.html
 
-ROOT CAUSE
-The Shop page shows live products even when their variants are sold out / inventory is 0.
-The Uniform page was doing something different: it removed any product that did not
-currently have an availableForSale variant.
+ADD:
+- api/uniform-products.js
 
-This is why a newly-live shirt could:
-- appear on Shop
-- appear as TOPS in Uniform Editor
-- still be missing from the public Uniform page
+WHAT THIS FIX CHANGES
+The public Uniform page now gets its catalog from one dedicated endpoint that joins:
+- the exact same shop-all collection used by the Shop page
+- fresh Shopify Admin status + LC_UNIFORM tags used by Uniform Editor
 
-FIX
-- Any published/live product assigned or auto-mapped to TOPS, BOTTOMS, or HEADWEAR
-  is now visible in Uniform even when its current inventory is 0.
-- Sold-out products display a SOLD OUT badge.
-- Sold-out products can still be browsed/swiped in the Uniform carousel.
-- A sold-out product is not added to cart.
-- Saved Uniform looks can restore a product even if it later sells out.
-- In-stock items continue to work exactly as before.
+This removes the mismatch where a product could be live on Shop and assigned to TOPS
+in Uniform Editor but still not reach the public Uniform page.
 
-No API, Shopify scope, admin, or environment-variable changes are required.
+The endpoint is no-cache, respects TOPS / BOTTOMS / HEADWEAR / OFF immediately,
+and defaults untagged live garments from product type/title.
+
+The Uniform page also tracks the catalog. When a genuinely new live product appears,
+it is surfaced once as the visible product in that category instead of staying buried
+behind a previously saved local Uniform selection.
+
+No new environment variables or Shopify scopes are required.

@@ -1,6 +1,7 @@
 (() => {
-const STORAGE_KEY="longevity_uniform_v10";
+const STORAGE_KEY="longevity_uniform_v11";
 const SIZE_MEMORY_KEY="longevity_uniform_size_memory_v10";
+const CATALOG_KEY="longevity_uniform_catalog_v11";
 const state={headwear:{items:[],selections:[],none:false},tops:{items:[],selections:[]},bottoms:{items:[],selections:[]}};
 let CART=null, lastLookSignature="", pendingDuplicateDecision=null, sizeAdjusted={};
 const esc=(v="")=>String(v).replaceAll("&","&amp;").replaceAll("<","&lt;").replaceAll(">","&gt;").replaceAll('"',"&quot;").replaceAll("'","&#039;");
@@ -10,6 +11,12 @@ function explicitUniformCategory(p){
  return tag.split(":")[1].toUpperCase();
 }
 function cat(p){
+ const serverCategory=String(p?.uniformCategory||"").toUpperCase();
+ if(serverCategory==="OFF")return"";
+ if(serverCategory==="HEADWEAR")return"headwear";
+ if(serverCategory==="TOPS")return"tops";
+ if(serverCategory==="BOTTOMS")return"bottoms";
+
  const explicit=explicitUniformCategory(p);
  if(explicit==="OFF")return"";
  if(explicit==="HEADWEAR")return"headwear";
@@ -24,7 +31,7 @@ function cat(p){
  if(/pants|pant|shorts|short|jogger|trouser|bottom|denim|jean|cargo|chino/.test(r))return"bottoms";
  return"";
 }
-function norm(p){let imgs=p.images?.nodes||[],primary=p.featuredImage?.url||imgs[0]?.url||"",secondary=imgs.find(img=>img?.url&&img.url!==primary)?.url||"";let vs=(p.variants?.nodes||[]).map(v=>({id:v.id,title:v.title||"Default",availableForSale:v.availableForSale!==false,selectedOptions:v.selectedOptions||[],price:v.price||p.priceRange?.minVariantPrice||{amount:"0",currencyCode:"USD"}}));return{id:p.id,handle:p.handle||"",title:p.title,image:primary,hoverImage:secondary,productType:p.productType||"",tags:Array.isArray(p.tags)?p.tags:[],variants:vs}}
+function norm(p){let imgs=p.images?.nodes||[],primary=p.featuredImage?.url||imgs[0]?.url||"",secondary=imgs.find(img=>img?.url&&img.url!==primary)?.url||"";let vs=(p.variants?.nodes||[]).map(v=>({id:v.id,title:v.title||"Default",availableForSale:v.availableForSale!==false,selectedOptions:v.selectedOptions||[],price:v.price||p.priceRange?.minVariantPrice||{amount:"0",currencyCode:"USD"}}));return{id:p.id,handle:p.handle||"",title:p.title,image:primary,hoverImage:secondary,productType:p.productType||"",uniformCategory:p.uniformCategory||"",createdAt:p.createdAt||"",tags:Array.isArray(p.tags)?p.tags:[],variants:vs}}
 function label(v){let s=(v?.selectedOptions||[]).find(o=>String(o.name).toLowerCase()==="size");return s?.value||(v?.title&&v.title!=="Default Title"?v.title:"One Size")}
 function isOneSizeLabel(v){let s=String(label(v)||"").trim().toLowerCase().replace(/\s+/g," ");return !s||["default","default title","one size","one size fits all","one-size","os","osfa"].includes(s)}
 function sizeChoices(c,p){if(c==="headwear"||!p?.variants?.length)return[];let available=p.variants.filter(v=>v.availableForSale);if(!available.length||available.every(isOneSizeLabel))return[];let seen=new Set();return available.filter(v=>{let k=canonicalSize(label(v));if(!k||seen.has(k))return false;seen.add(k);return true})}
@@ -46,6 +53,48 @@ function rememberSize(c,v){if(!v||isOneSizeLabel(v))return;let m=getSizeMemory()
 function preferredSize(c,currentVariant){return currentVariant&&!isOneSizeLabel(currentVariant)?label(currentVariant):(getSizeMemory()[c]||"")}
 function make(c,i=0,preferred=""){let a=state[c].items;if(!a.length)return null;i=(i+a.length)%a.length;let v=smartVariant(a[i],preferred)||first(a[i]);return{productIndex:i,variantId:v?.id||"",uid:Math.random().toString(36).slice(2)}}
 function prod(c,s){return state[c].items[s.productIndex]} function vari(c,s){let p=prod(c,s);return p?.variants.find(v=>v.id===s.variantId)||first(p)}
+function catalogSnapshot(){
+ try{return JSON.parse(localStorage.getItem(CATALOG_KEY)||"null")}catch{return null}
+}
+function currentCatalogSnapshot(){
+ let out={};
+ ["headwear","tops","bottoms"].forEach(c=>{out[c]=state[c].items.map(p=>p.id)});
+ return out;
+}
+function newCatalogItems(previous){
+ let found={headwear:[],tops:[],bottoms:[]};
+ if(!previous)return found;
+ ["headwear","tops","bottoms"].forEach(c=>{
+  const old=new Set(Array.isArray(previous[c])?previous[c]:[]);
+  found[c]=state[c].items.filter(p=>!old.has(p.id));
+ });
+ return found;
+}
+function rememberCatalog(){
+ try{localStorage.setItem(CATALOG_KEY,JSON.stringify(currentCatalogSnapshot()))}catch{}
+}
+function surfaceNewCatalogItems(found){
+ let changed=false;
+ ["headwear","tops","bottoms"].forEach(c=>{
+  const added=found[c]||[];
+  if(!added.length)return;
+  const newest=[...added].sort((a,b)=>(new Date(b.createdAt||0).getTime()||0)-(new Date(a.createdAt||0).getTime()||0))[0];
+  const index=state[c].items.findIndex(p=>p.id===newest?.id);
+  if(index<0)return;
+  const next=make(c,index,getSizeMemory()[c]||"");
+  if(next){state[c].selections=[next];changed=true}
+ });
+ if(changed)saveLook();
+}
+function sortUniformCatalog(){
+ ["headwear","tops","bottoms"].forEach(c=>{
+  state[c].items.sort((a,b)=>{
+   const ad=new Date(a.createdAt||0).getTime()||0;
+   const bd=new Date(b.createdAt||0).getTime()||0;
+   return bd-ad;
+  });
+ });
+}
 function ensure(){["headwear","tops","bottoms"].forEach(c=>{if(state[c].items.length&&!state[c].selections.length)state[c].selections=[make(c,0,getSizeMemory()[c]||"")]})}
 function saveLook(){try{let data={none:state.headwear.none,categories:{}};["headwear","tops","bottoms"].forEach(c=>{let s=state[c].selections[0],p=s&&prod(c,s),v=s&&vari(c,s);data.categories[c]=p?{productId:p.id,handle:p.handle,variantId:v?.id||"",size:v?label(v):""}:null});localStorage.setItem(STORAGE_KEY,JSON.stringify(data))}catch{}}
 function restoreLook(){try{let d=JSON.parse(localStorage.getItem(STORAGE_KEY)||"null");if(!d)return;state.headwear.none=!!d.none;["headwear","tops","bottoms"].forEach(c=>{let saved=d.categories?.[c];if(!saved)return;let i=state[c].items.findIndex(p=>p.id===saved.productId||(saved.handle&&p.handle===saved.handle));if(i<0)return;let p=state[c].items[i],v=p.variants.find(v=>v.id===saved.variantId)||smartVariant(p,saved.size||getSizeMemory()[c]||"")||first(p);if(v)state[c].selections=[{productIndex:i,variantId:v.id,uid:Math.random().toString(36).slice(2)}]})}catch{}}
@@ -171,14 +220,44 @@ function bind(){
  document.getElementById("uniform-add-duplicates").onclick=async()=>{closeDuplicateConfirm();try{await addLines(newLines(true))}catch(e){console.error(e)}};
  document.addEventListener("keydown",e=>{if(e.key==="Escape")closeDuplicateConfirm()})
 }
+async function loadUniformProducts(){
+ const primary=await fetch(`/api/uniform-products?_=${Date.now()}`,{
+  cache:"no-store",
+  headers:{"Cache-Control":"no-cache"}
+ });
+ if(primary.ok){
+  const data=await primary.json();
+  return data.products||[];
+ }
+
+ console.warn("Uniform source-of-truth endpoint failed; using Storefront fallback.");
+ const fallback=await fetch(`/api/shopify-products?collection=shop-all&_=${Date.now()}`,{
+  cache:"no-store",
+  headers:{"Cache-Control":"no-cache"}
+ });
+ const data=await fallback.json();
+ if(!fallback.ok)throw new Error(data?.error||"Unable to load Uniform products.");
+ return data.products||[];
+}
 async function boot(){
  bind();
  try{
-  let [r]=await Promise.all([fetch("/api/shopify-products"),syncCart()]);
-  let d=await r.json();(d.products||d||[]).map(norm).forEach(p=>{let c=cat(p);if(c&&p.variants.length)state[c].items.push(p)});
-  ensure();restoreLook();let b=document.getElementById("uniform-headwear-none");b.classList.toggle("is-active",state.headwear.none);b.setAttribute("aria-pressed",state.headwear.none);
+  const previousCatalog=catalogSnapshot();
+  let [products]=await Promise.all([loadUniformProducts(),syncCart()]);
+  (products||[]).map(norm).forEach(p=>{let c=cat(p);if(c&&p.variants.length)state[c].items.push(p)});
+  sortUniformCatalog();
+  const added=newCatalogItems(previousCatalog);
+  ensure();
+  restoreLook();
+  surfaceNewCatalogItems(added);
+  rememberCatalog();
+  let b=document.getElementById("uniform-headwear-none");b.classList.toggle("is-active",state.headwear.none);b.setAttribute("aria-pressed",state.headwear.none);
   ["headwear","tops","bottoms"].forEach(render);summary();swipe()
- }catch(e){console.error(e)}
+ }catch(e){
+  console.error("Uniform boot failed:",e);
+  let msg=document.getElementById("uniform-cart-message");
+  if(msg)msg.textContent="Unable to load Uniform products. Please refresh.";
+ }
 }
 document.addEventListener("DOMContentLoaded",boot);
 })();
