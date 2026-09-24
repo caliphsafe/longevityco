@@ -1,41 +1,27 @@
-LONGEVITY CO. — UNIFORM AUTO-LIVE + EDITOR OVERRIDE FIX — 43 BUILD
+LONGEVITY CO. — UNIFORM LIVE PRODUCT VISIBILITY FIX — 43 BUILD
 
 REPLACE:
 - uniform.js
+- uniform.css
 - uniform.html
-- admin-ops.js
-- admin-sort.js
-- admin.html
-- api/admin-merchandising.js
 
-WHAT WAS WRONG
-The Uniform Editor was saving LC_UNIFORM tags in Shopify, but the public Uniform
-page was not reading those tags. It was only guessing from product title/type.
-Also, choosing OFF removed the Uniform tag entirely, which cannot work once
-untagged live products become automatic.
+ROOT CAUSE
+The Shop page shows live products even when their variants are sold out / inventory is 0.
+The Uniform page was doing something different: it removed any product that did not
+currently have an availableForSale variant.
 
-NEW BEHAVIOR
-1. Any LIVE / published garment defaults onto the Uniform page automatically.
-2. Default placement is inferred from Shopify Product Type + product title:
-   - Hoodies / tees / shirts / sweaters / jerseys -> TOPS
-   - Pants / shorts / joggers / denim / cargos / chinos -> BOTTOMS
-   - Hats / caps / beanies / snapbacks / truckers -> HEADWEAR
-3. Uniform Editor can override any item to HEADWEAR, TOPS, or BOTTOMS.
-4. Choosing OFF now writes LC_UNIFORM:OFF, so the item stays hidden.
-5. Explicit Uniform Editor choices always override the automatic placement.
-6. The public Uniform page now reads all published Shopify products instead of
-   depending on the shop-all collection.
-7. The Uniform Editor now shows "Auto: TOPS/BOTTOMS/HEADWEAR" when the product
-   is appearing by default, and "Uniform: ..." once it has an explicit setting.
+This is why a newly-live shirt could:
+- appear on Shop
+- appear as TOPS in Uniform Editor
+- still be missing from the public Uniform page
 
-IMPORTANT
-- Existing explicit HEADWEAR / TOPS / BOTTOMS choices now work on the public page.
-- Existing products with no Uniform tag will automatically appear if their
-  product type/title maps cleanly to one of the three Uniform sections.
-- Products that do not map to Headwear/Tops/Bottoms (for example a generic
-  accessory) stay out by default, but can be explicitly assigned in Uniform Editor.
-- Products with no available-for-sale variant remain excluded from the builder.
-- No new environment variables or Shopify scopes are required.
+FIX
+- Any published/live product assigned or auto-mapped to TOPS, BOTTOMS, or HEADWEAR
+  is now visible in Uniform even when its current inventory is 0.
+- Sold-out products display a SOLD OUT badge.
+- Sold-out products can still be browsed/swiped in the Uniform carousel.
+- A sold-out product is not added to cart.
+- Saved Uniform looks can restore a product even if it later sells out.
+- In-stock items continue to work exactly as before.
 
-CACHE
-Version numbers were bumped for Uniform and Admin add-ons.
+No API, Shopify scope, admin, or environment-variable changes are required.

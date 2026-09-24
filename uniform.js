@@ -48,7 +48,7 @@ function make(c,i=0,preferred=""){let a=state[c].items;if(!a.length)return null;
 function prod(c,s){return state[c].items[s.productIndex]} function vari(c,s){let p=prod(c,s);return p?.variants.find(v=>v.id===s.variantId)||first(p)}
 function ensure(){["headwear","tops","bottoms"].forEach(c=>{if(state[c].items.length&&!state[c].selections.length)state[c].selections=[make(c,0,getSizeMemory()[c]||"")]})}
 function saveLook(){try{let data={none:state.headwear.none,categories:{}};["headwear","tops","bottoms"].forEach(c=>{let s=state[c].selections[0],p=s&&prod(c,s),v=s&&vari(c,s);data.categories[c]=p?{productId:p.id,handle:p.handle,variantId:v?.id||"",size:v?label(v):""}:null});localStorage.setItem(STORAGE_KEY,JSON.stringify(data))}catch{}}
-function restoreLook(){try{let d=JSON.parse(localStorage.getItem(STORAGE_KEY)||"null");if(!d)return;state.headwear.none=!!d.none;["headwear","tops","bottoms"].forEach(c=>{let saved=d.categories?.[c];if(!saved)return;let i=state[c].items.findIndex(p=>p.id===saved.productId||(saved.handle&&p.handle===saved.handle));if(i<0)return;let p=state[c].items[i],v=p.variants.find(v=>v.id===saved.variantId&&v.availableForSale)||smartVariant(p,saved.size||getSizeMemory()[c]||"");if(v)state[c].selections=[{productIndex:i,variantId:v.id,uid:Math.random().toString(36).slice(2)}]})}catch{}}
+function restoreLook(){try{let d=JSON.parse(localStorage.getItem(STORAGE_KEY)||"null");if(!d)return;state.headwear.none=!!d.none;["headwear","tops","bottoms"].forEach(c=>{let saved=d.categories?.[c];if(!saved)return;let i=state[c].items.findIndex(p=>p.id===saved.productId||(saved.handle&&p.handle===saved.handle));if(i<0)return;let p=state[c].items[i],v=p.variants.find(v=>v.id===saved.variantId)||smartVariant(p,saved.size||getSizeMemory()[c]||"")||first(p);if(v)state[c].selections=[{productIndex:i,variantId:v.id,uid:Math.random().toString(36).slice(2)}]})}catch{}}
 function cartLines(cart=CART){return cart?.lines?.nodes||cart?.lines?.edges?.map(e=>e.node)||[]}
 function cartQty(variantId){return cartLines().filter(l=>(l.merchandise?.id||l.merchandiseId)===variantId).reduce((n,l)=>n+Number(l.quantity||0),0)}
 function inCart(variantId){return cartQty(variantId)>0}
@@ -57,7 +57,12 @@ function change(c,d){
  let s=state[c].selections[0],a=state[c].items;if(!s||!a.length)return;
  let previous=vari(c,s),preferred=preferredSize(c,previous),oldLabel=previous?label(previous):"";
  let start=s.productIndex,tries=0,nextIndex=start,nextProduct=null,picked=null;
- do{nextIndex=(nextIndex+d+a.length)%a.length;nextProduct=a[nextIndex];picked=smartVariant(nextProduct,preferred);tries++}while(tries<a.length&&!picked);
+ do{
+  nextIndex=(nextIndex+d+a.length)%a.length;
+  nextProduct=a[nextIndex];
+  picked=smartVariant(nextProduct,preferred)||first(nextProduct);
+  tries++;
+ }while(tries<a.length&&!picked);
  if(!picked)return;
  s.productIndex=nextIndex;s.variantId=picked.id;
  sizeAdjusted[c]=preferred&&canonicalSize(label(picked))!==canonicalSize(preferred)?`${preferred} unavailable — ${label(picked)} selected`:"";
@@ -65,7 +70,7 @@ function change(c,d){
 }
 function peek(c,index,cls,d){let a=state[c].items;if(!a.length)return"";let i=(index+d+a.length)%a.length,p=a[i];return `<button class="uniform-peek ${cls}" data-change="${c}" data-dir="${d}" aria-label="${d<0?"Previous":"Next"} ${c}"><img src="${esc(p.image)}" alt=""></button>`}
 function swipeBuffer(c,index,side,d){let a=state[c].items;if(a.length<2)return"";let i=(index+d+a.length)%a.length,p=a[i];return `<div class="uniform-swipe-buffer ${side}" aria-hidden="true"><img src="${esc(p.image)}" alt=""></div>`}
-function mainCarousel(c){let s=state[c].selections[0],p=prod(c,s),v=vari(c,s);if(!p||!v)return"";let badge=inCart(v.id)?`<span class="uniform-in-cart-badge">IN CART${cartQty(v.id)>1?` ×${cartQty(v.id)}`:""}</span>`:"";let hover=p.hoverImage?`<img class="uniform-product-image uniform-product-image-hover" src="${esc(p.hoverImage)}" alt="${esc(p.title)} alternate view">`:"";let tap=p.hoverImage?` role="button" tabindex="0" aria-label="Toggle alternate product image" data-toggle-hover-image`:"";return `<div class="uniform-track">${swipeBuffer(c,s.productIndex,"far-prev",-2)}${peek(c,s.productIndex,"prev",-1)}<div class="uniform-current"><div class="uniform-current-visual ${p.hoverImage?"has-hover-image":""}"${tap}><img class="uniform-product-image uniform-product-image-primary" src="${esc(p.image)}" alt="${esc(p.title)}">${hover}${badge}</div>${sizeRow(c,s,p)}</div>${peek(c,s.productIndex,"next",1)}${swipeBuffer(c,s.productIndex,"far-next",2)}</div>`}
+function mainCarousel(c){let s=state[c].selections[0],p=prod(c,s),v=vari(c,s);if(!p||!v)return"";let hasAvailable=p.variants.some(x=>x.availableForSale);let badge=!hasAvailable?`<span class="uniform-sold-out-badge">SOLD OUT</span>`:(inCart(v.id)?`<span class="uniform-in-cart-badge">IN CART${cartQty(v.id)>1?` ×${cartQty(v.id)}`:""}</span>`:"");let hover=p.hoverImage?`<img class="uniform-product-image uniform-product-image-hover" src="${esc(p.hoverImage)}" alt="${esc(p.title)} alternate view">`:"";let tap=p.hoverImage?` role="button" tabindex="0" aria-label="Toggle alternate product image" data-toggle-hover-image`:"";return `<div class="uniform-track">${swipeBuffer(c,s.productIndex,"far-prev",-2)}${peek(c,s.productIndex,"prev",-1)}<div class="uniform-current"><div class="uniform-current-visual ${p.hoverImage?"has-hover-image":""}"${tap}><img class="uniform-product-image uniform-product-image-primary" src="${esc(p.image)}" alt="${esc(p.title)}">${hover}${badge}</div>${sizeRow(c,s,p)}</div>${peek(c,s.productIndex,"next",1)}${swipeBuffer(c,s.productIndex,"far-next",2)}</div>`}
 function render(c){let w=document.getElementById(`uniform-${c}-list`);if(!w)return;if(c==="headwear"){const slot=w.closest(".uniform-look-slot"),canvas=w.closest(".uniform-canvas");slot?.classList.toggle("is-none",state.headwear.none);canvas?.classList.toggle("headwear-off",state.headwear.none)}if(c==="headwear"&&state.headwear.none)w.innerHTML=`<div class="uniform-none-state"><div><strong>NO HEADWEAR</strong><small>Top + bottom look</small></div></div>`;else w.innerHTML=mainCarousel(c);w.querySelectorAll("[data-change]").forEach(b=>b.onclick=()=>change(b.dataset.change,+b.dataset.dir));w.querySelectorAll("[data-size-variant]").forEach(b=>b.onclick=()=>{let c=b.dataset.sizeCategory,s=state[c]?.selections?.[0],p=s&&prod(c,s),v=p?.variants.find(v=>v.id===b.dataset.sizeVariant);if(!s||!v||!v.availableForSale)return;s.variantId=v.id;sizeAdjusted[c]="";rememberSize(c,v);saveLook();render(c);summary()});
  w.querySelectorAll("[data-toggle-hover-image]").forEach(el=>{
    const toggle=()=>{if(window.matchMedia("(max-width:700px)").matches)el.classList.toggle("show-hover-image")};
@@ -170,7 +175,7 @@ async function boot(){
  bind();
  try{
   let [r]=await Promise.all([fetch("/api/shopify-products"),syncCart()]);
-  let d=await r.json();(d.products||d||[]).map(norm).forEach(p=>{let c=cat(p);if(c&&p.variants.some(v=>v.availableForSale))state[c].items.push(p)});
+  let d=await r.json();(d.products||d||[]).map(norm).forEach(p=>{let c=cat(p);if(c&&p.variants.length)state[c].items.push(p)});
   ensure();restoreLook();let b=document.getElementById("uniform-headwear-none");b.classList.toggle("is-active",state.headwear.none);b.setAttribute("aria-pressed",state.headwear.none);
   ["headwear","tops","bottoms"].forEach(render);summary();swipe()
  }catch(e){console.error(e)}
