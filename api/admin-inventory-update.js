@@ -12,6 +12,9 @@ function normalizeUpdate(update = {}) {
     inventoryItemId,
     locationId,
     quantity,
+    // Current Shopify Admin API requires this field to be present.
+    // null intentionally skips the compare-and-swap guard for admin corrections.
+    changeFromQuantity: null,
   };
 }
 
@@ -33,7 +36,6 @@ async function setInventoryBatch(updates) {
     input: {
       name: "available",
       reason: "correction",
-      ignoreCompareQuantity: true,
       quantities: updates,
     },
   });
