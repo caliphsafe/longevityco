@@ -1,25 +1,17 @@
-LONGEVITY CO. — UNIFORM SOURCE-OF-TRUTH FIX — 43 BUILD
+LONGEVITY CO. — FEATURED + CATEGORY DUPLICATION — 43 BUILD
 
 REPLACE:
-- uniform.js
-- uniform.html
+- shop-editorial.js
+- shop.html
 
-ADD:
-- api/uniform-products.js
+NEW BEHAVIOR
+- A product selected as one of the four Featured items stays in its normal category.
+- On the default All view, a Featured item appears:
+  1. in the Featured section
+  2. again in its normal category section
+- When a customer selects Hoodies, T-Shirts, Pants, Shorts, Headwear, or Accessories,
+  the Featured product still appears if it belongs to that category.
+- The Featured filter continues to show just the Featured section/items.
+- Category item counts now include Featured products because they remain part of the catalog.
 
-WHAT THIS FIX CHANGES
-The public Uniform page now gets its catalog from one dedicated endpoint that joins:
-- the exact same shop-all collection used by the Shop page
-- fresh Shopify Admin status + LC_UNIFORM tags used by Uniform Editor
-
-This removes the mismatch where a product could be live on Shop and assigned to TOPS
-in Uniform Editor but still not reach the public Uniform page.
-
-The endpoint is no-cache, respects TOPS / BOTTOMS / HEADWEAR / OFF immediately,
-and defaults untagged live garments from product type/title.
-
-The Uniform page also tracks the catalog. When a genuinely new live product appears,
-it is surfaced once as the visible product in that category instead of staying buried
-behind a previously saved local Uniform selection.
-
-No new environment variables or Shopify scopes are required.
+No admin, Shopify, API, or environment-variable changes are required.
