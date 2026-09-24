@@ -37,7 +37,7 @@
 
   function categoryValues() {
     return [...new Set(
-      (window.ADMIN_PRODUCTS || [])
+      (typeof ADMIN_PRODUCTS !== "undefined" ? ADMIN_PRODUCTS : [])
         .filter((product) => product.status !== "ARCHIVED")
         .map((product) => String(product.productType || "Product").trim())
         .filter(Boolean)
@@ -160,7 +160,7 @@
   function hydrateState() {
     const valid = new Set();
 
-    for (const product of (window.ADMIN_PRODUCTS || [])) {
+    for (const product of (typeof ADMIN_PRODUCTS !== "undefined" ? ADMIN_PRODUCTS : [])) {
       if (product.status === "ARCHIVED") continue;
 
       for (const variant of (product.variants?.nodes || [])) {
@@ -211,7 +211,7 @@
 
     const q = STATE.search.trim().toLowerCase();
 
-    let rows = (window.ADMIN_PRODUCTS || [])
+    let rows = (typeof ADMIN_PRODUCTS !== "undefined" ? ADMIN_PRODUCTS : [])
       .filter((product) => product.status !== "ARCHIVED")
       .filter((product) =>
         STATE.category === "ALL" ||
@@ -231,8 +231,8 @@
           if (!key) return false;
 
           const size = String(
-            typeof window.getVariantSize === "function"
-              ? window.getVariantSize(variant)
+            typeof getVariantSize === "function"
+              ? getVariantSize(variant)
               : variant.title || "Default"
           );
 
@@ -318,8 +318,8 @@
         if (!key) return;
         visibleKeys.push(key);
 
-        const size = typeof window.getVariantSize === "function"
-          ? window.getVariantSize(variant)
+        const size = typeof getVariantSize === "function"
+          ? getVariantSize(variant)
           : (variant.title || "Default");
 
         const value = currentQty(variant);
@@ -461,7 +461,7 @@
   }
 
   function updatesFor(keys) {
-    const locationId = window.ADMIN_LOCATIONS?.[0]?.id;
+    const locationId = (typeof ADMIN_LOCATIONS !== "undefined" ? ADMIN_LOCATIONS?.[0]?.id : null);
     if (!locationId) throw new Error("No Shopify inventory location found.");
 
     return keys
@@ -501,7 +501,7 @@
     setMessage(`Saving ${updates.length} inventory change${updates.length === 1 ? "" : "s"} to Shopify...`);
 
     try {
-      const result = await window.apiJson("/api/admin-inventory-update", {
+      const result = await apiJson("/api/admin-inventory-update", {
         method: "POST",
         body: JSON.stringify({ updates }),
       });
@@ -537,11 +537,23 @@
   function install() {
     if (STATE.installed) return true;
     if (!buildWorkspace()) return false;
-    if (typeof window.renderInventory !== "function") return false;
+    if (typeof renderInventory !== "function") return false;
 
-    window.renderInventory = renderInventoryBulk;
+    renderInventory = renderInventoryBulk;
+
+    // Keep the Inventory workspace synced whenever the main admin data reloads.
+    if (typeof loadAdminData === "function" && !loadAdminData.__inventoryBulkWrapped) {
+      const originalLoadAdminData = loadAdminData;
+      loadAdminData = async function(...args) {
+        const result = await originalLoadAdminData.apply(this, args);
+        refreshCategoryOptions();
+        renderInventoryBulk();
+        return result;
+      };
+      loadAdminData.__inventoryBulkWrapped = true;
+    }
+
     STATE.installed = true;
-
     refreshCategoryOptions();
     renderInventoryBulk();
     return true;

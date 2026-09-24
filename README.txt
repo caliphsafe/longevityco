@@ -1,39 +1,25 @@
-LONGEVITY CO. — INVENTORY EDIT + BULK EDIT — 43 BUILD
+LONGEVITY CO. — INVENTORY ITEMS RESTORE FIX — 43 BUILD
 
 REPLACE:
-- admin.html
-- admin-sort.js
-- api/admin-inventory-update.js
-
-ADD:
 - admin-inventory-bulk.js
-- admin-inventory-bulk.css
+- admin-sort.js
+- admin.html
 
-WHAT THIS ADDS TO INVENTORY
-- Edit every size quantity directly from the Inventory page.
-- Save a single changed size.
-- Change multiple sizes and Save All Changes in one action.
-- Select individual sizes with checkboxes.
-- Select all visible sizes.
-- Select/clear all sizes within a product.
-- Set all selected sizes to one exact quantity.
-- Add 1 or subtract 1 across selected sizes.
-- Save only selected changed sizes.
-- Search by product, category, or size.
-- Filter by category.
-- Filter All / In Stock / Low Stock (1–5) / Out of Stock.
-- Sort by product name, total stock, or changed items first.
-- Live counts for visible, selected, and changed variants.
-- Fully responsive/mobile-friendly controls.
+WHAT BROKE
+The new Inventory bulk editor tried to read:
+- window.ADMIN_PRODUCTS
+- window.ADMIN_LOCATIONS
 
-SHOPIFY
-- The existing inventory API now supports both the original single-size update
-  and batched inventory updates.
-- Bulk saves are sent to Shopify in safe batches.
-- No new Shopify scopes or environment variables are required.
+But the existing admin defines those with top-level `let`, so they are available to
+other classic scripts as globals but are NOT properties on `window`.
 
-IMPORTANT
-- Quantity never goes below 0.
-- Changes are only written to Shopify when Save is pressed.
-- The Inventory page updates its in-memory Shopify quantities immediately after
-  a successful save so the page stays in sync without a full reload.
+That made the new Inventory UI think there were zero products, even though the
+Products page still had them.
+
+FIX
+- Inventory bulk editor now reads the existing ADMIN_PRODUCTS and ADMIN_LOCATIONS globals directly.
+- It uses the existing getVariantSize() and apiJson() functions directly.
+- It re-renders whenever the main admin data reloads.
+- Cache version bumped so the corrected addon is loaded immediately.
+
+No API, Shopify, scope, or environment-variable changes are required.
