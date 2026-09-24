@@ -4,8 +4,27 @@ const SIZE_MEMORY_KEY="longevity_uniform_size_memory_v10";
 const state={headwear:{items:[],selections:[],none:false},tops:{items:[],selections:[]},bottoms:{items:[],selections:[]}};
 let CART=null, lastLookSignature="", pendingDuplicateDecision=null, sizeAdjusted={};
 const esc=(v="")=>String(v).replaceAll("&","&amp;").replaceAll("<","&lt;").replaceAll(">","&gt;").replaceAll('"',"&quot;").replaceAll("'","&#039;");
-function cat(p){let r=`${p.productType||""} ${p.title||""}`.toLowerCase();if(/headwear|hat|cap|beanie/.test(r))return"headwear";if(/hoodie|sweatshirt|crewneck|t-shirt|t shirt|tee|shirt|top|sweater|longsleeve|long sleeve/.test(r))return"tops";if(/pants|pant|shorts|short|jogger|trouser|bottom/.test(r))return"bottoms";return""}
-function norm(p){let imgs=p.images?.nodes||[],primary=p.featuredImage?.url||imgs[0]?.url||"",secondary=imgs.find(img=>img?.url&&img.url!==primary)?.url||"";let vs=(p.variants?.nodes||[]).map(v=>({id:v.id,title:v.title||"Default",availableForSale:v.availableForSale!==false,selectedOptions:v.selectedOptions||[],price:v.price||p.priceRange?.minVariantPrice||{amount:"0",currencyCode:"USD"}}));return{id:p.id,handle:p.handle||"",title:p.title,image:primary,hoverImage:secondary,productType:p.productType||"",variants:vs}}
+function explicitUniformCategory(p){
+ const tag=(p?.tags||[]).map(String).find(t=>/^LC_UNIFORM:(HEADWEAR|TOPS|BOTTOMS|OFF)$/i.test(t));
+ if(!tag)return"";
+ return tag.split(":")[1].toUpperCase();
+}
+function cat(p){
+ const explicit=explicitUniformCategory(p);
+ if(explicit==="OFF")return"";
+ if(explicit==="HEADWEAR")return"headwear";
+ if(explicit==="TOPS")return"tops";
+ if(explicit==="BOTTOMS")return"bottoms";
+
+ // No explicit Uniform setting = automatically include live garments
+ // using the Shopify product type/title as the placement clue.
+ let r=`${p.productType||""} ${p.title||""}`.toLowerCase();
+ if(/headwear|hat|cap|beanie|snapback|trucker|bucket hat/.test(r))return"headwear";
+ if(/hoodie|sweatshirt|crewneck|t-shirt|t shirt|tee|shirt|top|sweater|longsleeve|long sleeve|jersey/.test(r))return"tops";
+ if(/pants|pant|shorts|short|jogger|trouser|bottom|denim|jean|cargo|chino/.test(r))return"bottoms";
+ return"";
+}
+function norm(p){let imgs=p.images?.nodes||[],primary=p.featuredImage?.url||imgs[0]?.url||"",secondary=imgs.find(img=>img?.url&&img.url!==primary)?.url||"";let vs=(p.variants?.nodes||[]).map(v=>({id:v.id,title:v.title||"Default",availableForSale:v.availableForSale!==false,selectedOptions:v.selectedOptions||[],price:v.price||p.priceRange?.minVariantPrice||{amount:"0",currencyCode:"USD"}}));return{id:p.id,handle:p.handle||"",title:p.title,image:primary,hoverImage:secondary,productType:p.productType||"",tags:Array.isArray(p.tags)?p.tags:[],variants:vs}}
 function label(v){let s=(v?.selectedOptions||[]).find(o=>String(o.name).toLowerCase()==="size");return s?.value||(v?.title&&v.title!=="Default Title"?v.title:"One Size")}
 function isOneSizeLabel(v){let s=String(label(v)||"").trim().toLowerCase().replace(/\s+/g," ");return !s||["default","default title","one size","one size fits all","one-size","os","osfa"].includes(s)}
 function sizeChoices(c,p){if(c==="headwear"||!p?.variants?.length)return[];let available=p.variants.filter(v=>v.availableForSale);if(!available.length||available.every(isOneSizeLabel))return[];let seen=new Set();return available.filter(v=>{let k=canonicalSize(label(v));if(!k||seen.has(k))return false;seen.add(k);return true})}
@@ -150,7 +169,7 @@ function bind(){
 async function boot(){
  bind();
  try{
-  let [r]=await Promise.all([fetch("/api/shopify-products?collection=shop-all"),syncCart()]);
+  let [r]=await Promise.all([fetch("/api/shopify-products"),syncCart()]);
   let d=await r.json();(d.products||d||[]).map(norm).forEach(p=>{let c=cat(p);if(c&&p.variants.some(v=>v.availableForSale))state[c].items.push(p)});
   ensure();restoreLook();let b=document.getElementById("uniform-headwear-none");b.classList.toggle("is-active",state.headwear.none);b.setAttribute("aria-pressed",state.headwear.none);
   ["headwear","tops","bottoms"].forEach(render);summary();swipe()

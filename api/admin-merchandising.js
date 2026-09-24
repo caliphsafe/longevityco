@@ -68,7 +68,11 @@ export default async function handler(req, res) {
       if (!VALID_UNIFORM.includes(next)) return res.status(400).json({ error: "Invalid Uniform category." });
       const oldTags = (product.tags || []).filter(tag => String(tag).toUpperCase().startsWith(UNIFORM_PREFIX));
       await tagsRemove(productId, oldTags);
-      if (next !== "OFF") await tagsAdd(productId, [`${UNIFORM_PREFIX}${next}`]);
+
+      // OFF is stored explicitly so an item that would normally be
+      // auto-included does not reappear on the Uniform page.
+      await tagsAdd(productId, [`${UNIFORM_PREFIX}${next}`]);
+
       return res.status(200).json({ ok: true, value: next });
     }
 

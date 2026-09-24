@@ -1,55 +1,41 @@
-LONGEVITY — MODEL FILTERS + CASTING SORTING — 43 BUILD
+LONGEVITY CO. — UNIFORM AUTO-LIVE + EDITOR OVERRIDE FIX — 43 BUILD
 
 REPLACE:
-- admin.html
+- uniform.js
+- uniform.html
+- admin-ops.js
 - admin-sort.js
-- admin-models.js
-- admin-models.css
-- api/admin-models.js
+- admin.html
+- api/admin-merchandising.js
 
-GOOGLE APPS SCRIPT:
-- Replace the current Apps Script Code.gs with:
-  google-apps-script/Code.gs
-- Save.
-- Run initializeModels once.
-- Then Deploy > Manage deployments > Edit > New version > Deploy.
+WHAT WAS WRONG
+The Uniform Editor was saving LC_UNIFORM tags in Shopify, but the public Uniform
+page was not reading those tags. It was only guessing from product title/type.
+Also, choosing OFF removed the Uniform tag entirely, which cannot work once
+untagged live products become automatic.
 
-NEW MODEL DATA
-- Adds a Gender column to the existing Casting Submissions sheet.
-- Existing rows remain intact.
-- Existing models will have Gender blank until you assign Male or Female in Admin.
-- Gender is NEVER inferred from a name, photo, email, or Instagram.
+NEW BEHAVIOR
+1. Any LIVE / published garment defaults onto the Uniform page automatically.
+2. Default placement is inferred from Shopify Product Type + product title:
+   - Hoodies / tees / shirts / sweaters / jerseys -> TOPS
+   - Pants / shorts / joggers / denim / cargos / chinos -> BOTTOMS
+   - Hats / caps / beanies / snapbacks / truckers -> HEADWEAR
+3. Uniform Editor can override any item to HEADWEAR, TOPS, or BOTTOMS.
+4. Choosing OFF now writes LC_UNIFORM:OFF, so the item stays hidden.
+5. Explicit Uniform Editor choices always override the automatic placement.
+6. The public Uniform page now reads all published Shopify products instead of
+   depending on the shop-all collection.
+7. The Uniform Editor now shows "Auto: TOPS/BOTTOMS/HEADWEAR" when the product
+   is appearing by default, and "Uniform: ..." once it has an explicit setting.
 
-NEW FILTERS
-- Status
-- Gender: Male only / Female only / Not set
-- Top size
-- Bottom size
-- Shoe size
-- Profile data:
-  - Complete sizing
-  - Missing sizing
-  - Has Instagram
-  - No Instagram
-- Reset Filters button
+IMPORTANT
+- Existing explicit HEADWEAR / TOPS / BOTTOMS choices now work on the public page.
+- Existing products with no Uniform tag will automatically appear if their
+  product type/title maps cleanly to one of the three Uniform sections.
+- Products that do not map to Headwear/Tops/Bottoms (for example a generic
+  accessory) stay out by default, but can be explicitly assigned in Uniform Editor.
+- Products with no available-for-sale variant remain excluded from the builder.
+- No new environment variables or Shopify scopes are required.
 
-NEW SORTING
-- Newest applicant
-- Recently updated
-- Oldest applicant
-- Name A-Z
-- Status
-- Gender
-- Height: tallest / shortest
-- Top size: small / large
-- Bottom size: small / large
-- Shoe size: small / large
-
-SIZE / HEIGHT BEHAVIOR
-- Top sizes understand common apparel ordering: XS, S, M, L, XL, 2XL, 3XL, etc.
-- Numeric bottom sizes sort numerically.
-- Shoe sizes sort numerically, including decimals.
-- Height sorting understands common feet/inches and centimeter formats.
-- Blank/unreadable measurements are kept at the bottom of measurement sorts.
-
-NO NEW VERCEL ENVIRONMENT VARIABLES ARE REQUIRED.
+CACHE
+Version numbers were bumped for Uniform and Admin add-ons.

@@ -37,7 +37,7 @@
         <div class="ops-grid" id="ops-fulfillment-metrics"></div><div class="ops-panel"><div class="ops-panel-head"><div><h2>Shipping Queue</h2><p>Orders that still need fulfillment.</p></div></div><div class="ops-list" id="ops-fulfillment-list"></div></div>
       `)}
       ${view("uniform-editor","Merchandising","Uniform Editor",`
-        <div class="ops-note">Assign products to Uniform without changing the public Shop category.</div>
+        <div class="ops-note">Live garments appear in Uniform automatically. Use this editor to override their placement or choose OFF to hide them from Uniform without changing the public Shop category.</div>
         <div class="ops-toolbar"><input id="ops-uniform-search" type="search" placeholder="Search products"><select id="ops-uniform-filter"><option value="ALL">All products</option><option value="HEADWEAR">Headwear</option><option value="TOPS">Tops</option><option value="BOTTOMS">Bottoms</option><option value="OFF">Not in Uniform</option></select><button class="ops-button secondary" id="ops-uniform-refresh">Refresh</button></div><div id="ops-uniform-list"></div>
       `)}
       ${view("drops","Release Management","Drops",`
@@ -116,12 +116,13 @@
   }
   function metric(a,b){return `<article class="ops-metric"><span>${esc(a)}</span><strong>${esc(b)}</strong></article>`}
 
-  function uniformTag(p){return (p.tags||[]).map(String).find(t=>/^LC_UNIFORM:(HEADWEAR|TOPS|BOTTOMS)$/i.test(t))?.split(":")[1]?.toUpperCase()||"OFF"}
-  function suggested(p){const s=`${p.productType||""} ${p.title||""}`.toLowerCase();if(/hat|cap|beanie|headwear/.test(s))return"HEADWEAR";if(/pants|short|jogger|bottom|trouser/.test(s))return"BOTTOMS";return"TOPS"}
+  function explicitUniformTag(p){return (p.tags||[]).map(String).find(t=>/^LC_UNIFORM:(HEADWEAR|TOPS|BOTTOMS|OFF)$/i.test(t))?.split(":")[1]?.toUpperCase()||""}
+  function suggested(p){const s=`${p.productType||""} ${p.title||""}`.toLowerCase();if(/headwear|hat|cap|beanie|snapback|trucker|bucket hat/.test(s))return"HEADWEAR";if(/pants|pant|shorts|short|jogger|bottom|trouser|denim|jean|cargo|chino/.test(s))return"BOTTOMS";if(/hoodie|sweatshirt|crewneck|t-shirt|t shirt|tee|shirt|top|sweater|longsleeve|long sleeve|jersey/.test(s))return"TOPS";return"OFF"}
+  function uniformTag(p){const explicit=explicitUniformTag(p);if(explicit)return explicit;return String(p.status||"").toUpperCase()==="ACTIVE"?suggested(p):"OFF"}
   function renderUniform(){
     const q=($("ops-uniform-search")?.value||"").toLowerCase(),f=$("ops-uniform-filter")?.value||"ALL";
     const rows=STATE.merch.filter(p=>(!q||`${p.title} ${p.productType}`.toLowerCase().includes(q))&&(f==="ALL"||uniformTag(p)===f));
-    $("ops-uniform-list").innerHTML=rows.length?rows.map(p=>{const active=uniformTag(p);return `<article class="ops-product-card"><img src="${esc(p.featuredImage?.url||"")}" alt=""><div><h3>${esc(p.title)}</h3><p>${esc(p.productType||"Uncategorized")} · Suggested: ${suggested(p)}</p></div><div class="ops-segment">${["HEADWEAR","TOPS","BOTTOMS","OFF"].map(v=>`<button class="${active===v?"is-active":""}" data-uniform-product="${esc(p.id)}" data-uniform-value="${v}">${v}</button>`).join("")}</div></article>`}).join(""):`<div class="ops-empty">No products found.</div>`;
+    $("ops-uniform-list").innerHTML=rows.length?rows.map(p=>{const active=uniformTag(p),explicit=explicitUniformTag(p),auto=!explicit&&String(p.status||"").toUpperCase()==="ACTIVE";return `<article class="ops-product-card"><img src="${esc(p.featuredImage?.url||"")}" alt=""><div><h3>${esc(p.title)}</h3><p>${esc(p.productType||"Uncategorized")} · ${auto?`Auto: ${active}`:`Uniform: ${active}`}</p></div><div class="ops-segment">${["HEADWEAR","TOPS","BOTTOMS","OFF"].map(v=>`<button class="${active===v?"is-active":""}" data-uniform-product="${esc(p.id)}" data-uniform-value="${v}">${v}</button>`).join("")}</div></article>`}).join(""):`<div class="ops-empty">No products found.</div>`;
     $("ops-uniform-list")?.querySelectorAll("[data-uniform-product]").forEach(b=>b.onclick=()=>setUniform(b.dataset.uniformProduct,b.dataset.uniformValue,b));
   }
   async function setUniform(productId,value,btn){btn.disabled=true;try{await apiJson("/api/admin-merchandising",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({action:"uniform",productId,value})});await loadMerch(true);renderUniform()}catch(e){alert(e.message)}finally{btn.disabled=false}}
