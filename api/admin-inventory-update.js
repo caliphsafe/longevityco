@@ -1,3 +1,4 @@
+import { randomUUID } from "node:crypto";
 import { requireAdmin } from "./_admin-auth.js";
 import { shopifyAdminGraphql, throwUserErrors } from "./_shopify-admin.js";
 
@@ -20,13 +21,17 @@ function normalizeUpdate(update = {}) {
 
 async function setInventoryBatch(updates) {
   const data = await shopifyAdminGraphql(`
-    mutation AdminInventorySet($input: InventorySetQuantitiesInput!) {
-      inventorySetQuantities(input: $input) {
+    mutation AdminInventorySet(
+      $input: InventorySetQuantitiesInput!,
+      $idempotencyKey: String!
+    ) {
+      inventorySetQuantities(input: $input) @idempotent(key: $idempotencyKey) {
         inventoryAdjustmentGroup {
           createdAt
           reason
         }
         userErrors {
+          code
           field
           message
         }
@@ -38,6 +43,7 @@ async function setInventoryBatch(updates) {
       reason: "correction",
       quantities: updates,
     },
+    idempotencyKey: randomUUID(),
   });
 
   throwUserErrors(data.inventorySetQuantities?.userErrors);
