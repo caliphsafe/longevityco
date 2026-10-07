@@ -1,25 +1,34 @@
-LONGEVITY CO. — INVENTORY ITEMS RESTORE FIX — 43 BUILD
+LONGEVITY CO. — TEMPORARY PASSWORD + COUNTDOWN — 43 BUILD
 
-REPLACE:
-- admin-inventory-bulk.js
-- admin-sort.js
-- admin.html
+ADD:
+- middleware.js
+- password.html
+- password.css
+- password.js
+- api/site-gate-login.js
 
-WHAT BROKE
-The new Inventory bulk editor tried to read:
-- window.ADMIN_PRODUCTS
-- window.ADMIN_LOCATIONS
+PUBLIC LAUNCH
+Thursday, October 8, 2026
+7:00 PM America/New_York (EDT)
 
-But the existing admin defines those with top-level `let`, so they are available to
-other classic scripts as globals but are NOT properties on `window`.
+PASSWORD
+continuation
 
-That made the new Inventory UI think there were zero products, even though the
-Products page still had them.
+BEHAVIOR
+- Before launch, the public storefront is blocked before its static pages are served.
+- Visitors are redirected to the Longevity countdown/password screen.
+- The correct password grants access through an HttpOnly cookie.
+- The site automatically becomes public at 7:00 PM EDT on October 8, 2026.
+- The countdown automatically redirects into the site at zero.
+- Direct visits to Shop, Uniform, Product, About, Contact, Lookbook and Cart are gated too.
+- The existing Admin remains accessible because it already has its own login.
+- No password is present in browser-side JavaScript; password validation happens server-side.
+- No new environment variables are required.
 
-FIX
-- Inventory bulk editor now reads the existing ADMIN_PRODUCTS and ADMIN_LOCATIONS globals directly.
-- It uses the existing getVariantSize() and apiJson() functions directly.
-- It re-renders whenever the main admin data reloads.
-- Cache version bumped so the corrected addon is loaded immediately.
+DESIGN
+- Existing Longevity home background video.
+- Existing Longevity logo.
+- Black minimal styling matching the current homepage.
+- Responsive desktop/mobile countdown.
 
-No API, Shopify, scope, or environment-variable changes are required.
+This is a temporary launch gate. After the timestamp, middleware automatically stops blocking public traffic.
