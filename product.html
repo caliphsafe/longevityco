@@ -122,10 +122,29 @@
       </section>
     </main>
 
+    <div class="shop-drawer-overlay" id="shop-drawer-overlay"></div>
+
+    <aside class="side-panel" id="favorites-panel" aria-hidden="true">
+      <div class="side-panel-header"><p>Favorites</p><button class="side-panel-close" type="button" data-close-panel="favorites-panel">×</button></div>
+      <div class="side-panel-body" id="favorites-items"></div>
+      <div class="side-panel-empty" id="favorites-empty">No favorites yet.</div>
+    </aside>
+
+    <aside class="side-panel" id="cart-panel" aria-hidden="true">
+      <div class="side-panel-header"><p>Cart</p><button class="side-panel-close" type="button" data-close-panel="cart-panel">×</button></div>
+      <div class="side-panel-body" id="cart-panel-items"></div>
+      <div class="side-panel-empty" id="cart-panel-empty">Your cart is empty.</div>
+      <div class="side-panel-footer">
+        <div class="side-panel-total"><span>Subtotal</span><span id="cart-panel-subtotal">$0</span></div>
+        <a href="cart.html" class="add-cart-btn panel-cart-link">View Cart</a>
+      </div>
+    </aside>
+
     <div id="site-footer"></div>
   </div>
 
   <script src="components.js?v=1"></script>
   <script src="script.js?v=16"></script>
+  <script src="shop-panels-fix.js?v=1"></script>
 </body>
 </html>
