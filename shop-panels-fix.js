@@ -1,23 +1,25 @@
 (() => {
-  // Shop + product-page behavior only.
-  // Uniform already opens its cart panel through uniform.js.
+  // Minimal storefront behavior patch.
+  // This file intentionally does not observe or re-render the Shop catalog.
 
   if (typeof toggleFavorite === "function") {
     const originalToggleFavorite = toggleFavorite;
 
     toggleFavorite = function(product) {
       const key = product?.id || product?.handle || "";
-      const wasFavorite = key && typeof isFavorite === "function"
-        ? isFavorite(key)
-        : false;
+      const wasFavorite =
+        !!key &&
+        typeof isFavorite === "function" &&
+        isFavorite(key);
 
       const result = originalToggleFavorite(product);
 
-      const isNowFavorite = key && typeof isFavorite === "function"
-        ? isFavorite(key)
-        : false;
+      const isNowFavorite =
+        !!key &&
+        typeof isFavorite === "function" &&
+        isFavorite(key);
 
-      // Only pop Favorites when the item was ADDED, not when it was removed.
+      // Open Favorites only when a product has just been added.
       if (!wasFavorite && isNowFavorite) {
         if (typeof renderFavoritesPanel === "function") {
           renderFavoritesPanel();
@@ -37,7 +39,7 @@
     addVariantToShopifyCart = async function(...args) {
       const cart = await originalAddVariantToShopifyCart.apply(this, args);
 
-      // Successful add: update the panel and open it immediately.
+      // Open the existing side cart only after Shopify confirms the add.
       if (cart) {
         if (typeof updateCartCountUI === "function") {
           updateCartCountUI(cart.totalQuantity || 0);
@@ -54,14 +56,19 @@
     };
   }
 
-  // "View Cart" is an internal cart-page link, not a Shopify checkout link.
-  // Keep it pointed at the local cart page even if older markup still carries
-  // data-checkout-link somewhere in a cached page.
   function normalizeViewCartLinks() {
     document.querySelectorAll(".panel-cart-link").forEach((link) => {
-      link.setAttribute("href", "cart.html");
-      link.removeAttribute("data-checkout-link");
-      link.removeAttribute("aria-disabled");
+      // Only change an attribute if it actually needs changing.
+      // This avoids the recursive attribute-mutation loop from the previous build.
+      if (link.getAttribute("href") !== "cart.html") {
+        link.setAttribute("href", "cart.html");
+      }
+      if (link.hasAttribute("data-checkout-link")) {
+        link.removeAttribute("data-checkout-link");
+      }
+      if (link.hasAttribute("aria-disabled")) {
+        link.removeAttribute("aria-disabled");
+      }
     });
   }
 
@@ -69,17 +76,5 @@
     document.addEventListener("DOMContentLoaded", normalizeViewCartLinks, { once: true });
   } else {
     normalizeViewCartLinks();
-  }
-
-  // renderCartPanel can run after page load. Re-assert the local View Cart link
-  // whenever the side-cart content changes.
-  const cartPanel = document.getElementById("cart-panel");
-  if (cartPanel && "MutationObserver" in window) {
-    new MutationObserver(normalizeViewCartLinks).observe(cartPanel, {
-      childList: true,
-      subtree: true,
-      attributes: true,
-      attributeFilter: ["href", "data-checkout-link", "aria-disabled"],
-    });
   }
 })();
