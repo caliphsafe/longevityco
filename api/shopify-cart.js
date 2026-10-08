@@ -1,103 +1,83 @@
-function cleanShopDomain(value = "") {
-  let domain = String(value)
+function getMyShopifyDomain(value = "") {
+  let domain = String(value || "")
     .trim()
     .replace(/^https?:\/\//i, "")
     .replace(/\/.*$/, "")
     .replace(/\.$/, "");
 
-  if (domain && !domain.endsWith(".myshopify.com")) {
+  if (!domain) return "";
+
+  if (!domain.endsWith(".myshopify.com")) {
     domain = `${domain}.myshopify.com`;
   }
 
   return domain;
 }
 
-function numericVariantId(gid = "") {
-  const match = String(gid).match(/ProductVariant\/(\d+)(?:\?.*)?$/);
-  return match ? match[1] : "";
-}
+function normalizeHeadlessCheckoutUrl(
+  checkoutUrl,
+  storeDomain
+) {
+  if (!checkoutUrl) return checkoutUrl;
 
-function buildShopifyCheckoutPermalink(cart, storeDomain) {
-  const shopDomain = cleanShopDomain(storeDomain);
-  if (!shopDomain) return "";
+  const myshopifyDomain =
+    getMyShopifyDomain(storeDomain);
 
-  const parts = (cart?.lines?.nodes || [])
-    .map((line) => {
-      const variantId = numericVariantId(line?.merchandise?.id);
-      const quantity = Math.max(1, Number(line?.quantity || 1));
-
-      return variantId
-        ? `${variantId}:${quantity}`
-        : "";
-    })
-    .filter(Boolean);
-
-  if (!parts.length) return "";
-
-  const url = new URL(
-    `https://${shopDomain}/cart/${parts.join(",")}`
-  );
-
-  const discountCodes = (cart?.discountCodes || [])
-    .filter(
-      (discount) =>
-        discount?.code &&
-        discount?.applicable !== false
-    )
-    .map((discount) => discount.code);
-
-  if (discountCodes.length) {
-    url.searchParams.set(
-      "discount",
-      discountCodes.join(",")
-    );
-  }
-
-  if (cart?.buyerIdentity?.email) {
-    url.searchParams.set(
-      "checkout[email]",
-      cart.buyerIdentity.email
-    );
-  }
-
-  if (cart?.note) {
-    url.searchParams.set(
-      "note",
-      cart.note
-    );
-  }
-
-  return url.toString();
-}
-
-function isShopifyHostedCheckout(checkoutUrl) {
-  if (!checkoutUrl) return false;
+  if (!myshopifyDomain) return checkoutUrl;
 
   try {
-    const host =
-      new URL(checkoutUrl).hostname.toLowerCase();
+    const url = new URL(
+      String(checkoutUrl)
+    );
 
-    return host.endsWith(".myshopify.com");
+    /*
+      Shopify's Storefront Cart API can return
+      /cart/c/... on the custom headless
+      storefront domain.
+
+      On this project that domain is served by
+      Vercel, so that route produces Vercel's
+      404 NOT_FOUND page.
+
+      Preserve Shopify's exact cart checkout
+      path and key, but send that path to
+      Shopify's permanent store host.
+
+      The Headless channel parameter tells
+      Shopify this checkout originated from
+      the Headless storefront.
+    */
+
+    url.protocol = "https:";
+    url.hostname = myshopifyDomain;
+    url.port = "";
+
+    url.searchParams.set(
+      "channel",
+      "headless-storefronts"
+    );
+
+    return url.toString();
   } catch {
-    return false;
+    return checkoutUrl;
   }
 }
 
-export default async function handler(req, res) {
+export default async function handler(
+  req,
+  res
+) {
   if (req.method !== "GET") {
     return res
       .status(405)
       .json({
-        error: "Method not allowed",
+        error:
+          "Method not allowed",
       });
   }
 
-  res.setHeader(
-    "Cache-Control",
-    "no-store, no-cache, must-revalidate, max-age=0"
-  );
-
-  const { id: cartId } = req.query;
+  const { id: cartId } =
+    req.query;
 
   if (
     !cartId ||
@@ -106,18 +86,22 @@ export default async function handler(req, res) {
     return res
       .status(400)
       .json({
-        error: "Missing cart id",
+        error:
+          "Missing cart id",
       });
   }
 
   const SHOPIFY_STORE_DOMAIN =
-    process.env.SHOPIFY_STORE_DOMAIN;
+    process.env
+      .SHOPIFY_STORE_DOMAIN;
 
   const SHOPIFY_STOREFRONT_TOKEN =
-    process.env.SHOPIFY_STOREFRONT_TOKEN;
+    process.env
+      .SHOPIFY_STOREFRONT_TOKEN;
 
   const SHOPIFY_API_VERSION =
-    process.env.SHOPIFY_API_VERSION ||
+    process.env
+      .SHOPIFY_API_VERSION ||
     "2026-04";
 
   if (
@@ -138,17 +122,16 @@ export default async function handler(req, res) {
     `/graphql.json`;
 
   const query = `
-    query GetCart($cartId: ID!) {
-      cart(id: $cartId) {
+    query GetCart(
+      $cartId: ID!
+    ) {
+      cart(
+        id: $cartId
+      ) {
         id
         checkoutUrl
         totalQuantity
         note
-
-        discountCodes {
-          code
-          applicable
-        }
 
         lines(first: 100) {
           nodes {
@@ -213,27 +196,29 @@ export default async function handler(req, res) {
   `;
 
   try {
-    const response = await fetch(
-      endpoint,
-      {
-        method: "POST",
+    const response =
+      await fetch(
+        endpoint,
+        {
+          method: "POST",
 
-        headers: {
-          "Content-Type":
-            "application/json",
+          headers: {
+            "Content-Type":
+              "application/json",
 
-          "X-Shopify-Storefront-Access-Token":
-            SHOPIFY_STOREFRONT_TOKEN,
-        },
-
-        body: JSON.stringify({
-          query,
-          variables: {
-            cartId,
+            "X-Shopify-Storefront-Access-Token":
+              SHOPIFY_STOREFRONT_TOKEN,
           },
-        }),
-      }
-    );
+
+          body: JSON.stringify({
+            query,
+
+            variables: {
+              cartId,
+            },
+          }),
+        }
+      );
 
     const data =
       await response.json();
@@ -262,68 +247,62 @@ export default async function handler(req, res) {
         });
     }
 
-    let safeCheckoutUrl =
-      cart.checkoutUrl;
+    const checkoutUrl =
+      normalizeHeadlessCheckoutUrl(
+        cart.checkoutUrl,
+        SHOPIFY_STORE_DOMAIN
+      );
 
-    let checkoutMode =
-      "shopify_cart_api";
+    try {
+      console.info(
+        "SHOPIFY CHECKOUT ROUTE",
+        {
+          originalHost:
+            new URL(
+              cart.checkoutUrl
+            ).hostname,
 
-    if (
-      !isShopifyHostedCheckout(
-        cart.checkoutUrl
-      )
-    ) {
-      const permalink =
-        buildShopifyCheckoutPermalink(
-          cart,
-          SHOPIFY_STORE_DOMAIN
-        );
+          finalHost:
+            new URL(
+              checkoutUrl
+            ).hostname,
 
-      if (permalink) {
-        safeCheckoutUrl =
-          permalink;
+          path:
+            new URL(
+              checkoutUrl
+            ).pathname,
 
-        checkoutMode =
-          "shopify_cart_permalink";
+          hasKey:
+            new URL(
+              checkoutUrl
+            ).searchParams.has(
+              "key"
+            ),
 
-        try {
-          console.warn(
-            "SHOPIFY CHECKOUT FALLBACK:",
-            {
-              returnedHost:
-                new URL(
-                  cart.checkoutUrl
-                ).hostname,
-
-              safeHost:
-                new URL(
-                  permalink
-                ).hostname,
-
-              lineCount:
-                cart.lines
-                  ?.nodes
-                  ?.length || 0,
-            }
-          );
-        } catch {
-          console.warn(
-            "SHOPIFY CHECKOUT FALLBACK: using cart permalink"
-          );
+          channel:
+            new URL(
+              checkoutUrl
+            ).searchParams.get(
+              "channel"
+            ),
         }
-      }
+      );
+    } catch {
+      // Diagnostic logging only.
     }
+
+    res.setHeader(
+      "Cache-Control",
+      "no-store, no-cache, must-revalidate, max-age=0"
+    );
 
     return res
       .status(200)
       .json({
         cart: {
           ...cart,
-          checkoutUrl:
-            safeCheckoutUrl,
+          checkoutUrl,
         },
-
-        checkoutMode,
       });
   } catch (error) {
     return res
