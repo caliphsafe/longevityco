@@ -1,7 +1,43 @@
+function cleanStoreDomain(value = "") {
+  return String(value)
+    .trim()
+    .replace(/^https?:\/\//i, "")
+    .replace(/\/.*$/, "")
+    .replace(/\.$/, "");
+}
+
+function normalizeCheckoutUrl(checkoutUrl, storeDomain) {
+  if (!checkoutUrl) return checkoutUrl;
+
+  const shopDomain = cleanStoreDomain(storeDomain);
+
+  // SHOPIFY_STORE_DOMAIN for this storefront is the permanent Shopify host.
+  // Only force the hostname when it is actually a myshopify.com domain.
+  // This prevents a headless/Vercel storefront domain from receiving Shopify's
+  // /cart/c/... checkout route and returning a Vercel 404.
+  if (!shopDomain.endsWith(".myshopify.com")) {
+    return checkoutUrl;
+  }
+
+  try {
+    const url = new URL(String(checkoutUrl), `https://${shopDomain}`);
+
+    url.protocol = "https:";
+    url.hostname = shopDomain;
+    url.port = "";
+
+    return url.toString();
+  } catch {
+    return checkoutUrl;
+  }
+}
+
 export default async function handler(req, res) {
   if (req.method !== "GET") {
     return res.status(405).json({ error: "Method not allowed" });
   }
+
+  res.setHeader("Cache-Control", "no-store");
 
   const { id: cartId } = req.query;
 
@@ -107,7 +143,17 @@ export default async function handler(req, res) {
       return res.status(404).json({ error: "Cart not found" });
     }
 
-    return res.status(200).json({ cart });
+    // The rest of the cart object is returned untouched. Only the checkout
+    // hostname is corrected so Checkout leaves Vercel and goes to Shopify.
+    const safeCart = {
+      ...cart,
+      checkoutUrl: normalizeCheckoutUrl(
+        cart.checkoutUrl,
+        SHOPIFY_STORE_DOMAIN
+      ),
+    };
+
+    return res.status(200).json({ cart: safeCart });
   } catch (error) {
     return res.status(500).json({
       error: "Unexpected server error",
